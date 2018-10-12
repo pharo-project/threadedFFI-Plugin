@@ -130,13 +130,26 @@ TFBasicType class >> void [
 	^ VOID
 ]
 
+{ #category : #size }
+TFBasicType >> byteSize [
+	self validate.
+	^ self primByteSize
+]
+
 { #category : #accessing }
 TFBasicType >> isValid [ 
 
 	^ handle isNull not
 ]
 
-{ #category : #accessing }
+{ #category : #primitives }
+TFBasicType >> primByteSize [
+	<primitive: 'primitiveTypeByteSize' module: 'PThreadedPlugin'>
+
+	^ self primitiveFailed	
+]
+
+{ #category : #primitives }
 TFBasicType >> primFillType [
 	<primitive: 'primitiveFillBasicType' module: 'PThreadedPlugin'>
 
