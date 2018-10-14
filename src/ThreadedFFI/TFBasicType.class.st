@@ -31,15 +31,15 @@ TFBasicType class >> createBasicTypes [
 		 	FLOAT := self newTypeName: #float code: 2.
 		 	DOUBLE := self newTypeName: #double code: 3.
 
-			UINT8 := self newTypeName: #uint8 code: 4.
-			UINT16 := self newTypeName: #uint16 code: 5.
-			UINT32 := self newTypeName: #uint32 code: 6.
-			UINT64 := self newTypeName: #uint64 code: 7.
+			UINT8 := self newIntTypeName: #uint8 code: 4 signed: false.
+			UINT16 := self newIntTypeName: #uint16 code: 5 signed: false.
+			UINT32 := self newIntTypeName: #uint32 code: 6 signed: false.
+			UINT64 := self newIntTypeName: #uint64 code: 7 signed: false.
 			
-			SINT8 := self newTypeName: #sint8 code: 8.
-			SINT16 := self newTypeName: #sint16 code: 9.
-			SINT32 := self newTypeName: #sint32 code: 10.
-			SINT64 := self newTypeName: #sint64 code: 11.
+			SINT8 := self newIntTypeName: #sint8 code: 8 signed: true.
+			SINT16 := self newIntTypeName: #sint16 code: 9 signed: true.
+			SINT32 := self newIntTypeName: #sint32 code: 10 signed: true.
+			SINT64 := self newIntTypeName: #sint64 code: 11 signed: true.
 			
 			POINTER := self newTypeName: #pointer code: 12. }
 ]
@@ -59,6 +59,16 @@ TFBasicType class >> initialize [
 	
 	Types := self createBasicTypes.
 	TypeMap := (Types collect: [ :t | t typeName -> t ]) asDictionary.
+]
+
+{ #category : #'instance creation' }
+TFBasicType class >> newIntTypeName: aName code: aCode signed: signed [
+	
+	^ TFIntType new 
+		typeName: aName;
+		typeCode: aCode;
+		signed: signed;
+		yourself
 ]
 
 { #category : #'instance creation' }

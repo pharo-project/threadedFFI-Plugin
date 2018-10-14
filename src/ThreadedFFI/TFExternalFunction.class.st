@@ -2,7 +2,7 @@ Class {
 	#name : #TFExternalFunction,
 	#superclass : #Object,
 	#instVars : [
-		'address',
+		'handle',
 		'definition',
 		'functionName',
 		'moduleName'
@@ -23,12 +23,12 @@ TFExternalFunction class >> name: aName moduleName: aModuleName definition: aFun
 
 { #category : #accessing }
 TFExternalFunction >> address [
-	^ address
+	^ handle
 ]
 
 { #category : #accessing }
 TFExternalFunction >> address: anObject [
-	address := anObject
+	handle := anObject
 ]
 
 { #category : #accessing }
@@ -61,9 +61,15 @@ TFExternalFunction >> moduleName: anObject [
 	moduleName := anObject
 ]
 
-{ #category : #accessing }
+{ #category : #operations }
+TFExternalFunction >> newAsyncCall [
+
+	^ TFExternalAsyncCall forFunction: self
+]
+
+{ #category : #operations }
 TFExternalFunction >> validate [
 	definition validate.
-	address isNull
-		ifTrue: [ address := ExternalAddress loadSymbol: functionName module: moduleName ]
+	handle isNull
+		ifTrue: [ handle := ExternalAddress loadSymbol: functionName module: moduleName ]
 ]
