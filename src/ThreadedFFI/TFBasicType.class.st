@@ -9,16 +9,24 @@ Class {
 		'DOUBLE',
 		'FLOAT',
 		'POINTER',
+		'SCHAR',
+		'SINT',
 		'SINT16',
 		'SINT32',
 		'SINT64',
 		'SINT8',
+		'SLONG',
+		'SSHORT',
 		'TypeMap',
 		'Types',
+		'UCHAR',
+		'UINT',
 		'UINT16',
 		'UINT32',
 		'UINT64',
 		'UINT8',
+		'ULONG',
+		'USHORT',
 		'VOID'
 	],
 	#category : #ThreadedFFI
@@ -27,9 +35,11 @@ Class {
 { #category : #'instance creation' }
 TFBasicType class >> createBasicTypes [
 
-	^ { 	VOID := self newTypeName: #void code: 1.
-		 	FLOAT := self newTypeName: #float code: 2.
-		 	DOUBLE := self newTypeName: #double code: 3.
+	^ { 	
+			"Platform independent types"
+			VOID := self newTypeName: #void code: 1.
+		 	FLOAT := self newFloatTypeName: #float code: 2.
+		 	DOUBLE := self newDoubleName: #double code: 3.
 
 			UINT8 := self newIntTypeName: #uint8 code: 4 signed: false.
 			UINT16 := self newIntTypeName: #uint16 code: 5 signed: false.
@@ -40,8 +50,24 @@ TFBasicType class >> createBasicTypes [
 			SINT16 := self newIntTypeName: #sint16 code: 9 signed: true.
 			SINT32 := self newIntTypeName: #sint32 code: 10 signed: true.
 			SINT64 := self newIntTypeName: #sint64 code: 11 signed: true.
+
+			"Aliased types, these depends of the architecture"
+
+			POINTER := self newPointerTypeName: #pointer code: 12.
+
+			UCHAR := self newIntTypeName: #uchar code: 13 signed: false.
+			SCHAR := self newIntTypeName: #schar code: 14 signed: true.
 			
-			POINTER := self newTypeName: #pointer code: 12. }
+			USHORT := self newIntTypeName: #ushort code: 15 signed: false.
+			SSHORT := self newIntTypeName: #sshort code: 16 signed: true.
+
+			UINT := self newIntTypeName: #uint code: 17 signed: false.
+			SINT := self newIntTypeName: #sint code: 18 signed: true.
+
+			ULONG := self newIntTypeName: #ulong code: 19 signed: false.
+			SLONG := self newIntTypeName: #slong code: 20 signed: true.	
+					
+			}
 ]
 
 { #category : #accessing }
@@ -62,12 +88,39 @@ TFBasicType class >> initialize [
 ]
 
 { #category : #'instance creation' }
+TFBasicType class >> newDoubleName: aName code: aCode [
+
+	^ TFDoubleType new 
+		typeName: aName;
+		typeCode: aCode;
+		yourself
+]
+
+{ #category : #'instance creation' }
+TFBasicType class >> newFloatTypeName: aName code: aCode [
+
+	^ TFFloatType new 
+		typeName: aName;
+		typeCode: aCode;
+		yourself
+]
+
+{ #category : #'instance creation' }
 TFBasicType class >> newIntTypeName: aName code: aCode signed: signed [
 	
 	^ TFIntType new 
 		typeName: aName;
 		typeCode: aCode;
 		signed: signed;
+		yourself
+]
+
+{ #category : #'instance creation' }
+TFBasicType class >> newPointerTypeName: aName code: aCode [
+
+	^ TFPointerType new 
+		typeName: aName;
+		typeCode: aCode;
 		yourself
 ]
 
@@ -83,6 +136,16 @@ TFBasicType class >> newTypeName: aName code: aCode [
 { #category : #accessing }
 TFBasicType class >> pointer [ 
 	^ POINTER
+]
+
+{ #category : #accessing }
+TFBasicType class >> schar [
+	^SCHAR
+]
+
+{ #category : #accessing }
+TFBasicType class >> sint [
+	^SINT
 ]
 
 { #category : #accessing }
@@ -106,6 +169,16 @@ TFBasicType class >> sint8 [
 ]
 
 { #category : #accessing }
+TFBasicType class >> slong [
+	^SLONG
+]
+
+{ #category : #accessing }
+TFBasicType class >> sshort [
+	^SSHORT
+]
+
+{ #category : #accessing }
 TFBasicType class >> typemap [ 
 	^ TypeMap
 ]
@@ -113,6 +186,16 @@ TFBasicType class >> typemap [
 { #category : #accessing }
 TFBasicType class >> types [ 
 	^ Types
+]
+
+{ #category : #accessing }
+TFBasicType class >> uchar [
+	^UCHAR
+]
+
+{ #category : #accessing }
+TFBasicType class >> uint [
+	^UINT
 ]
 
 { #category : #accessing }
@@ -133,6 +216,16 @@ TFBasicType class >> uint64 [
 { #category : #accessing }
 TFBasicType class >> uint8 [ 
 	^ UINT8
+]
+
+{ #category : #accessing }
+TFBasicType class >> ulong [
+	^ULONG
+]
+
+{ #category : #accessing }
+TFBasicType class >> ushort [
+	^USHORT
 ]
 
 { #category : #accessing }

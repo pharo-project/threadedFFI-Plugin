@@ -1,0 +1,107 @@
+Class {
+	#name : #TFCallback,
+	#superclass : #FFIExternalReference,
+	#instVars : [
+		'callbackData',
+		'parameterTypes',
+		'returnType',
+		'block'
+	],
+	#category : #ThreadedFFI
+}
+
+{ #category : #'as yet unclassified' }
+TFCallback class >> finalizeResourceData: handle [
+
+	(self fromHandle: handle) unregister
+]
+
+{ #category : #'as yet unclassified' }
+TFCallback class >> forBlock: aBlock parameters: parameterTypes returnType: returnType [
+
+	^ self new
+		block: aBlock;
+		parameterTypes: parameterTypes;
+		returnType: returnType;
+		autoRelease;
+		register;
+		yourself
+]
+
+{ #category : #accessing }
+TFCallback >> block [
+	^ block
+]
+
+{ #category : #accessing }
+TFCallback >> block: anObject [
+	block := anObject
+]
+
+{ #category : #initialization }
+TFCallback >> initialize [
+	super initialize.
+	callbackData := ExternalAddress new.
+]
+
+{ #category : #accessing }
+TFCallback >> parameterTypes [
+	^ parameterTypes
+]
+
+{ #category : #accessing }
+TFCallback >> parameterTypes: anObject [
+	parameterTypes := anObject
+]
+
+{ #category : #'private - operations' }
+TFCallback >> primRegister [
+
+	<primitive: 'primitiveRegisterCallback' module: 'PThreadedPlugin'>
+
+	^ self primitiveFailed	
+]
+
+{ #category : #'private - operations' }
+TFCallback >> primUnregister [
+
+	<primitive: 'primitiveUnregisterCallback' module: 'PThreadedPlugin'>
+
+	^ self primitiveFailed	
+]
+
+{ #category : #operations }
+TFCallback >> register [
+	
+	handle isNull ifFalse: [ ^ self error: 'Callback already registered' ].
+	self validateTypes.	
+	self primRegister.
+]
+
+{ #category : #accessing }
+TFCallback >> returnType [
+	^ returnType
+]
+
+{ #category : #accessing }
+TFCallback >> returnType: anObject [
+	returnType := anObject
+]
+
+{ #category : #operations }
+TFCallback >> unregister [
+	
+	handle isNull ifTrue: [ ^ self ].
+	self primUnregister.
+	
+	handle beNull.
+	callbackData beNull.
+
+]
+
+{ #category : #'private - operations' }
+TFCallback >> validateTypes [
+
+	parameterTypes do: [ :each | each validate ].
+	returnType validate
+]
