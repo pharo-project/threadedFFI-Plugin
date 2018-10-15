@@ -1,0 +1,10 @@
+{
+	"class" : {
+		"hasHeaderFile" : "pt 10/15/2018 14:00",
+		"requiresPlatformFiles" : "pt 10/10/2018 22:41" },
+	"instance" : {
+		"primitiveDefineFunction" : "pt 10/15/2018 14:08",
+		"primitiveFillBasicType" : "pt 10/12/2018 18:23",
+		"primitiveFreeDefinition" : "pt 10/15/2018 13:59",
+		"primitivePerformCall" : "pt 10/14/2018 21:52",
+		"primitiveTypeByteSize" : "pt 10/12/2018 22:51" } }
