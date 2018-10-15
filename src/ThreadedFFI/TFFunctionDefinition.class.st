@@ -9,6 +9,14 @@ Class {
 }
 
 { #category : #'instance creation' }
+TFFunctionDefinition class >> finalizeResourceData: handle [
+
+	self new
+		setHandle: handle;
+		primFreeDefinition.
+]
+
+{ #category : #'instance creation' }
 TFFunctionDefinition class >> fromHandle: aHandle [
 	
 	^ self error: 'should not be used'
@@ -38,6 +46,14 @@ TFFunctionDefinition >> parameterTypes: anObject [
 TFFunctionDefinition >> primDefineFunctionWith: parameterHandlers returnType: returnTypeHandler [ 
 	
 	<primitive: 'primitiveDefineFunction' module: 'PThreadedPlugin' error: ec>
+
+	^ self primitiveFailed	
+]
+
+{ #category : #primitives }
+TFFunctionDefinition >> primFreeDefinition [
+	
+	<primitive: 'primitiveFreeDefinition' module: 'PThreadedPlugin'>
 
 	^ self primitiveFailed	
 ]

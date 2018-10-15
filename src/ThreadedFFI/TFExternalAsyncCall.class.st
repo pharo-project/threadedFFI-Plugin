@@ -20,10 +20,19 @@ TFExternalAsyncCall class >> forFunction: aTFExternalFunction [
 
 { #category : #'private - operations' }
 TFExternalAsyncCall >> allocateParameters [
+	| paramArray pointerSize |
 	
 	parameters size = 0 ifTrue: [ ^ ExternalAddress null ].
+	pointerSize := TFBasicType pointer byteSize.
+	paramArray := ExternalAddress allocate: (parameters size * pointerSize).
 	
-	self halt.
+	function definition parameterTypes withIndexDo: [ :type :idx | |holder|
+		holder := ExternalAddress allocate: type byteSize.
+		type write: (parameters at: idx) into: holder.
+		paramArray pointerAt: 1 + ((idx-1)*pointerSize) put: holder.
+	].
+
+	^ paramArray.
 ]
 
 { #category : #'private - operations' }
@@ -63,10 +72,17 @@ TFExternalAsyncCall >> execute [
 
 { #category : #'private - operations' }
 TFExternalAsyncCall >> freeParameters: parametersArray [
+
+	| pointerSize |
 	
 	parametersArray isNull ifTrue: [ ^ self ].
-	
-	self halt.
+	pointerSize := TFBasicType pointer byteSize.
+
+	0 to: parameters size -1 do: [ :idx | 
+		(parametersArray pointerAt: (idx * pointerSize) + 1) free.
+	].
+
+	parametersArray free.
 ]
 
 { #category : #'private - operations' }
@@ -136,6 +152,4 @@ TFExternalAsyncCall >> validateParameters [
 	
 	function definition parameterTypes size = parameters size
 		ifFalse: [ self error: 'The number of parameters does not match the expected ones' ].
-		
-	parameters with: (function definition parameterTypes) do: [ :param : paramType | self halt ] 
 ]

@@ -22,3 +22,8 @@ TFIntType >> signed [
 TFIntType >> signed: anObject [
 	signed := anObject
 ]
+
+{ #category : #writing }
+TFIntType >> write: anInteger into: anExternalAddress [ 
+	anExternalAddress integerAt: 1 put: anInteger size: self byteSize signed: signed
+]
