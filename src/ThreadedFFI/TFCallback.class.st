@@ -11,9 +11,11 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-TFCallback class >> finalizeResourceData: handle [
+TFCallback class >> finalizeResourceData: anArray [
 
-	(self fromHandle: handle) unregister
+	(self fromHandle: anArray first)
+		callbackData: anArray second;
+	 	unregister
 ]
 
 { #category : #'as yet unclassified' }
@@ -36,6 +38,16 @@ TFCallback >> block [
 { #category : #accessing }
 TFCallback >> block: anObject [
 	block := anObject
+]
+
+{ #category : #accessing }
+TFCallback >> callbackData [
+	^ callbackData
+]
+
+{ #category : #accessing }
+TFCallback >> callbackData: anObject [
+	callbackData := anObject
 ]
 
 { #category : #initialization }
@@ -76,6 +88,13 @@ TFCallback >> register [
 	handle isNull ifFalse: [ ^ self error: 'Callback already registered' ].
 	self validateTypes.	
 	self primRegister.
+	
+	TFCallbackQueue uniqueInstance registerCallback: self.
+]
+
+{ #category : #accessing }
+TFCallback >> resourceData [
+	^ { self getHandle. self callbackData}
 ]
 
 { #category : #accessing }

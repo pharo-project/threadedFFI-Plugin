@@ -11,6 +11,15 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
+TFExternalFunction class >> fromAddress: anExternalAddress definition: aFunctionDefinition [
+
+	^ self new
+		address: anExternalAddress;
+		definition: aFunctionDefinition;
+		yourself
+]
+
+{ #category : #'as yet unclassified' }
 TFExternalFunction class >> name: aName moduleName: aModuleName definition: aFunctionDefinition [
 
 	^ self new

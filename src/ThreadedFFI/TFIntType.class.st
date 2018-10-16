@@ -8,9 +8,9 @@ Class {
 }
 
 { #category : #reading }
-TFIntType >> readValue: anExternalAddress [ 
+TFIntType >> readValue: anExternalAddress offset: offset [
 	
-	^ anExternalAddress integerAt: 1 size: self byteSize signed: signed
+	^ anExternalAddress integerAt: offset size: self byteSize signed: signed
 ]
 
 { #category : #accessing }

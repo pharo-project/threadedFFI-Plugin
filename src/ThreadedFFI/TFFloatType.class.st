@@ -5,9 +5,9 @@ Class {
 }
 
 { #category : #reading }
-TFFloatType >> readValue: anExternalAddress [
+TFFloatType >> readValue: anExternalAddress offset: offset [
 
-	^ anExternalAddress floatAt: 1
+	^ anExternalAddress floatAt: offset
 ]
 
 { #category : #writing }

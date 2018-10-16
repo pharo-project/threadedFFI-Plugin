@@ -5,9 +5,9 @@ Class {
 }
 
 { #category : #reading }
-TFDoubleType >> readValue: anExternalAddress [ 
+TFDoubleType >> readValue: anExternalAddress offset: offset [
 	
-	^ anExternalAddress doubleAt: 1
+	^ anExternalAddress doubleAt: offset
 ]
 
 { #category : #writing }

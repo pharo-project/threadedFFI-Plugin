@@ -245,6 +245,12 @@ TFBasicType >> isValid [
 	^ handle isNull not
 ]
 
+{ #category : #accessing }
+TFBasicType >> isVoid [
+
+	^ typeName = #void
+]
+
 { #category : #primitives }
 TFBasicType >> primByteSize [
 	<primitive: 'primitiveTypeByteSize' module: 'PThreadedPlugin'>
@@ -268,6 +274,18 @@ TFBasicType >> printOn: aStream [
 		space;
 		print: typeCode;
 		nextPut: $]
+]
+
+{ #category : #reading }
+TFBasicType >> readValue: anExternalAddress [
+
+	^ self readValue: anExternalAddress offset: 1
+]
+
+{ #category : #reading }
+TFBasicType >> readValue: anExternalAddress offset: offset [
+
+	^ self subclassResponsibility
 ]
 
 { #category : #accessing }
