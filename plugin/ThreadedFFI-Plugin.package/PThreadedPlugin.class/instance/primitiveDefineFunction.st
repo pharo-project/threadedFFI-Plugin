@@ -7,11 +7,12 @@ primitiveDefineFunction
 	<var: #handler type: #'void*'>
 	<var: #count type: #'sqInt'>
 
-	returnType := interpreterProxy pointerAtPointer: (interpreterProxy arrayValueOf:(interpreterProxy stackValue: 0)).
+	returnType := self readAddress: (interpreterProxy stackValue: 0).
 	count := interpreterProxy stSizeOf: (interpreterProxy stackValue: 1).
 	paramsArray := interpreterProxy stackValue: 1.
 	receiver := interpreterProxy stackValue: 2.
 
+	"The parameters are freed by the primitiveFreeDefinition, if there is an error it is freed by #defineFunction:With:And:"
 	parameters := self cCode: 'malloc(count*sizeof(void*))' inSmalltalk: [Array new: count].
 	
 	0 to:(count - 1) do: [:idx | parameters at: idx put: (self readAddress: (interpreterProxy stObject: paramsArray at: (idx+1)))].
