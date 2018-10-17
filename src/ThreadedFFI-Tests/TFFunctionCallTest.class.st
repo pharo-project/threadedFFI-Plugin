@@ -7,7 +7,7 @@ Class {
 { #category : #'as yet unclassified' }
 TFFunctionCallTest >> libraryPath [
 
-	^ '/Users/admin/dev/Pharo/git-repos/pharo-callback-test/library/build/testLibrary.dylib'
+	^ 'testLibrary.dylib'
 ]
 
 { #category : #'as yet unclassified' }
