@@ -12,9 +12,11 @@ My class side contains a set of accessors for well known types that are cached i
 - #byteSize
   returns the size in bytes
 - #readValue: anExternalAddress
-  reads a value of this type from an external address containing a pointer
+  reads a value of my type from an external address containing a pointer
 - #readValue: anExternalAddress offset: anOffset
-  reads a value of this type from an external address containing a pointer but starting reading at the given offset. Offsets are Pharo-like, 1-based
+  reads a value of my type from an external address containing a pointer but starting reading at the given offset. Offsets are Pharo-like, 1-based
+- #write: aValue into: anExternalAddress
+  writes a value of my corresponding type into an external address
 - #isVoid
   returns true if it is a void type
 - #isValid
@@ -342,4 +344,10 @@ TFBasicType >> typeName: anObject [
 TFBasicType >> validate [ 
 	
 	self isValid ifFalse: [ self primFillType ]
+]
+
+{ #category : #writing }
+TFBasicType >> write: aNumber into: anExternalAddress [
+
+	self subclassResponsibility
 ]
