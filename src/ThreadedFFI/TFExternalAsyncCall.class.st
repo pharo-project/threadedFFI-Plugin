@@ -12,7 +12,7 @@ Class {
 	#instVars : [
 		'function',
 		'semaphore',
-		'parameters'
+		'arguments'
 	],
 	#category : #ThreadedFFI
 }
@@ -26,74 +26,79 @@ TFExternalAsyncCall class >> forFunction: aTFExternalFunction [
 		yourself
 ]
 
-{ #category : #'private - operations' }
+{ #category : #'private - allocation' }
 TFExternalAsyncCall >> allocateParameters [
 	| paramArray pointerSize |
 	
-	parameters size = 0 ifTrue: [ ^ ExternalAddress null ].
+	arguments ifEmpty: [ ^ ExternalAddress null ].
 	pointerSize := TFBasicType pointer byteSize.
-	paramArray := ExternalAddress allocate: (parameters size * pointerSize).
+	paramArray := ExternalAddress allocate: (arguments size * pointerSize).
 	
 	function definition parameterTypes withIndexDo: [ :type :idx | |holder|
 		holder := ExternalAddress allocate: type byteSize.
-		type write: (parameters at: idx) into: holder.
+		type write: (arguments at: idx) into: holder.
 		paramArray pointerAt: 1 + ((idx-1)*pointerSize) put: holder.
 	].
 
 	^ paramArray.
 ]
 
-{ #category : #'private - operations' }
+{ #category : #'private - allocation' }
 TFExternalAsyncCall >> allocateReturn [
 	
 	^ ExternalAddress allocate: function definition returnType byteSize.
 ]
 
-{ #category : #'private - operations' }
-TFExternalAsyncCall >> deregisterSempahore [
+{ #category : #'private - semaphore' }
+TFExternalAsyncCall >> deregisterSemaphore [
 	
 	Smalltalk unregisterExternalObject: semaphore
 ]
 
 { #category : #operations }
 TFExternalAsyncCall >> execute [
+	"Performs a callout using the asynchronous threaded FFI plugin.
+	This method schedules the execution of a function in the threaded FFI plugin and then waits for its result in a semaphore.
+	When the semaphore is signaled, the result is available in an external value holder from where the value is read.
+	
+	This method contains some boilerplate code to allocate and release external value holders for the arguments and the return value."
 	| index parameterArray returnHolder |
 
 	self validateFunction.
-	self validateParameters.
+	self validateArguments.
 	
 	returnHolder := self allocateReturn.
 	parameterArray := self allocateParameters.
 	
-	index := self registerSemaphore. 
+	index := self registerSemaphore.
 	
-	[
-		self performCall: function with: parameterArray into: returnHolder using: index.
+	^ [
+		self scheduleFunctionExecution: function withArguments: parameterArray withReturnHolder: returnHolder usingSemaphore: index.
 		semaphore wait. 
-		^ self readReturnValue: returnHolder
+		self readReturnValue: returnHolder
 	] ensure: [ 
-		self deregisterSempahore.
+		self deregisterSemaphore.
 		self freeReturn: returnHolder.
-		self freeParameters: parameterArray] .
+		self freeArguments: parameterArray] .
 
 ]
 
-{ #category : #'private - operations' }
-TFExternalAsyncCall >> freeParameters: parametersArray [
+{ #category : #'private - allocation' }
+TFExternalAsyncCall >> freeArguments: argumentsArray [
 
 	| pointerSize |
 	
-	parametersArray isNull ifTrue: [ ^ self ].
+	argumentsArray isNull ifTrue: [ ^ self ].
 	pointerSize := TFBasicType pointer byteSize.
 
-	0 to: parameters size -1 do: [ :idx | 
-		(parametersArray pointerAt: (idx * pointerSize) + 1) free.
+	0 to: arguments size -1 do: [ :idx | 
+		(argumentsArray pointerAt: (idx * pointerSize) + 1) free.
 	].
 
-	parametersArray free.
+	argumentsArray free.
 ]
 
-{ #category : #'private - operations' }
+{ #category : #'private - allocation' }
 TFExternalAsyncCall >> freeReturn: returnHolder [
 
 	returnHolder free.
@@ -109,39 +114,39 @@ TFExternalAsyncCall >> function: anObject [
 	function := anObject
 ]
 
-{ #category : #accessing }
+{ #category : #initialization }
 TFExternalAsyncCall >> initialize [
 	semaphore := Semaphore new.
 ]
 
 { #category : #accessing }
 TFExternalAsyncCall >> parameters [
-	^ parameters
+	^ arguments
 ]
 
 { #category : #accessing }
 TFExternalAsyncCall >> parameters: anObject [
-	parameters := anObject
+	arguments := anObject
 ]
 
-{ #category : #'private - operations' }
-TFExternalAsyncCall >> performCall: aExternalFunction with: parametersAddress into: returnHolderAddress using: semaphoreIndex [ 
-	
-	<primitive: 'primitivePerformCall' module: 'PThreadedPlugin'>
-
-	self primitiveFailed
-]
-
-{ #category : #'private - operations' }
+{ #category : #'private - marshalling' }
 TFExternalAsyncCall >> readReturnValue: aValueHolder [
 
 	^ function definition returnType readValue: aValueHolder
 ]
 
-{ #category : #'private - operations' }
+{ #category : #'private - semaphore' }
 TFExternalAsyncCall >> registerSemaphore [
 	
 	^ Smalltalk registerExternalObject: semaphore
+]
+
+{ #category : #'private - primitive' }
+TFExternalAsyncCall >> scheduleFunctionExecution: aExternalFunction withArguments: argumentsAddress withReturnHolder: returnHolderAddress usingSemaphore: semaphoreIndex [ 
+	
+	<primitive: 'primitivePerformCall' module: 'PThreadedPlugin'>
+
+	self primitiveFailed
 ]
 
 { #category : #accessing }
@@ -149,15 +154,15 @@ TFExternalAsyncCall >> semaphore [
 	^ semaphore
 ]
 
-{ #category : #'private - operations' }
+{ #category : #'private - validation' }
+TFExternalAsyncCall >> validateArguments [
+	
+	function definition parameterTypes size = arguments size
+		ifFalse: [ self error: 'The number of parameters does not match the expected ones' ].
+]
+
+{ #category : #'private - validation' }
 TFExternalAsyncCall >> validateFunction [
 	
 	function validate
-]
-
-{ #category : #'private - operations' }
-TFExternalAsyncCall >> validateParameters [
-	
-	function definition parameterTypes size = parameters size
-		ifFalse: [ self error: 'The number of parameters does not match the expected ones' ].
 ]
