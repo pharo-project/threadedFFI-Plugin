@@ -1,3 +1,9 @@
+"
+I represent a int type in libffi, and I augment basic types with a sign.
+I override the marshalling methods from/to C doubles to pharo objects.
+
+See my superclass for more details.
+"
 Class {
 	#name : #TFIntType,
 	#superclass : #TFBasicType,

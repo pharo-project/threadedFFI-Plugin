@@ -1,3 +1,9 @@
+"
+I represent a double type in libffi.
+I override the marshalling methods from/to C doubles to pharo objects.
+
+See my superclass for more details.
+"
 Class {
 	#name : #TFDoubleType,
 	#superclass : #TFBasicType,

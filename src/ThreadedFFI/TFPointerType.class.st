@@ -1,3 +1,9 @@
+"
+I represent a pointer type in libffi.
+I override the marshalling methods to allow reading/writing C pointers from/to C pointers.
+
+See my superclass for more details.
+"
 Class {
 	#name : #TFPointerType,
 	#superclass : #TFBasicType,
