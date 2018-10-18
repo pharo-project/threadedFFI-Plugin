@@ -1,3 +1,26 @@
+"
+I represent an external function from a library.
+I have a name, a TFFunctionDefinition type signature and I am fetched from an external library.
+
+TFExternalFunction
+	name: 'functionName'
+	moduleName: 'pathToLibrary'
+	definition: (TFFunctionDefinition
+		parameterTypes: { TFBasicType pointer }
+		returnType: TFBasicType sint).
+
+To execute myself you can call my #execute and #executeWithArguments: method.
+These will create an async function call and block the current pharo process while waiting for its finish.
+
+!! Examples
+
+((TFExternalFunction
+	name: 'getenv'
+	moduleName: LibC uniqueInstance moduleName
+	parameterTypes: { TFBasicType pointer }
+	returnType: TFBasicType pointer)
+		executeWithArguments: { ExternalAddress fromString: 'HOME' utf8Encoded }) readString asByteArray utf8Decoded.
+"
 Class {
 	#name : #TFExternalFunction,
 	#superclass : #Object,
@@ -10,7 +33,7 @@ Class {
 	#category : #ThreadedFFI
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #'instance creation' }
 TFExternalFunction class >> fromAddress: anExternalAddress definition: aFunctionDefinition [
 
 	^ self new
@@ -19,7 +42,7 @@ TFExternalFunction class >> fromAddress: anExternalAddress definition: aFunction
 		yourself
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'instance creation' }
 TFExternalFunction class >> name: aName moduleName: aModuleName definition: aFunctionDefinition [
 
 	^ self new
@@ -28,6 +51,19 @@ TFExternalFunction class >> name: aName moduleName: aModuleName definition: aFun
 		functionName: aName;
 		definition: aFunctionDefinition;
 		yourself
+]
+
+{ #category : #'instance creation' }
+TFExternalFunction class >> name: aName moduleName: aModuleName parameterTypes: parameterTypes returnType: returnType [
+
+
+	^ self
+		name: aName
+		moduleName: aModuleName
+		definition: (TFFunctionDefinition 
+			parameterTypes: parameterTypes
+			returnType: returnType)
+
 ]
 
 { #category : #accessing }
@@ -48,6 +84,20 @@ TFExternalFunction >> definition [
 { #category : #accessing }
 TFExternalFunction >> definition: anObject [
 	definition := anObject
+]
+
+{ #category : #operations }
+TFExternalFunction >> execute [
+
+	^ self executeWithArguments: #()
+]
+
+{ #category : #operations }
+TFExternalFunction >> executeWithArguments: arguments [
+
+	^ self newAsyncCall
+		parameters: arguments;
+		execute
 ]
 
 { #category : #accessing }

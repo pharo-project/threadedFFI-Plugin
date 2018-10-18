@@ -1,3 +1,13 @@
+"
+I represent a function type signature. I am used for both defining named functions and anonymous callbacks.
+I am created using an array of parameter types and a single return type, all TFBasicType (sub)instances.
+
+TFFunctionDefinition
+	parameterTypes: {TFBasicType sint. TFBasicType float.}
+	returnType: TFBasicType float.
+	
+I am not meant to be used from outside of this plugin, so my main users are TFCallback and TFExternalFunction
+"
 Class {
 	#name : #TFFunctionDefinition,
 	#superclass : #FFIExternalReference,

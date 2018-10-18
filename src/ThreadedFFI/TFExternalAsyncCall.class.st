@@ -1,3 +1,11 @@
+"
+I am an asynchronous call to an external function. I reference the function to call and the arguments of the call.
+The function execution will happen in a separate thread, and meanwhile the current Pharo process is suspended without suspending the entire VM thread.
+
+For this purpose, I have a semaphore that is handed out to the primitive that executes the function.
+Upon the return of the primitive (i.e., when the function execution finished is scheduled), I wait at the semaphore.
+When the function execution is managed and finishes, the threaded FFI plugin will signal the semaphore and the calling Pharo process will be re-scheduled to be run.
+"
 Class {
 	#name : #TFExternalAsyncCall,
 	#superclass : #Object,
