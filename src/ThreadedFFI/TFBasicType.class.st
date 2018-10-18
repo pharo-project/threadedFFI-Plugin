@@ -1,3 +1,33 @@
+"
+I am an abstract class representing a type in the C world.
+I have a name and a code that corresponds to a type code in libffi.
+From this information I:
+ - calculate my size in memory for the current platform
+ - provide marshalling from/to Pharo objets to their corresponding C representation.
+
+My class side contains a set of accessors for well known types that are cached in class side variables.
+
+!! Public API
+
+- #byteSize
+  returns the size in bytes
+- #readValue: anExternalAddress
+  reads a value of this type from an external address containing a pointer
+- #readValue: anExternalAddress offset: anOffset
+  reads a value of this type from an external address containing a pointer but starting reading at the given offset. Offsets are Pharo-like, 1-based
+- #isVoid
+  returns true if it is a void type
+- #isValid
+  returns true if the type is initialized
+
+!! Implementation Details
+
+At my first usage in a session, any of my instances will use this information to ask the ThreadedFFI plugin for the correct representation in the current platform.
+
+See #validate and #primFillType.
+
+My subclasses should redefine #readValue:offset: to provide correct type marshalling from C values to Pharo values
+"
 Class {
 	#name : #TFBasicType,
 	#superclass : #FFIExternalReference,
