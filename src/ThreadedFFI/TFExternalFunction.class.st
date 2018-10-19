@@ -127,6 +127,12 @@ TFExternalFunction >> newAsyncCall [
 ]
 
 { #category : #operations }
+TFExternalFunction >> newSyncCall [
+
+	^ TFExternalSyncCall forFunction: self
+]
+
+{ #category : #operations }
 TFExternalFunction >> validate [
 	definition validate.
 	handle isNull
