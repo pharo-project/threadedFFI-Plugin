@@ -38,26 +38,20 @@ TUFFIFunctionCallTest >> sumInt:a andInt: b [
 { #category : #tests }
 TUFFIFunctionCallTest >> testCallbackAsFunction [
 
-	| callback fun definition returnValue |
-
-	callback := TFCallback 
-		forBlock: [ :a :b | a + b ] 
-		parameters: { TFBasicType sint. TFBasicType float } 
-		returnType: TFBasicType float.
-
+	| callback fun definition |
+	callback := self
+		newCallbackWithSignature: #(float (int a, float b))
+		block: [ :a :b | a + b ].
+	callback parameterTypes at: 1 put: TFBasicType sint.
 	definition := TFFunctionDefinition
-				parameterTypes: {TFBasicType sint. TFBasicType float.}
-				returnType: TFBasicType float.
+		parameterTypes: {TFBasicType sint. TFBasicType float.}
+		returnType: TFBasicType float.
 
 	fun := TFExternalFunction 
 		fromAddress: callback getHandle 
 		definition: definition.
-	
-	returnValue := fun newAsyncCall 
-		parameters: {1. 2.0};
-		execute.
-		
-	self assert: returnValue equals: 3.0
+
+	self assert: (fun invokeWithArguments: {1. 2.0}) equals: 3.0
 ]
 
 { #category : #tests }
