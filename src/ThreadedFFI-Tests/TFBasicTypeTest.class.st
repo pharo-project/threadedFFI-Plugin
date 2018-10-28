@@ -36,6 +36,18 @@ TFBasicTypeTest >> testPointerSize [
 ]
 
 { #category : #tests }
+TFBasicTypeTest >> testSInt32Size [
+
+	self assert: TFBasicType sint32 byteSize equals: 4
+]
+
+{ #category : #tests }
+TFBasicTypeTest >> testSIntSize [
+
+	self assert: TFBasicType sint byteSize equals: Smalltalk wordSize 
+]
+
+{ #category : #tests }
 TFBasicTypeTest >> testUInt32Size [
 
 	self assert: TFBasicType uint32 byteSize equals: 4
