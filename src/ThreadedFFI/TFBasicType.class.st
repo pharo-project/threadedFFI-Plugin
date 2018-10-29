@@ -49,6 +49,7 @@ Class {
 		'SINT8',
 		'SLONG',
 		'SSHORT',
+		'STRING',
 		'TypeMap',
 		'Types',
 		'UCHAR',
@@ -84,7 +85,6 @@ TFBasicType class >> createBasicTypes [
 			SINT64 := self newIntTypeName: #sint64 code: 11 signed: true.
 
 			"Aliased types, these depends of the architecture"
-
 			POINTER := self newPointerTypeName: #pointer code: 12.
 
 			UCHAR := self newIntTypeName: #uchar code: 13 signed: false.
@@ -98,7 +98,12 @@ TFBasicType class >> createBasicTypes [
 
 			ULONG := self newIntTypeName: #ulong code: 19 signed: false.
 			SLONG := self newIntTypeName: #slong code: 20 signed: true.	
-					
+			
+			"Derived pointer types"
+			STRING := TFStringType new
+				typeName: #string;
+				typeCode: 12;
+				yourself.
 			}
 ]
 
@@ -211,6 +216,11 @@ TFBasicType class >> sshort [
 ]
 
 { #category : #accessing }
+TFBasicType class >> string [
+	^ STRING
+]
+
+{ #category : #accessing }
 TFBasicType class >> typemap [ 
 	^ TypeMap
 ]
@@ -269,6 +279,12 @@ TFBasicType class >> void [
 TFBasicType >> byteSize [
 	self validate.
 	^ self primByteSize
+]
+
+{ #category : #writing }
+TFBasicType >> freeValueIfNeeded: aValue [ 
+	
+	"Do nothing. Basic types do not need to be free'd"
 ]
 
 { #category : #accessing }
