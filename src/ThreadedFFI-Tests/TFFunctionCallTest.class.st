@@ -4,13 +4,13 @@ Class {
 	#category : #'ThreadedFFI-Tests'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 TFFunctionCallTest >> libraryPath [
 
 	^ 'testLibrary.dylib'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #tests }
 TFFunctionCallTest >> testCallbackAsFunction [
 
 	| callback fun definition returnValue |
@@ -35,7 +35,7 @@ TFFunctionCallTest >> testCallbackAsFunction [
 	self assert: returnValue equals: 3.0
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #tests }
 TFFunctionCallTest >> testCallbackInLoop [
 
 	| callback fun returnValue |
@@ -62,7 +62,7 @@ TFFunctionCallTest >> testCallbackInLoop [
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #tests }
 TFFunctionCallTest >> testCallbackInSingleFunction [
 
 	| callback fun returnValue |
@@ -88,7 +88,7 @@ TFFunctionCallTest >> testCallbackInSingleFunction [
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #tests }
 TFFunctionCallTest >> testWithFloatAndDouble [
 	| fun return |
 
@@ -109,7 +109,7 @@ TFFunctionCallTest >> testWithFloatAndDouble [
 	self assert: return equals: 3.5
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #tests }
 TFFunctionCallTest >> testWithTwoInts [
 
 	| fun return |
@@ -131,7 +131,7 @@ TFFunctionCallTest >> testWithTwoInts [
 	self assert: return equals: 5
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #tests }
 TFFunctionCallTest >> testWithoutArguments [
 	| fun return |
 	fun := TFExternalFunction

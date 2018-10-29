@@ -86,20 +86,6 @@ TFExternalFunction >> definition: anObject [
 	definition := anObject
 ]
 
-{ #category : #operations }
-TFExternalFunction >> execute [
-
-	^ self executeWithArguments: #()
-]
-
-{ #category : #operations }
-TFExternalFunction >> executeWithArguments: arguments [
-
-	^ self newAsyncCall
-		parameters: arguments;
-		execute
-]
-
 { #category : #accessing }
 TFExternalFunction >> functionName [
 	^ functionName
@@ -108,6 +94,20 @@ TFExternalFunction >> functionName [
 { #category : #accessing }
 TFExternalFunction >> functionName: anObject [
 	functionName := anObject
+]
+
+{ #category : #operations }
+TFExternalFunction >> invoke [
+
+	^ self invokeWithArguments: #()
+]
+
+{ #category : #operations }
+TFExternalFunction >> invokeWithArguments: arguments [
+
+	^ self newAsyncCall
+		parameters: arguments;
+		execute
 ]
 
 { #category : #accessing }
