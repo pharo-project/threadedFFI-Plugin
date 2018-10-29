@@ -19,7 +19,6 @@ TUFFIFunctionCallTest >> ffiLibraryName [
 { #category : #tests }
 TUFFIFunctionCallTest >> returnAnswer [
 
-1halt.
 	^ self ffiCall: #(int32 returnAnswer())
 ]
 
