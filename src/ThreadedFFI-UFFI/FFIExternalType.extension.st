@@ -1,7 +1,7 @@
 Extension { #name : #FFIExternalType }
 
 { #category : #'*ThreadedFFI-UFFI' }
-FFIExternalType >> tfexternalTypeWithArity [
-	
-	self subclassResponsibility
+FFIExternalType >> tfexternalType [
+		
+	^ self subclassResponsibility
 ]
