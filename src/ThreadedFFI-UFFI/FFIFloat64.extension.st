@@ -1,7 +1,7 @@
 Extension { #name : #FFIFloat64 }
 
 { #category : #'*ThreadedFFI-UFFI' }
-FFIFloat64 >> tfexternalTypeWithArity [
+FFIFloat64 >> tfexternalType [
 	
 	^ TFBasicType double
 ]

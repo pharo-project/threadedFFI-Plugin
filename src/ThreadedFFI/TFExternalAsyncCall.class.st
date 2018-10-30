@@ -91,8 +91,9 @@ TFExternalAsyncCall >> freeArguments: argumentsArray [
 	argumentsArray isNull ifTrue: [ ^ self ].
 	pointerSize := TFBasicType pointer byteSize.
 
-	0 to: arguments size -1 do: [ :idx | 
-		(argumentsArray pointerAt: (idx * pointerSize) + 1) free.
+	function definition parameterTypes withIndexDo: [ :type :idx |
+		type freeValueIfNeeded: (argumentsArray pointerAt: 1 + ((idx-1)*pointerSize)).
+		(argumentsArray pointerAt: 1 + ((idx-1)*pointerSize)) free.
 	].
 
 	argumentsArray free.

@@ -30,6 +30,7 @@ TFIntType >> signed: anObject [
 ]
 
 { #category : #writing }
-TFIntType >> write: anInteger into: anExternalAddress [ 
+TFIntType >> write: anInteger into: anExternalAddress [
+
 	anExternalAddress integerAt: 1 put: anInteger size: self byteSize signed: signed
 ]

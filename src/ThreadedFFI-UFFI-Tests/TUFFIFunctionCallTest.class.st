@@ -4,6 +4,12 @@ Class {
 	#category : #'ThreadedFFI-UFFI-Tests'
 }
 
+{ #category : #tests }
+TUFFIFunctionCallTest >> callbackInALoop: callback [
+
+	^ self ffiCall: #(int callbackInALoop(void* callback))
+]
+
 { #category : #accessing }
 TUFFIFunctionCallTest >> calloutAPIClass [
 
@@ -19,8 +25,13 @@ TUFFIFunctionCallTest >> ffiLibraryName [
 { #category : #tests }
 TUFFIFunctionCallTest >> returnAnswer [
 
-1halt.
 	^ self ffiCall: #(int32 returnAnswer())
+]
+
+{ #category : #tests }
+TUFFIFunctionCallTest >> singleCallToCallback: callback value: value [
+
+	^ self ffiCall: #(int singleCallToCallback(void* callback, int value))
 ]
 
 { #category : #tests }
@@ -57,53 +68,23 @@ TUFFIFunctionCallTest >> testCallbackAsFunction [
 { #category : #tests }
 TUFFIFunctionCallTest >> testCallbackInLoop [
 
-	| callback fun returnValue |
+	| callback |
 
-	callback := TFCallback 
-		forBlock: [ :a | a + 1 ] 
-		parameters: { TFBasicType sint. } 
-		returnType: TFBasicType sint.
+	callback := self
+		newCallbackWithSignature: #(int (int a))
+		block: [ :a | a + 1 ].
 
-	fun := TFExternalFunction
-		name: 'callbackInALoop'
-		moduleName: self libraryPath
-		definition:
-			(TFFunctionDefinition
-				parameterTypes:
-					{TFBasicType pointer}
-				returnType: TFBasicType sint).
-
-	returnValue := fun newAsyncCall 
-		parameters: {callback getHandle};
-		execute.
-
-	self assert: returnValue equals: 42
+	self assert: (self callbackInALoop: callback) equals: 42
 
 ]
 
 { #category : #tests }
 TUFFIFunctionCallTest >> testCallbackInSingleFunction [
 
-	| callback fun returnValue |
+	| callback |
 
-	callback := TFCallback 
-		forBlock: [ :a | a + 1 ] 
-		parameters: { TFBasicType sint. } 
-		returnType: TFBasicType sint.
-
-	fun := TFExternalFunction
-		name: 'singleCallToCallback'
-		moduleName: self libraryPath
-		definition:
-			(TFFunctionDefinition
-				parameterTypes: {TFBasicType pointer. TFBasicType sint}
-				returnType: TFBasicType sint).
-
-	returnValue := fun newAsyncCall 
-		parameters: {callback getHandle. 3};
-		execute.
-
-	self assert: returnValue equals: 5
+	callback := self newCallbackWithSignature: #(int (int a)) block: [ :a | a + 1 ].
+	self assert: (self singleCallToCallback: callback value: 3) equals: 5
 
 ]
 

@@ -19,5 +19,5 @@ TFPointerType >> readValue: anExternalAddress offset: offset [
 { #category : #writting }
 TFPointerType >> write: anExternalAddress into: targetAddress [ 
 
-	targetAddress pointerAt: 1 put: anExternalAddress
+	targetAddress pointerAt: 1 put: anExternalAddress getHandle
 ]
