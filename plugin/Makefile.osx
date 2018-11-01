@@ -17,14 +17,12 @@ LOCAL_DIR=$(shell pwd)
 
 .DEFAULT: all
 
-all: prerequisites $(BUILD_DIR)/$(LIB_NAME)
-
-prerequisites: $(BUILD_DIR) $(VMSOURCES) $(libFFI)
+all: $(BUILD_DIR)/$(LIB_NAME)
 	
 $(VMSOURCES):
 	git clone --depth=1 https://github.com/OpenSmalltalk/opensmalltalk-vm.git $(VMSOURCES)
 
-$(libFFI_SOURCES):
+$(libFFI_SOURCES)/configure:
 	git clone https://github.com/libffi/libffi.git $(libFFI_SOURCES)
 	cd $(libFFI_SOURCES) && git checkout v3.3-rc0 
 	cd $(libFFI_SOURCES) && ./autogen.sh
@@ -32,7 +30,7 @@ $(libFFI_SOURCES):
 $(BUILD_DIR): 
 	mkdir -p $(BUILD_DIR)
 
-$(BUILD_DIR)/libPThreadedPlugin.dylib: $(OBJS) 
+$(BUILD_DIR)/libPThreadedPlugin.dylib: $(BUILD_DIR) $(VMSOURCES) $(libFFI) $(OBJS) 
 	$(LD) $(OBJS) -o $(BUILD_DIR)/$(LIB_NAME) $(LDFLAGS)
 	
 $(OBJS): $(BUILD_DIR)/%.o:$(SRCS)/%.c $(HEADERS)

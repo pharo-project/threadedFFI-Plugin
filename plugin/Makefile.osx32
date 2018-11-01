@@ -2,11 +2,11 @@ BUILD_DIR=../build/osx32
 ARCH=-arch i386
 SPURVM=spursrc
 
-libFFI=../build/libffi/i386-apple-darwin/.libs
+libFFI=../build/libffi/i386-apple-darwin/.libs/libffi.7.dylib
 ADDITIONAL_LIB_PATHS=-L../build/libffi/i386-apple-darwin/.libs
 
 include Makefile.osx
 
-$(libFFI): $(libFFI_SOURCES)
+$(libFFI): $(libFFI_SOURCES)/configure
 	cd $(libFFI_SOURCES) && ./configure --target=i386-apple-darwin CFLAGS=-m32
 	cd $(libFFI_SOURCES)/i386-apple-darwin && $(MAKE)
