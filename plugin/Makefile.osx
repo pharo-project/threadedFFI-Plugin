@@ -1,0 +1,31 @@
+
+SOURCES=$(notdir $(shell find $(SRCS) -iname *.c))
+HEADERS=$(shell find $(SRCS) -iname *.h)
+OBJS=$(addprefix $(BUILD_DIR)/,$(addsuffix .o,$(basename $(SOURCES))))
+
+ADDITIONAL_LIBS=-lffi -lpthread
+ADDITIONAL_LIB_PATHS=-L/usr/local/lib/
+
+CFLAGS=$(ARCH) -g3 -I$(VMSOURCES)/platforms/iOS/vm/OSX/ -I$(VMSOURCES)/platforms/Cross/vm/ -I$(VMSOURCES)/$(SPURVM)/vm/ -mmacosx-version-min=10.10
+LDFLAGS=-dylib -install_name @executable_path/Plugins/$(LIB_NAME) -macosx_version_min 10.10 $(ARCH) $(ADDITIONAL_LIBS) $(ADDITIONAL_LIB_PATHS) 
+
+.DEFAULT: all
+
+all: prerequisites $(BUILD_DIR)/$(LIB_NAME)
+
+prerequisites: $(BUILD_DIR) $(VMSOURCES)
+	
+$(VMSOURCES):
+	git clone --depth=1 https://github.com/OpenSmalltalk/opensmalltalk-vm.git $(VMSOURCES)
+	
+$(BUILD_DIR): 
+	mkdir -p $(BUILD_DIR)
+
+$(BUILD_DIR)/libPThreadedPlugin.dylib: $(OBJS) 
+	$(LD) $(OBJS) -o $(BUILD_DIR)/$(LIB_NAME) $(LDFLAGS)
+	
+$(OBJS): $(BUILD_DIR)/%.o:$(SRCS)/%.c $(HEADERS)
+	$(CC) -c $(CFLAGS) -o $@ $<
+	
+clean:
+	rm -rf $(BUILD_DIR)

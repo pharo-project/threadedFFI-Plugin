@@ -1,0 +1,8 @@
+SRCS=./src
+BUILD_DIR=../build/osx64
+VMSOURCES=../build/vmSources
+LIB_NAME=libPThreadedPlugin.dylib
+ARCH=-arch x86_64
+SPURVM=spur64src
+
+include Makefile.osx
