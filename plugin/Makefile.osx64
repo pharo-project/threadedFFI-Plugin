@@ -1,8 +1,12 @@
-SRCS=./src
 BUILD_DIR=../build/osx64
-VMSOURCES=../build/vmSources
-LIB_NAME=libPThreadedPlugin.dylib
 ARCH=-arch x86_64
 SPURVM=spur64src
 
+libFFI=../build/libffi/x86_64-apple-darwin/.libs
+ADDITIONAL_LIB_PATHS=-L../build/libffi/x86_64-apple-darwin/.libs
+
 include Makefile.osx
+
+$(libFFI): $(libFFI_SOURCES)
+	cd $(libFFI_SOURCES) && ./configure --target=x86_64-apple-darwin
+	cd $(libFFI_SOURCES)/x86_64-apple-darwin && $(MAKE)

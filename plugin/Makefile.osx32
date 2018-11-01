@@ -1,8 +1,12 @@
-SRCS=./src
 BUILD_DIR=../build/osx32
-VMSOURCES=../build/vmSources
-LIB_NAME=libPThreadedPlugin.dylib
 ARCH=-arch i386
 SPURVM=spursrc
 
+libFFI=../build/libffi/i386-apple-darwin/.libs
+ADDITIONAL_LIB_PATHS=-L../build/libffi/i386-apple-darwin/.libs
+
 include Makefile.osx
+
+$(libFFI): $(libFFI_SOURCES)
+	cd $(libFFI_SOURCES) && ./configure --target=i386-apple-darwin CFLAGS=-m32
+	cd $(libFFI_SOURCES)/i386-apple-darwin && $(MAKE)
