@@ -11,6 +11,7 @@ static char __buildInfo[] = "PThreadedPlugin * ThreadedFFI-Plugin-pt.2 uuid: a8e
 
 /*** Function Prototypes ***/
 EXPORT(const char*) getModuleName(void);
+EXPORT(sqInt) initialiseModule(void);
 EXPORT(sqInt) primitiveCallbackReturn(void);
 EXPORT(sqInt) primitiveDefineFunction(void);
 EXPORT(sqInt) primitiveFillBasicType(void);
@@ -51,6 +52,12 @@ EXPORT(const char*)
 getModuleName(void)
 {
 	return moduleName;
+}
+
+EXPORT(sqInt)
+initialiseModule(void)
+{
+	return initializeWorkerThread();
 }
 
 	/* PThreadedPlugin>>#primitiveCallbackReturn */
@@ -308,6 +315,7 @@ setInterpreter(struct VirtualMachine*anInterpreter)
 	}
 	return ok;
 }
+
 
 signed char primitiveCallbackReturnAccessorDepth = 0;
 signed char primitiveDefineFunctionAccessorDepth = 0;

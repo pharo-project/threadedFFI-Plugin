@@ -46,6 +46,7 @@ typedef struct {
 
 #define MAX_PENDING_CALLBACKS 100
 
+sqInt initializeWorkerThread();
 void* readAddress(sqInt anExternalAddress);
 void writeAddress(sqInt anExternalAddress, void* value);
 

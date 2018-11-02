@@ -17,21 +17,30 @@ pthread_mutex_t queueCriticalSection;
 Queue queue;
 
 sqInt initializeWorkerThread(){
-	if (pthread_create(&threadId, NULL, worker, NULL) != 0) {
-		perror("pthread_create() error");
-		return 1;
-	}
+
+	queue.first=NULL;
+	queue.last=NULL;
+
 	if (pthread_mutex_init(&lock, NULL) != 0){
 		perror("pthread_mutex_init(&lock) error");
-		return 1;
+		return -1;
 	}
+	
 	if (pthread_mutex_init(&queueCriticalSection, NULL) != 0){
 		perror("pthread_mutex_init(&queueCriticalSection) error");
-		return 1;
+		return -1;
+	}
+
+	//I will lock the mutex. This mutex is used by the worker to detect when it is a element in the queue
+    pthread_mutex_lock(&lock);
+
+	if (pthread_create(&threadId, NULL, worker, NULL) != 0) {
+		perror("pthread_create() error");
+		return -1;
 	}
 
 	pthread_detach(threadId);
-	return 0;
+	return 1;
 }
 
 void* worker(void* aParameter){
@@ -60,9 +69,20 @@ AsyncCallParameters* take_queue(){
     pthread_mutex_lock(&queueCriticalSection);
   }
   current = queue.first;
+  
+  if(!current){
+	  pthread_mutex_unlock(&queueCriticalSection);
+	  return NULL;  	
+  }
+  
   calloutParameters = current->calloutParameters;
   queue.first = current->next;
   free(current);
+  
+  if(queue.first == NULL){
+	  queue.last = NULL;
+  }
+  
   // Free the queue mutex
   pthread_mutex_unlock(&queueCriticalSection);
   
@@ -72,6 +92,7 @@ AsyncCallParameters* take_queue(){
 void put_queue(AsyncCallParameters* calloutParameters){
   QueueNode* current = malloc(sizeof(QueueNode));
   current->calloutParameters = calloutParameters;
+  current->next=NULL;
   
   pthread_mutex_lock(&queueCriticalSection);
   if (queue.last){
