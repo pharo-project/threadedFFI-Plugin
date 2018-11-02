@@ -1,12 +1,8 @@
 BUILD_DIR=../build/osx64
 ARCH=-arch x86_64
 SPURVM=spur64src
+PACKAGE_NAME=PharoThreadedFFI-osx64.zip
 
-libFFI=../build/libffi/x86_64-apple-darwin/.libs/libffi.7.dylib
-ADDITIONAL_LIB_PATHS=-L../build/libffi/x86_64-apple-darwin/.libs
+libFFI_TARGET=x86_64-apple-darwin
 
 include Makefile.osx
-
-$(libFFI): $(libFFI_SOURCES)/configure
-	cd $(libFFI_SOURCES) && ./configure --target=x86_64-apple-darwin
-	cd $(libFFI_SOURCES)/x86_64-apple-darwin && $(MAKE)

@@ -1,12 +1,9 @@
 BUILD_DIR=../build/osx32
 ARCH=-arch i386
 SPURVM=spursrc
+PACKAGE_NAME=PharoThreadedFFI-osx32.zip
 
-libFFI=../build/libffi/i386-apple-darwin/.libs/libffi.7.dylib
-ADDITIONAL_LIB_PATHS=-L../build/libffi/i386-apple-darwin/.libs
+libFFI_TARGET=i386-apple-darwin
+libFFI_ADDITIONAL_CFG= CFLAGS=-m32
 
 include Makefile.osx
-
-$(libFFI): $(libFFI_SOURCES)/configure
-	cd $(libFFI_SOURCES) && ./configure --target=i386-apple-darwin CFLAGS=-m32
-	cd $(libFFI_SOURCES)/i386-apple-darwin && $(MAKE)
