@@ -20,7 +20,7 @@ TFBasicTypeTest >> testCharSize [
 { #category : #tests }
 TFBasicTypeTest >> testIntSize [
 
-	self assert: TFBasicType uint byteSize equals: Smalltalk wordSize 
+	self assert: TFBasicType uint byteSize equals: 4 
 ]
 
 { #category : #tests }
@@ -44,7 +44,7 @@ TFBasicTypeTest >> testSInt32Size [
 { #category : #tests }
 TFBasicTypeTest >> testSIntSize [
 
-	self assert: TFBasicType sint byteSize equals: Smalltalk wordSize 
+	self assert: TFBasicType sint byteSize equals: 4 
 ]
 
 { #category : #tests }
