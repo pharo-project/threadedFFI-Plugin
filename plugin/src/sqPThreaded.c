@@ -14,7 +14,7 @@ int pendingCallbackSemaphoreIndex;
 pthread_t threadId;
 pthread_mutex_t lock;
 pthread_mutex_t queueCriticalSection;
-Queue queue;
+Queue queue = {0, 0};
 
 sqInt initializeWorkerThread(){
 

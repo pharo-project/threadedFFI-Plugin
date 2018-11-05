@@ -315,13 +315,3 @@ setInterpreter(struct VirtualMachine*anInterpreter)
 	}
 	return ok;
 }
-
-
-signed char primitiveCallbackReturnAccessorDepth = 0;
-signed char primitiveDefineFunctionAccessorDepth = 0;
-signed char primitiveFreeDefinitionAccessorDepth = 0;
-signed char primitiveReadNextCallbackAccessorDepth = 0;
-signed char primitiveRegisterCallbackAccessorDepth = 1;
-signed char primitiveTypeByteSizeAccessorDepth = 0;
-signed char primitiveUnregisterCallbackAccessorDepth = 1;
-
