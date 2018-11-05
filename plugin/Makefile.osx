@@ -38,7 +38,7 @@ $(libFFI_SOURCES)/configure:
 $(libFFI): $(libFFI_SOURCES)/configure
 	cd $(libFFI_SOURCES) && ./configure --target=$(libFFI_TARGET) $(libFFI_ADDITIONAL_CFG)
 	cd $(libFFI_SOURCES)/$(libFFI_TARGET) && $(MAKE)
-	cd $(libFFI_SOURCES)/$(libFFI_TARGET)/.libs && install_name_tool -id "libffi.7.dylib" libffi.7.dylib	
+	cd $(libFFI_SOURCES)/$(libFFI_TARGET)/.libs && install_name_tool -id "@executable_path/Plugins/libffi.7.dylib" libffi.7.dylib	
 	
 #
 # Build of the plugin
@@ -60,5 +60,5 @@ $(OBJS): $(BUILD_DIR)/%.o:$(SRCS)/%.c $(HEADERS)
 	zip -j ../build/$(PACKAGE_NAME) $(BUILD_DIR)/$(PLUGIN_NAME)
 		
 clean:
-	rm ../build/$(PACKAGE_NAME)
+	rm -f ../build/$(PACKAGE_NAME)
 	rm -rf $(BUILD_DIR)
