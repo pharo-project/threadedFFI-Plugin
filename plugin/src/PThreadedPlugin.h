@@ -34,16 +34,6 @@ typedef struct {
 	dispatch_semaphore_t semaphore;
 } CallbackInvocation;
 
-typedef struct QueueNode{
-	AsyncCallParameters *calloutParameters;
-  struct QueueNode *next;
-} QueueNode;
-
-typedef struct {
-  QueueNode *first;
-  QueueNode *last;
-} Queue;
-
 #define MAX_PENDING_CALLBACKS 100
 
 sqInt initializeWorkerThread();

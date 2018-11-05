@@ -1,8 +1,3 @@
-static char __buildInfo[] = "PThreadedPlugin * ThreadedFFI-Plugin-pt.2 uuid: a8ee3921-5a53-497f-9ddf-40a0311352e5 " __DATE__ ;
-
-/* Default EXPORT macro that does nothing (see comment in sq.h): */
-#define EXPORT(returnType) returnType
-
 #define true 1
 #define false 0
 #define null 0  /* using 'null' because nil is predefined in Think C */
@@ -10,32 +5,23 @@ static char __buildInfo[] = "PThreadedPlugin * ThreadedFFI-Plugin-pt.2 uuid: a8e
 #include "PThreadedPlugin.h"
 
 /*** Function Prototypes ***/
-EXPORT(const char*) getModuleName(void);
-EXPORT(sqInt) initialiseModule(void);
-EXPORT(sqInt) primitiveCallbackReturn(void);
-EXPORT(sqInt) primitiveDefineFunction(void);
-EXPORT(sqInt) primitiveFillBasicType(void);
-EXPORT(sqInt) primitiveFreeDefinition(void);
-EXPORT(sqInt) primitiveInitializeCallbacksQueue(void);
-EXPORT(sqInt) primitivePerformCall(void);
-EXPORT(sqInt) primitivePerformSyncCall(void);
-EXPORT(sqInt) primitiveReadNextCallback(void);
-EXPORT(sqInt) primitiveRegisterCallback(void);
-EXPORT(sqInt) primitiveTypeByteSize(void);
-EXPORT(sqInt) primitiveUnregisterCallback(void);
-EXPORT(sqInt) setInterpreter(struct VirtualMachine*anInterpreter);
+const char* getModuleName(void);
+sqInt initialiseModule(void);
+sqInt primitiveCallbackReturn(void);
+sqInt primitiveDefineFunction(void);
+sqInt primitiveFillBasicType(void);
+sqInt primitiveFreeDefinition(void);
+sqInt primitiveInitializeCallbacksQueue(void);
+sqInt primitivePerformCall(void);
+sqInt primitivePerformSyncCall(void);
+sqInt primitiveReadNextCallback(void);
+sqInt primitiveRegisterCallback(void);
+sqInt primitiveTypeByteSize(void);
+sqInt primitiveUnregisterCallback(void);
+sqInt setInterpreter(struct VirtualMachine*anInterpreter);
 
 
 /*** Variables ***/
-
-static sqInt (*failed)(void);
-static sqInt (*fetchPointerofObject)(sqInt index, sqInt oop);
-static sqInt (*integerValueOf)(sqInt oop);
-static sqInt (*methodReturnInteger)(sqInt integer);
-static sqInt (*pop)(sqInt nItems);
-static sqInt (*stObjectat)(sqInt array, sqInt index);
-static sqInt (*stSizeOf)(sqInt oop);
-static sqInt (*stackValue)(sqInt offset);
 
 struct VirtualMachine* interpreterProxy;
 static const char *moduleName = "PThreadedPlugin * ThreadedFFI-Plugin-pt.2 (e)";
@@ -48,34 +34,30 @@ static const char *moduleName = "PThreadedPlugin * ThreadedFFI-Plugin-pt.2 (e)";
 	we're thinking it contains. This is important! */
 
 	/* InterpreterPlugin>>#getModuleName */
-EXPORT(const char*)
-getModuleName(void)
+const char * getModuleName(void)
 {
 	return moduleName;
 }
 
-EXPORT(sqInt)
-initialiseModule(void)
+sqInt initialiseModule(void)
 {
 	return initializeWorkerThread();
 }
 
 	/* PThreadedPlugin>>#primitiveCallbackReturn */
-EXPORT(sqInt)
-primitiveCallbackReturn(void)
+sqInt primitiveCallbackReturn(void)
 {
     void*  handler;
     sqInt receiver;
 
-	receiver = stackValue(0);
+	receiver = interpreterProxy->stackValue(0);
 	handler = getHandler(receiver);
 	callbackReturn(handler);
 	return 0;
 }
 
 	/* PThreadedPlugin>>#primitiveDefineFunction */
-EXPORT(sqInt)
-primitiveDefineFunction(void)
+sqInt primitiveDefineFunction(void)
 {
     sqInt count;
     void*handler;
@@ -85,46 +67,44 @@ primitiveDefineFunction(void)
     sqInt receiver;
     void*returnType;
 
-	returnType = readAddress(stackValue(0));
-	count = stSizeOf(stackValue(1));
-	paramsArray = stackValue(1);
+	returnType = readAddress(interpreterProxy->stackValue(0));
+	count = interpreterProxy->stSizeOf(interpreterProxy->stackValue(1));
+	paramsArray = interpreterProxy->stackValue(1);
 
 	/* The parameters are freed by the primitiveFreeDefinition, if there is an error it is freed by #defineFunction:With:And: */
-	receiver = stackValue(2);
+	receiver = interpreterProxy->stackValue(2);
 	parameters = malloc(count*sizeof(void*));
 	for (idx = 0; idx < count; idx += 1) {
-		parameters[idx] = (readAddress(stObjectat(paramsArray, idx + 1)));
+		parameters[idx] = (readAddress(interpreterProxy->stObjectat(paramsArray, idx + 1)));
 	}
-	if (failed()) {
+	if (interpreterProxy->failed()) {
 		return null;
 	}
 	handler = defineFunctionWithAnd(parameters, count, returnType);
-	if (failed()) {
+	if (interpreterProxy->failed()) {
 		return null;
 	}
 	setHandler(receiver, handler);
-	if (!(failed())) {
-		pop(2);
+	if (!(interpreterProxy->failed())) {
+		interpreterProxy->pop(2);
 	}
 	return 0;
 }
 
 	/* PThreadedPlugin>>#primitiveFillBasicType */
-EXPORT(sqInt)
-primitiveFillBasicType(void)
+sqInt primitiveFillBasicType(void)
 {
-	fillBasicType(stackValue(0));
+	fillBasicType(interpreterProxy->stackValue(0));
 	return 0;
 }
 
 	/* PThreadedPlugin>>#primitiveFreeDefinition */
-EXPORT(sqInt)
-primitiveFreeDefinition(void)
+sqInt primitiveFreeDefinition(void)
 {
     void*handler;
     sqInt receiver;
 
-	receiver = stackValue(0);
+	receiver = interpreterProxy->stackValue(0);
 	handler = getHandler(receiver);
 	if (handler == 0) {
 		return 0;
@@ -136,22 +116,20 @@ primitiveFreeDefinition(void)
 }
 
 	/* PThreadedPlugin>>#primitiveInitializeCallbacksQueue */
-EXPORT(sqInt)
-primitiveInitializeCallbacksQueue(void)
+sqInt primitiveInitializeCallbacksQueue(void)
 {
     int index;
 
-	index = integerValueOf(stackValue(0));
+	index = interpreterProxy->integerValueOf(interpreterProxy->stackValue(0));
 	initCallbackQueue(index);
-	if (!(failed())) {
-		pop(1);
+	if (!(interpreterProxy->failed())) {
+		interpreterProxy->pop(1);
 	}
 	return 0;
 }
 
 	/* PThreadedPlugin>>#primitivePerformCall */
-EXPORT(sqInt)
-primitivePerformCall(void)
+sqInt primitivePerformCall(void)
 {
     void*aCif;
     void*aExternalFunction;
@@ -159,26 +137,26 @@ primitivePerformCall(void)
     void*returnHolderAddress;
     sqInt semaphoreIndex;
 
-	semaphoreIndex = integerValueOf(stackValue(0));
-	returnHolderAddress = readAddress(stackValue(1));
-	parametersAddress = readAddress(stackValue(2));
-	aExternalFunction = getHandler(stackValue(3));
-	aCif = getHandler(fetchPointerofObject(1, stackValue(3)));
-	if (failed()) {
+	semaphoreIndex = interpreterProxy->integerValueOf(interpreterProxy->stackValue(0));
+	returnHolderAddress = readAddress(interpreterProxy->stackValue(1));
+	parametersAddress = readAddress(interpreterProxy->stackValue(2));
+	aExternalFunction = getHandler(interpreterProxy->stackValue(3));
+	aCif = getHandler(interpreterProxy->fetchPointerofObject(1, interpreterProxy->stackValue(3)));
+	if (interpreterProxy->failed()) {
 		return null;
 	}
 	performCallCifWithIntoUsing(aExternalFunction, aCif, parametersAddress, returnHolderAddress, semaphoreIndex);
-	if (failed()) {
+	if (interpreterProxy->failed()) {
 		return null;
 	}
-	if (!(failed())) {
-		pop(4);
+	if (!(interpreterProxy->failed())) {
+		interpreterProxy->pop(4);
 	}
 	return 0;
 }
 
 	/* PThreadedPlugin>>#primitivePerformCall */
-EXPORT(sqInt)
+sqInt
 primitivePerformSyncCall(void)
 {
     void*aCif;
@@ -186,19 +164,19 @@ primitivePerformSyncCall(void)
     void*parametersAddress;
     void*returnHolderAddress;
 
-	returnHolderAddress = readAddress(stackValue(0));
-	parametersAddress = readAddress(stackValue(1));
-	aExternalFunction = getHandler(stackValue(2));
-	aCif = getHandler(fetchPointerofObject(1, stackValue(2)));
-	if (failed()) {
+	returnHolderAddress = readAddress(interpreterProxy->stackValue(0));
+	parametersAddress = readAddress(interpreterProxy->stackValue(1));
+	aExternalFunction = getHandler(interpreterProxy->stackValue(2));
+	aCif = getHandler(interpreterProxy->fetchPointerofObject(1, interpreterProxy->stackValue(2)));
+	if (interpreterProxy->failed()) {
 		return null;
 	}
 	performSyncCallCifWithInto(aExternalFunction, aCif, parametersAddress, returnHolderAddress);
-	if (failed()) {
+	if (interpreterProxy->failed()) {
 		return null;
 	}
-	if (!(failed())) {
-		pop(3);
+	if (!(interpreterProxy->failed())) {
+		interpreterProxy->pop(3);
 	}
 	return 0;
 }
@@ -206,24 +184,22 @@ primitivePerformSyncCall(void)
 
 
 	/* PThreadedPlugin>>#primitiveReadNextCallback */
-EXPORT(sqInt)
-primitiveReadNextCallback(void)
+sqInt primitiveReadNextCallback(void)
 {
     CallbackInvocation* address;
     sqInt externalAddress;
 
-	externalAddress = stackValue(0);
+	externalAddress = interpreterProxy->stackValue(0);
 	address = getNextCallback();
 	writeAddress(externalAddress, address);
-	if (!(failed())) {
-		pop(1);
+	if (!(interpreterProxy->failed())) {
+		interpreterProxy->pop(1);
 	}
 	return 0;
 }
 
 	/* PThreadedPlugin>>#primitiveRegisterCallback */
-EXPORT(sqInt)
-primitiveRegisterCallback(void)
+sqInt primitiveRegisterCallback(void)
 {
     sqInt callbackData;
     CallbackData*  callbackDataPtr;
@@ -235,23 +211,23 @@ primitiveRegisterCallback(void)
     sqInt receiver;
     ffi_type*  returnType;
 
-	receiver = stackValue(0);
-	callbackData = fetchPointerofObject(1, receiver);
-	paramArray = fetchPointerofObject(2, receiver);
-	count = stSizeOf(paramArray);
+	receiver = interpreterProxy->stackValue(0);
+	callbackData = interpreterProxy->fetchPointerofObject(1, receiver);
+	paramArray = interpreterProxy->fetchPointerofObject(2, receiver);
+	count = interpreterProxy->stSizeOf(paramArray);
 
 	/* The parameters are freed by the primitiveFreeDefinition, if there is an error it is freed by #defineCallback:WithParams:Count:ReturnType: */
 	callbackDataPtr = NULL;
 	parameters = malloc(count*sizeof(void*));
-	returnType = getHandler(fetchPointerofObject(3, receiver));
+	returnType = getHandler(interpreterProxy->fetchPointerofObject(3, receiver));
 	for (idx = 0; idx < count; idx += 1) {
-		parameters[idx] = (getHandler(stObjectat(paramArray, idx + 1)));
+		parameters[idx] = (getHandler(interpreterProxy->stObjectat(paramArray, idx + 1)));
 	}
-	if (failed()) {
+	if (interpreterProxy->failed()) {
 		return null;
 	}
 	handler = defineCallbackWithParamsCountReturnType((&callbackDataPtr), parameters, count, returnType);
-	if (failed()) {
+	if (interpreterProxy->failed()) {
 		return null;
 	}
 	setHandler(receiver, handler);
@@ -260,32 +236,30 @@ primitiveRegisterCallback(void)
 }
 
 	/* PThreadedPlugin>>#primitiveTypeByteSize */
-EXPORT(sqInt)
-primitiveTypeByteSize(void)
+sqInt primitiveTypeByteSize(void)
 {
     void* handler;
     sqInt receiver;
     sqInt size;
 
-	receiver = stackValue(0);
+	receiver = interpreterProxy->stackValue(0);
 	handler = getHandler(receiver);
 	size = getTypeByteSize(handler);
-	if (!(failed())) {
-		methodReturnInteger(size);
+	if (!(interpreterProxy->failed())) {
+		interpreterProxy->methodReturnInteger(size);
 	}
 	return 0;
 }
 
 	/* PThreadedPlugin>>#primitiveUnregisterCallback */
-EXPORT(sqInt)
-primitiveUnregisterCallback(void)
+sqInt primitiveUnregisterCallback(void)
 {
     sqInt callbackData;
     CallbackData*  callbackDataPtr;
     sqInt receiver;
 
-	receiver = stackValue(0);
-	callbackData = fetchPointerofObject(1, receiver);
+	receiver = interpreterProxy->stackValue(0);
+	callbackData = interpreterProxy->fetchPointerofObject(1, receiver);
 	callbackDataPtr = readAddress(callbackData);
 	releaseCallback(callbackDataPtr);
 	return 0;
@@ -295,23 +269,13 @@ primitiveUnregisterCallback(void)
 /*	Note: This is coded so that it can be run in Squeak. */
 
 	/* InterpreterPlugin>>#setInterpreter: */
-EXPORT(sqInt)
-setInterpreter(struct VirtualMachine*anInterpreter)
+sqInt setInterpreter(struct VirtualMachine* anInterpreter)
 {
     sqInt ok;
 
 	interpreterProxy = anInterpreter;
 	ok = ((interpreterProxy->majorVersion()) == (VM_PROXY_MAJOR))
 	 && ((interpreterProxy->minorVersion()) >= (VM_PROXY_MINOR));
-	if (ok) {
-		failed = interpreterProxy->failed;
-		fetchPointerofObject = interpreterProxy->fetchPointerofObject;
-		integerValueOf = interpreterProxy->integerValueOf;
-		methodReturnInteger = interpreterProxy->methodReturnInteger;
-		pop = interpreterProxy->pop;
-		stObjectat = interpreterProxy->stObjectat;
-		stSizeOf = interpreterProxy->stSizeOf;
-		stackValue = interpreterProxy->stackValue;
-	}
+
 	return ok;
 }
