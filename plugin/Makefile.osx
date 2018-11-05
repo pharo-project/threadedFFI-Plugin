@@ -12,7 +12,7 @@ libFFI_SOURCES=../build/libffi
 ADDITIONAL_LIBS=-lffi -lpthread
 ADDITIONAL_LIB_PATHS=-L../build/libffi/$(libFFI_TARGET)/.libs
 
-CFLAGS=$(ARCH) -g3 -I$(VMSOURCES)/platforms/iOS/vm/OSX/ -I$(VMSOURCES)/platforms/Cross/vm/ -I$(VMSOURCES)/$(SPURVM)/vm/ -mmacosx-version-min=10.10
+CFLAGS=$(ARCH) -g3 -I$(VMSOURCES)/platforms/iOS/vm/OSX/ -I$(VMSOURCES)/platforms/Cross/vm/ -I$(VMSOURCES)/$(SPURVM)/vm/ -mmacosx-version-min=10.10 -I../build/libffi/$(libFFI_TARGET)/include
 LDFLAGS=$(ADDITIONAL_LIB_PATHS) -dylib -install_name @executable_path/Plugins/$(PLUGIN_NAME) -macosx_version_min 10.10 $(ARCH) $(ADDITIONAL_LIBS)
 
 LOCAL_DIR=$(shell pwd)
