@@ -10,10 +10,23 @@ set -o nounset
 __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 __root="$(cd "$(dirname "${__dir}")" && pwd)"
 
-#Run Tests in OSX 32bits
-
 ${__root}/scripts/buildPlugin.sh
 ${__root}/scripts/buildTestLibrary.sh
 
-${__root}/scripts/testOSX.sh 32
-${__root}/scripts/testOSX.sh 64
+SYSTEM_NAME=`uname -s`
+
+if [ $SYSTEM_NAME == "Darwin" ] 
+then
+	${__root}/scripts/testOSX.sh 32
+	${__root}/scripts/testOSX.sh 64
+	exit 0
+fi
+
+if [ $SYSTEM_NAME == "Linux" ] 
+then
+	${__root}/scripts/testLinux.sh 32
+	${__root}/scripts/testLinux.sh 64
+	exit 0
+fi
+
+exit 99

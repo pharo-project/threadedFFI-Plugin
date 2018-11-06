@@ -1,16 +1,17 @@
 SOURCES=$(notdir $(shell find . -iname '*.c'))
 HEADERS=$(notdir $(shell find . -iname '*.h'))
 OBJS=$(SOURCES:.c=.o)
+BUILDDIR=../../../results/testLibrary
 
-all: ../../../results/testLibrary/testLibrary.dylib
+all: $(BUILDDIR)/testLibrary.dylib
 
-build/testLibrary.dylib: build $(addprefix build/,$(OBJS))
-	clang -dynamiclib -arch i386 -arch x86_64 ../../../results/testLibrary/*.o -o ../../../results/testLibrary/testLibrary.dylib
+$(BUILDDIR)/testLibrary.dylib: $(BUILDDIR) $(addprefix $(BUILDDIR)/,$(OBJS))
+	clang -dynamiclib -arch i386 -arch x86_64 $(BUILDDIR)/*.o -o $(BUILDDIR)/testLibrary.dylib
 
-build: 
-	mkdir -p build
+$(BUILDDIR): 
+	mkdir -p $(BUILDDIR)
 
-build/%.o: %.c $(HEADERS)
+$(BUILDDIR)/%.o: %.c $(HEADERS)
 	clang -arch i386 -arch x86_64 -c $< -o $@
 
 clean: 
