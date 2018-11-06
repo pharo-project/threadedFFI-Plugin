@@ -7,7 +7,7 @@ Class {
 { #category : #accessing }
 TFFunctionCallTest >> libraryPath [
 
-	^ 'testLibrary.dylib'
+	^ Smalltalk os isUnix ifTrue: [ 'testLibrary.so' ] ifFalse: [ 'testLibrary.dylib' ] 
 ]
 
 { #category : #tests }

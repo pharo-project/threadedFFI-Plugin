@@ -28,8 +28,8 @@ cd "${__root}/results/tests/linux$ARCH"
 
 wget -O - $PHARO_URL | bash
 
-cp "${__root}/results/PharoThreadedFFI-linux$ARCH.zip" "pharo-vm/Pharo.app/Contents/MacOS/Plugins/"
-unzip pharo-vm/Pharo.app/Contents/MacOS/Plugins/PharoThreadedFFI-linux$ARCH.zip -d pharo-vm/Pharo.app/Contents/MacOS/Plugins/
+cp "${__root}/results/PharoThreadedFFI-linux$ARCH.zip" "pharo-vm/lib/pharo/5.0-201806281256/"
+unzip pharo-vm/lib/pharo/5.0-201806281256/PharoThreadedFFI-linux$ARCH.zip -d pharo-vm/lib/pharo/5.0-201806281256/
 
 ./pharo Pharo.image eval "
 
@@ -41,7 +41,7 @@ Metacello new
 Smalltalk saveAs:'testFFI'.
 		"
 
-cp "${__root}/tests/src/c/build/testLibrary.dylib" .
+cp "${__root}/tests/src/c/build/testLibrary.so" .
 
 ./pharo testFFI.image test --fail-on-failure "ThreadedFFI-Tests" "ThreadedFFI-UFFI-Tests"
 
