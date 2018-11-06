@@ -23,12 +23,13 @@ int semaphore_wait(SemaphoreWrapper sem){
 }
 
 int semaphore_signal(SemaphoreWrapper sem){
-    sem_post(sem);
+    return sem_post(sem);
 }
 
 int semaphore_release(SemaphoreWrapper sem){
     sem_destroy(sem);
     free(sem);
+    return 0;    
 }
 
 #else
@@ -45,10 +46,12 @@ int semaphore_wait(SemaphoreWrapper sem){
 
 int semaphore_signal(SemaphoreWrapper sem){
     dispatch_semaphore_signal(sem);
+    return 0;
 }
 
 int semaphore_release(SemaphoreWrapper sem){
     dispatch_release(sem);
+    return 0;    
 }
 
 #endif
