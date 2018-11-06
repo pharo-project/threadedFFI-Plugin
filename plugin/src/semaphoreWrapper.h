@@ -21,7 +21,7 @@ typedef sem_t * SemaphoreWrapper;
 
 #include <dispatch/dispatch.h>
 
-typedef dispatch_semaphore SemaphoreWrapper;
+typedef dispatch_semaphore_t SemaphoreWrapper;
 #define isValidSemaphore(aSemaphore) (1)
 
 #endif // ifndef __APPLE__
