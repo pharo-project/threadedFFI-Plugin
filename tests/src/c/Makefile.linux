@@ -1,0 +1,19 @@
+SOURCES=$(notdir $(shell find . -iname '*.c'))
+HEADERS=$(notdir $(shell find . -iname '*.h'))
+OBJS=$(SOURCES:.c=.o)
+BUILDDIR=../../../results/testLibrary/$(ARCHITECTURE)
+
+all: $(BUILDDIR)/testLibrary.so
+
+$(BUILDDIR)/testLibrary.so: $(BUILDDIR) $(addprefix $(BUILDDIR)/,$(OBJS))
+	gcc --shared $(EXTRA) $(BUILDDIR)/*.o -o $(BUILDDIR)/testLibrary.so
+
+$(BUILDDIR): 
+	mkdir -p $(BUILDDIR)
+
+$(BUILDDIR)/%.o: %.c $(HEADERS)
+	gcc $(EXTRA) -c $< -o $@
+
+clean: 
+	rm -rf $(BUILDDIR)
+	
