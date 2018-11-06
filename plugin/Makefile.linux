@@ -11,6 +11,7 @@ else
 	ADDITIONAL_LDFLAGS=-fPIC
 	SPURVM=spur64src
 	libFFI_TARGET=x86_64-pc-linux-gnu
+	ADDITIONAL_DEPS=$(VMSOURCES)/platforms/unix/config/config.h
 endif
 
 BUILD_DIR=../results/linux$(ARCHITECTURE)
@@ -40,3 +41,12 @@ $(libFFI): $(libFFI_SOURCES)/configure
 	cd $(libFFI_SOURCES)/$(libFFI_TARGET) && $(MAKE)
 
 include Makefile.common
+
+
+#
+# Additional conf for Linux 64
+#
+
+$(VMSOURCES)/platforms/unix/config/config.h:
+	cd $(VMSOURCES)/platforms/unix/config/ && make
+	cd $(VMSOURCES)/platforms/unix/config/ && ./configure
