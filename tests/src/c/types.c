@@ -54,6 +54,9 @@ test_functions_with_name(unsigned long, ulong)
 test_functions_with_name(long long, longlong)
 test_functions_with_name(unsigned long long, ulonglong)
 
+// size_t
+test_functions(size_t)
+
 // Pointers
 
 // Receive a pointer as argument
