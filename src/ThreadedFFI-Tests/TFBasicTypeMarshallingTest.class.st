@@ -184,3 +184,25 @@ TFBasicTypeMarshallingTest >> testSumUnsignedShort [
 	function := self externalFunction: 'sum_ushort' ofType: TFBasicType ushort.
 	self assertUnsignedIntsWithFunction: function.
 ]
+
+{ #category : #tests }
+TFBasicTypeMarshallingTest >> testUnrefPointer [
+
+	| function holder pointerToHolder return |
+	function := TFExternalFunction
+		name: 'unref_pointer'
+		moduleName: self libraryPath
+		definition: (TFFunctionDefinition
+							parameterTypes: {TFBasicType pointer}
+							returnType: TFBasicType pointer).
+	
+	holder := ExternalAddress allocate: TFBasicType sshort byteSize.
+	TFBasicType sshort write: 17 into: holder.
+	
+	pointerToHolder := ExternalAddress allocate: TFBasicType pointer byteSize.
+	TFBasicType pointer write: holder into: pointerToHolder.
+	
+	return := function invokeWithArguments: { pointerToHolder }.
+	self assert: return equals: holder.
+	self assert: (TFBasicType sshort readValue: return) equals: 17.
+]
