@@ -19,7 +19,7 @@ sqInt setInterpreter(struct VirtualMachine*anInterpreter);
 
 /*** Variables ***/
 
-struct VirtualMachine* interpreterProxy;
+static struct VirtualMachine* interpreterProxy;
 static const char *moduleName = "PThreadedPlugin * ThreadedFFI-Plugin-pt.2 (e)";
 
 

@@ -2,12 +2,12 @@
 
 extern struct VirtualMachine* interpreterProxy;
 
-SemaphoreWrapper pendingCallbacks_semaphore;
-CallbackInvocation* pendingCallbacks[MAX_PENDING_CALLBACKS];
-int firstPendingCallback = 0;
-int nextPendingCallback = 0;
-int initialized = 0;
-int pendingCallbackSemaphoreIndex;
+static SemaphoreWrapper pendingCallbacks_semaphore;
+static CallbackInvocation* pendingCallbacks[MAX_PENDING_CALLBACKS];
+static int firstPendingCallback = 0;
+static int nextPendingCallback = 0;
+static int initialized = 0;
+static int pendingCallbackSemaphoreIndex;
 
 
 void initCallbackQueue(int semaphore_index){
