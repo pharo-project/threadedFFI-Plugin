@@ -86,7 +86,7 @@ TFBasicTypeSizeTest >> testSizeSignedInt8 [
 { #category : #tests }
 TFBasicTypeSizeTest >> testSizeSignedLong [
 
-	self assertType: 'long' equals: 8
+	self assertType: 'long' equals: Smalltalk wordSize
 ]
 
 { #category : #tests }
@@ -128,7 +128,7 @@ TFBasicTypeSizeTest >> testSizeUnsignedInt8 [
 { #category : #tests }
 TFBasicTypeSizeTest >> testSizeUnsignedLong [
 
-	self assertType: 'ulong' equals: 8
+	self assertType: 'ulong' equals: Smalltalk wordSize
 ]
 
 { #category : #tests }

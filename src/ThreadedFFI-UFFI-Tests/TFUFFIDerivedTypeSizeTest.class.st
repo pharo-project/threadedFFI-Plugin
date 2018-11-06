@@ -30,5 +30,5 @@ TFUFFIDerivedTypeSizeTest >> sizeof_size_t [
 { #category : #helpers }
 TFUFFIDerivedTypeSizeTest >> testSizeSizeT [
 
-	self assertType: 'size_t' equals: 8
+	self assertType: 'size_t' equals: Smalltalk wordSize
 ]
