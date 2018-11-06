@@ -2,7 +2,7 @@
 
 #ifndef __APPLE__
 
-SemaphoreWrapper semaphore_create(int initialValue){
+SemaphoreWrapper semaphore_create(long initialValue){
     SemaphoreWrapper wrapper = malloc(sizeof(sem_t));
     int returnCode;
     
@@ -29,6 +29,26 @@ int semaphore_signal(SemaphoreWrapper sem){
 int semaphore_release(SemaphoreWrapper sem){
     sem_destroy(sem);
     free(sem);
+}
+
+#else
+
+SemaphoreWrapper semaphore_create(long initialValue){
+    return dispatch_semaphore_create(initialValue);
+} 
+
+
+int semaphore_wait(SemaphoreWrapper sem){
+	dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER );
+    return 0;
+}
+
+int semaphore_signal(SemaphoreWrapper sem){
+    dispatch_semaphore_signal(sem);
+}
+
+int semaphore_release(SemaphoreWrapper sem){
+    dispatch_release(sem);
 }
 
 #endif

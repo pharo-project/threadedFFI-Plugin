@@ -37,7 +37,6 @@ CallbackInvocation* getNextCallback(){
 	
 	int returncode;
 	
-//	dispatch_semaphore_wait(pendingCallbacks_semaphore, DISPATCH_TIME_FOREVER );
     returncode = semaphore_wait(pendingCallbacks_semaphore);
 	
 	if(returncode == -1){
@@ -57,7 +56,6 @@ CallbackInvocation* getNextCallback(){
 			firstPendingCallback = 0;
 	}
 	
-//  dispatch_semaphore_signal(pendingCallbacks_semaphore);
     semaphore_signal(pendingCallbacks_semaphore);
 
     return ptr;
