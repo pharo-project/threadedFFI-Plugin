@@ -14,7 +14,8 @@
 #include <errno.h>
 #include <stdlib.h>
 
-#include "sqVirtualMachine.h"	
+#include "config.h"
+#include "sqVirtualMachine.h"
 
 #include "semaphoreWrapper.h"
 

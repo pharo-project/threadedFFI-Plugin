@@ -23,7 +23,7 @@ $(BUILD_DIR):
 $(BUILD_DIR)/$(PLUGIN_NAME): $(BUILD_DIR) $(VMSOURCES) $(libFFI) $(OBJS) 
 	$(LD) $(OBJS) -o $(BUILD_DIR)/$(PLUGIN_NAME) $(LDFLAGS)
 	
-$(OBJS): $(BUILD_DIR)/%.o:$(SRCS)/%.c $(HEADERS)
+$(OBJS): $(BUILD_DIR)/%.o:$(SRCS)/%.c $(HEADERS) $(ADDITIONAL_DEPS)
 	$(CC) -c $(CFLAGS) -o $@ $<
 
 #

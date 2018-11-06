@@ -1,8 +1,0 @@
-BUILD_DIR=../results/plugin/osx64
-ARCH=-arch x86_64
-SPURVM=spur64src
-PACKAGE_NAME=PharoThreadedFFI-osx64.zip
-
-libFFI_TARGET=x86_64-apple-darwin
-
-include Makefile.osx

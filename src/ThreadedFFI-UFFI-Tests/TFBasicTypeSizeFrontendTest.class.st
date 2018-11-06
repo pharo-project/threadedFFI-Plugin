@@ -19,7 +19,7 @@ TFBasicTypeSizeFrontendTest >> calloutAPIClass [
 { #category : #accessing }
 TFBasicTypeSizeFrontendTest >> ffiLibraryName [
 
-	^ self libraryPath
+	^ Smalltalk os isUnix ifTrue: [ 'testLibrary.so' ] ifFalse: [ 'testLibrary.dylib' ] 
 ]
 
 { #category : #accessing }
