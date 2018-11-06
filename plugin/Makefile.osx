@@ -1,25 +1,25 @@
 SRCS=./src
-VMSOURCES=../build/vmSources
+VMSOURCES=../results/vm/src
 PLUGIN_NAME=libPThreadedPlugin.dylib
 
 SOURCES=$(notdir $(shell find $(SRCS) -iname *.c))
 HEADERS=$(shell find $(SRCS) -iname *.h)
 OBJS=$(addprefix $(BUILD_DIR)/,$(addsuffix .o,$(basename $(SOURCES))))
 
-libFFI=../build/libffi/$(libFFI_TARGET)/.libs/libffi.7.dylib
-libFFI_SOURCES=../build/libffi
+libFFI=../results/libffi/$(libFFI_TARGET)/.libs/libffi.7.dylib
+libFFI_SOURCES=../results/libffi
 
 ADDITIONAL_LIBS=-lffi -lpthread
-ADDITIONAL_LIB_PATHS=-L../build/libffi/$(libFFI_TARGET)/.libs
+ADDITIONAL_LIB_PATHS=-L../results/libffi/$(libFFI_TARGET)/.libs
 
-CFLAGS=$(ARCH) -g3 -I$(VMSOURCES)/platforms/iOS/vm/OSX/ -I$(VMSOURCES)/platforms/Cross/vm/ -I$(VMSOURCES)/$(SPURVM)/vm/ -mmacosx-version-min=10.10 -I../build/libffi/$(libFFI_TARGET)/include
+CFLAGS=$(ARCH) -g3 -I$(VMSOURCES)/platforms/iOS/vm/OSX/ -I$(VMSOURCES)/platforms/Cross/vm/ -I$(VMSOURCES)/$(SPURVM)/vm/ -mmacosx-version-min=10.10 -I../results/libffi/$(libFFI_TARGET)/include
 LDFLAGS=$(ADDITIONAL_LIB_PATHS) -dylib -install_name @executable_path/Plugins/$(PLUGIN_NAME) -macosx_version_min 10.10 $(ARCH) $(ADDITIONAL_LIBS)
 
 LOCAL_DIR=$(shell pwd)
 
 .DEFAULT: all
 
-all: $(BUILD_DIR)/$(PLUGIN_NAME) ../build/$(PACKAGE_NAME)
+all: $(BUILD_DIR)/$(PLUGIN_NAME) ../results/$(PACKAGE_NAME)
 
 #	
 # VM Sources - Needed for the BUILD
@@ -55,10 +55,10 @@ $(OBJS): $(BUILD_DIR)/%.o:$(SRCS)/%.c $(HEADERS)
 #
 # Packaging of the plugin
 #
-../build/$(PACKAGE_NAME): $(BUILD_DIR)/$(PLUGIN_NAME) $(libFFI)
-	zip -j ../build/$(PACKAGE_NAME) $(libFFI)
-	zip -j ../build/$(PACKAGE_NAME) $(BUILD_DIR)/$(PLUGIN_NAME)
+../results/$(PACKAGE_NAME): $(BUILD_DIR)/$(PLUGIN_NAME) $(libFFI)
+	zip -j ../results/$(PACKAGE_NAME) $(libFFI)
+	zip -j ../results/$(PACKAGE_NAME) $(BUILD_DIR)/$(PLUGIN_NAME)
 		
 clean:
-	rm -f ../build/$(PACKAGE_NAME)
+	rm -f ../results/$(PACKAGE_NAME)
 	rm -rf $(BUILD_DIR)

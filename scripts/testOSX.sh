@@ -28,7 +28,7 @@ cd "${__root}/results/tests/osx$ARCH"
 
 wget -O - $PHARO_URL | bash
 
-cp "${__root}/build/PharoThreadedFFI-osx$ARCH.zip" "pharo-vm/Pharo.app/Contents/MacOS/Plugins/"
+cp "${__root}/results/PharoThreadedFFI-osx$ARCH.zip" "pharo-vm/Pharo.app/Contents/MacOS/Plugins/"
 unzip pharo-vm/Pharo.app/Contents/MacOS/Plugins/PharoThreadedFFI-osx$ARCH.zip -d pharo-vm/Pharo.app/Contents/MacOS/Plugins/
 
 ./pharo Pharo.image eval "

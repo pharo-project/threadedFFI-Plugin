@@ -1,4 +1,4 @@
-BUILD_DIR=../build/osx64
+BUILD_DIR=../results/plugin/osx64
 ARCH=-arch x86_64
 SPURVM=spur64src
 PACKAGE_NAME=PharoThreadedFFI-osx64.zip

@@ -10,10 +10,9 @@ set -o nounset
 __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 __root="$(cd "$(dirname "${__dir}")" && pwd)"
 
-#Run Tests in OSX 32bits
+LOCAL_DIR=`pwd`
 
-${__root}/scripts/buildPlugin.sh
-${__root}/scripts/buildTestLibrary.sh
+cd "${__root}/plugin"
+make
 
-${__root}/scripts/testOSX.sh 32
-${__root}/scripts/testOSX.sh 64
+cd "${LOCAL_DIR}"
