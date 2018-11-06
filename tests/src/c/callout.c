@@ -17,4 +17,5 @@ float sumAFloatAndADouble(float a, double b){
 
 int withDelay(int seconds){
 	usleep(seconds * 1000000); // will sleep for number of seconds
+  return 1;
 }
