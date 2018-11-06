@@ -1,9 +1,16 @@
-#!/bin/bash
-set -x
-set -e
+#!/usr/bin/env bash
+# Bash3 Boilerplate. Copyright (c) 2014, kvz.io
+
+set -o errexit
+set -o pipefail
+set -o nounset
+# set -o xtrace
+
+# Set magic variables for current file & dir
+__dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+__root="$(cd "$(dirname "${__dir}")" && pwd)"
 
 #Run Tests in OSX
-
 LOCAL_DIR=`pwd`
 
 if [ $1 -eq "32" ]; then
@@ -15,26 +22,26 @@ else
 fi
 
 
-rm -rf ./tests/osx$ARCH	
-mkdir -p ./tests/osx$ARCH
-cd ./tests/osx$ARCH
+rm -rf "${__root}/results/tests/osx$ARCH"
+mkdir -p "${__root}/results/tests/osx$ARCH"
+cd "${__root}/results/tests/osx$ARCH"
 
 wget -O - $PHARO_URL | bash
 
-cp ../../build/PharoThreadedFFI-osx$ARCH.zip pharo-vm/Pharo.app/Contents/MacOS/Plugins/
+cp "${__root}/build/PharoThreadedFFI-osx$ARCH.zip" "pharo-vm/Pharo.app/Contents/MacOS/Plugins/"
 unzip pharo-vm/Pharo.app/Contents/MacOS/Plugins/PharoThreadedFFI-osx$ARCH.zip -d pharo-vm/Pharo.app/Contents/MacOS/Plugins/
 
 ./pharo Pharo.image eval "
 
 Metacello new
         baseline: 'ThreadedFFI';
-        repository: 'tonel://../../src';
+        repository: 'tonel://${__root}/src';
         load.
 		
 Smalltalk saveAs:'testFFI'.
 		"
 
-cp ../pharo-callback-test/library/build/testLibrary.dylib .
+cp "${__root}/tests/src/c/build/testLibrary.dylib" .
 
 ./pharo testFFI.image test --fail-on-failure "ThreadedFFI-Tests" "ThreadedFFI-UFFI-Tests"
 
