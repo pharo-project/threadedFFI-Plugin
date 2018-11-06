@@ -13,7 +13,7 @@ TFUFFIDerivedTypeSizeTest >> assertType: typename equals: aSize [
 { #category : #helpers }
 TFUFFIDerivedTypeSizeTest >> ffiLibraryName [
 
-	^ self libraryPath
+	^ Smalltalk os isUnix ifTrue: [ 'testLibrary.so' ] ifFalse: [ 'testLibrary.dylib' ] 
 ]
 
 { #category : #helpers }
