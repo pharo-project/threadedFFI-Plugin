@@ -34,7 +34,7 @@ TFBasicTypeMarshallingTest >> externalFunction: name ofType: type [
 { #category : #accessing }
 TFBasicTypeMarshallingTest >> libraryPath [
 
-	^ 'testLibrary.dylib'
+	^ Smalltalk os isUnix ifTrue: [ 'testLibrary.so' ] ifFalse: [ 'testLibrary.dylib' ] 
 ]
 
 { #category : #tests }

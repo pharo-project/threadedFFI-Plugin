@@ -1,0 +1,38 @@
+all: $(BUILD_DIR)/$(PLUGIN_NAME) ../results/$(PACKAGE_NAME)
+
+#	
+# VM Sources - Needed for the BUILD
+#
+$(VMSOURCES):
+	git clone --depth=1 https://github.com/OpenSmalltalk/opensmalltalk-vm.git $(VMSOURCES)
+
+#
+# Build of libFFI
+#
+$(libFFI_SOURCES)/configure:
+	git clone https://github.com/libffi/libffi.git $(libFFI_SOURCES)
+	cd $(libFFI_SOURCES) && git checkout v3.3-rc0 
+	cd $(libFFI_SOURCES) && ./autogen.sh
+
+#
+# Build of the plugin
+#
+$(BUILD_DIR): 
+	mkdir -p $(BUILD_DIR)
+
+$(BUILD_DIR)/$(PLUGIN_NAME): $(BUILD_DIR) $(VMSOURCES) $(libFFI) $(OBJS) 
+	$(LD) $(OBJS) -o $(BUILD_DIR)/$(PLUGIN_NAME) $(LDFLAGS)
+	
+$(OBJS): $(BUILD_DIR)/%.o:$(SRCS)/%.c $(HEADERS)
+	$(CC) -c $(CFLAGS) -o $@ $<
+
+#
+# Packaging of the plugin
+#
+../results/$(PACKAGE_NAME): $(BUILD_DIR)/$(PLUGIN_NAME) $(libFFI)
+	zip -j ../results/$(PACKAGE_NAME) $(libFFI)
+	zip -j ../results/$(PACKAGE_NAME) $(BUILD_DIR)/$(PLUGIN_NAME)
+		
+clean:
+	rm -f ../results/$(PACKAGE_NAME)
+	rm -rf $(BUILD_DIR)
