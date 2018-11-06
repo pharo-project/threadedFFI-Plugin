@@ -48,5 +48,7 @@ include Makefile.common
 #
 
 $(VMSOURCES)/platforms/unix/config/config.h:
-	cd $(VMSOURCES)/platforms/unix/config/ && make
-	cd $(VMSOURCES)/platforms/unix/config/ && ./configure
+	touch $(VMSOURCES)/platforms/unix/config/plugins.int
+	touch $(VMSOURCES)/platforms/unix/config/plugins.ext
+	cd $(VMSOURCES)/platforms/unix/config && make configure
+	cd $(VMSOURCES)/platforms/unix/config && ./configure
