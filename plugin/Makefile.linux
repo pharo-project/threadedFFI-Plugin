@@ -2,9 +2,11 @@ ifeq ($(ARCHITECTURE),32)
 	ARCH_OPTS=-m32
 	SPURVM=spursrc
 	libFFI_TARGET=i686-pc-linux-gnu
-	libFFI_ADDITIONAL_CFG= CFLAGS=-m32	
+	libFFI_ADDITIONAL_CFG= CFLAGS=-m32
+	ADDITIONAL_LDFLAGS=	-m elf_i386
 else
 	ARCH_OPTS=
+	ADDITIONAL_LDFLAGS=
 	SPURVM=spur64src
 	libFFI_TARGET=x86_64-pc-linux-gnu
 endif
