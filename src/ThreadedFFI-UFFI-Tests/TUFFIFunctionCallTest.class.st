@@ -1,6 +1,6 @@
 Class {
 	#name : #TUFFIFunctionCallTest,
-	#superclass : #TestCase,
+	#superclass : #TFUFFITestCase,
 	#category : #'ThreadedFFI-UFFI-Tests'
 }
 
@@ -8,12 +8,6 @@ Class {
 TUFFIFunctionCallTest >> callbackInALoop: callback [
 
 	^ self ffiCall: #(int callbackInALoop(void* callback))
-]
-
-{ #category : #accessing }
-TUFFIFunctionCallTest >> calloutAPIClass [
-
-	^ TFCalloutAPI
 ]
 
 { #category : #accessing }
