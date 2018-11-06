@@ -25,6 +25,10 @@ sum_with_name(TYPE, NAME)
 // Floating point numbers
 test_functions(float)
 test_functions(double)
+  
+// Characters
+test_functions(char)
+test_functions_with_name(unsigned char, uchar)
 
 // Signed integers
 test_functions(int)
