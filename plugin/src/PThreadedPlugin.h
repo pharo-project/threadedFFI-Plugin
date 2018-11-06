@@ -3,14 +3,20 @@
 
 #define __PTREADEDPLUGIN__
 
+#define true 1
+#define false 0
+#define null 0
+
+
 #include <stdio.h>
 #include <ffi.h>
 #include <pthread.h>
-#include <dispatch/dispatch.h>
 #include <errno.h>
 #include <stdlib.h>
 
 #include "sqVirtualMachine.h"	
+
+#include "semaphoreWrapper.h"
 
 typedef struct {
 	void* anExternalFunction; 
@@ -31,7 +37,7 @@ typedef struct {
 	CallbackData* callback;
 	void* returnHolder;
 	void** arguments;
-	dispatch_semaphore_t semaphore;
+	SemaphoreWrapper semaphore;
 } CallbackInvocation;
 
 #define MAX_PENDING_CALLBACKS 100
