@@ -1,10 +1,16 @@
-BUILD_DIR=../results/linux32
-ARCH=-m32
-SPURVM=spursrc
-PACKAGE_NAME=PharoThreadedFFI-linux32.zip
+ifeq ($(ARCHITECTURE),32)
+	ARCH_OPTS=-m32
+	SPURVM=spursrc
+	libFFI_TARGET=i686-pc-linux-gnu
+	libFFI_ADDITIONAL_CFG= CFLAGS=-m32	
+else
+	ARCH_OPTS=
+	SPURVM=spur64src
+	libFFI_TARGET=x86_64-pc-linux-gnu
+endif
 
-libFFI_TARGET=i686-pc-linux-gnu
-libFFI_ADDITIONAL_CFG= CFLAGS=-m32
+BUILD_DIR=../results/linux$(ARCHITECTURE)
+PACKAGE_NAME=PharoThreadedFFI-linux$(ARCHITECTURE).zip
 
 SRCS=./src
 VMSOURCES=../results/vm/src
@@ -20,8 +26,8 @@ libFFI_SOURCES=../results/libffi
 ADDITIONAL_LIBS=-lffi -lpthread -lc
 ADDITIONAL_LIB_PATHS=-L../results/libffi/$(libFFI_TARGET)/.libs
 
-CFLAGS=$(ARCH) -g3 -I$(VMSOURCES)/platforms/unix/vm/ -I$(VMSOURCES)/platforms/Cross/vm/ -I$(VMSOURCES)/platforms/unix/misc/threadValidate/ -I$(VMSOURCES)/$(SPURVM)/vm/ -I../results/libffi/$(libFFI_TARGET)/include
-LDFLAGS=$(ADDITIONAL_LIB_PATHS) -m elf_i386 -shared $(ADDITIONAL_LIBS)
+CFLAGS=$(ARCH_OPTS) -g3 -I$(VMSOURCES)/platforms/unix/vm/ -I$(VMSOURCES)/platforms/Cross/vm/ -I$(VMSOURCES)/platforms/unix/misc/threadValidate/ -I$(VMSOURCES)/$(SPURVM)/vm/ -I../results/libffi/$(libFFI_TARGET)/include
+LDFLAGS=$(ADDITIONAL_LIB_PATHS) -shared $(ADDITIONAL_LIBS)
 
 .DEFAULT: all
 

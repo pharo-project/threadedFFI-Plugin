@@ -1,9 +1,0 @@
-BUILD_DIR=../results/plugin/osx32
-ARCH=-arch i386
-SPURVM=spursrc
-PACKAGE_NAME=PharoThreadedFFI-osx32.zip
-
-libFFI_TARGET=i386-apple-darwin
-libFFI_ADDITIONAL_CFG= CFLAGS=-m32
-
-include Makefile.osx
