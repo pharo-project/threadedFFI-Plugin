@@ -22,7 +22,7 @@ ADDITIONAL_LIBS=-lffi -lpthread -lc
 ADDITIONAL_LIB_PATHS=-L../results/libffi/$(libFFI_TARGET)/.libs
 
 CFLAGS=$(ARCH) -g3 -I$(VMSOURCES)/platforms/unix/vm/ -I$(VMSOURCES)/platforms/Cross/vm/ -I$(VMSOURCES)/platforms/unix/misc/threadValidate/ -I$(VMSOURCES)/$(SPURVM)/vm/ -I../results/libffi/$(libFFI_TARGET)/include
-LDFLAGS=$(ADDITIONAL_LIB_PATHS) -shared $(ADDITIONAL_LIBS)
+LDFLAGS=$(ADDITIONAL_LIB_PATHS) -m elf_i386 -shared $(ADDITIONAL_LIBS)
 
 LOCAL_DIR=$(shell pwd)
 

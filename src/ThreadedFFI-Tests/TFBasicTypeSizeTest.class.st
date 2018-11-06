@@ -26,7 +26,7 @@ TFBasicTypeSizeTest >> externalFunction: name [
 { #category : #accessing }
 TFBasicTypeSizeTest >> libraryPath [
 
-	^ 'testLibrary.dylib'
+	^ Smalltalk os isUnix ifTrue: [ 'testLibrary.so' ] ifFalse: [ 'testLibrary.dylib' ] 
 ]
 
 { #category : #tests }

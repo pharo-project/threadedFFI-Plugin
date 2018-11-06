@@ -19,7 +19,7 @@ TUFFIFunctionCallTest >> calloutAPIClass [
 { #category : #accessing }
 TUFFIFunctionCallTest >> ffiLibraryName [
 
-	^ 'testLibrary.dylib'
+	^ Smalltalk os isUnix ifTrue: [ 'testLibrary.so' ] ifFalse: [ 'testLibrary.dylib' ] 
 ]
 
 { #category : #tests }
