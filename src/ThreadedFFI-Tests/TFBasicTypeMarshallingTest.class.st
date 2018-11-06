@@ -58,6 +58,14 @@ TFBasicTypeMarshallingTest >> testSumFloat [
 ]
 
 { #category : #tests }
+TFBasicTypeMarshallingTest >> testSumSignedChar [
+
+	| function |
+	function := self externalFunction: 'sum_char' ofType: TFBasicType schar.
+	self assertSignedIntsWithFunction: function.
+]
+
+{ #category : #tests }
 TFBasicTypeMarshallingTest >> testSumSignedInt [
 
 	| function |
@@ -111,6 +119,14 @@ TFBasicTypeMarshallingTest >> testSumSignedShort [
 	| function |
 	function := self externalFunction: 'sum_short' ofType: TFBasicType sshort.
 	self assertSignedIntsWithFunction: function.
+]
+
+{ #category : #tests }
+TFBasicTypeMarshallingTest >> testSumUnsignedChar [
+
+	| function |
+	function := self externalFunction: 'sum_uchar' ofType: TFBasicType uchar.
+	self assertUnsignedIntsWithFunction: function.
 ]
 
 { #category : #tests }
