@@ -54,8 +54,14 @@ test_functions_with_name(unsigned long, ulong)
 test_functions_with_name(long long, longlong)
 test_functions_with_name(unsigned long long, ulonglong)
 
+// Pointers
+
 // Receive a pointer as argument
 // Dereference its value and return it
 void *unref_pointer(void **pointer) {
   return *pointer;
+}
+
+size_t sizeof_pointer(){ 
+  return sizeof(void*);
 }
