@@ -2,10 +2,10 @@ SOURCES=$(notdir $(shell find . -iname '*.c'))
 HEADERS=$(notdir $(shell find . -iname '*.h'))
 OBJS=$(SOURCES:.c=.o)
 
-all: build/testLibrary.dylib
+all: ../../../results/testLibrary/testLibrary.dylib
 
 build/testLibrary.dylib: build $(addprefix build/,$(OBJS))
-	clang -dynamiclib -arch i386 -arch x86_64 build/*.o -o build/testLibrary.dylib
+	clang -dynamiclib -arch i386 -arch x86_64 ../../../results/testLibrary/*.o -o ../../../results/testLibrary/testLibrary.dylib
 
 build: 
 	mkdir -p build

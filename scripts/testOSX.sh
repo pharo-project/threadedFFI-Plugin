@@ -41,7 +41,7 @@ Metacello new
 Smalltalk saveAs:'testFFI'.
 		"
 
-cp "${__root}/tests/src/c/build/testLibrary.dylib" .
+cp "${__root}/results/testLibrary/testLibrary.dylib" .
 
 ./pharo testFFI.image test --fail-on-failure "ThreadedFFI-Tests" "ThreadedFFI-UFFI-Tests"
 

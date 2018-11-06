@@ -11,12 +11,9 @@ __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 __root="$(cd "$(dirname "${__dir}")" && pwd)"
 
 LOCAL_DIR=`pwd`
-
-if [ -d "${__root}/tests/src/c/build" ]; then
-	exit 0
-fi
+OS=`${__root}/scripts/getOS.sh`
 
 cd "${__root}/tests/src/c"
-make
+make -f Makefile.$OS
 
 cd "${LOCAL_DIR}"
