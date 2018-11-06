@@ -2,7 +2,7 @@
 
 extern struct VirtualMachine* interpreterProxy;
 
-dispatch_semaphore_t pendingCallbacks_semaphore;
+SemaphoreWrapper pendingCallbacks_semaphore;
 CallbackInvocation* pendingCallbacks[MAX_PENDING_CALLBACKS];
 int firstPendingCallback = 0;
 int nextPendingCallback = 0;
@@ -17,8 +17,14 @@ void initCallbackQueue(int semaphore_index){
 	if(initialized)
 		return;
 	
-	pendingCallbacks_semaphore = dispatch_semaphore_create(1);
-
+	pendingCallbacks_semaphore = semaphore_create(1);
+    if(!isValidSemaphore(pendingCallbacks_semaphore)){
+		interpreterProxy->primitiveFailFor(1);
+		perror("initCallbackQueue");
+		return;        
+    }
+    
+    
 	for(int i = 0; i < MAX_PENDING_CALLBACKS; i++){
 		pendingCallbacks[i] = NULL;
 	}
@@ -29,16 +35,15 @@ void initCallbackQueue(int semaphore_index){
 CallbackInvocation* getNextCallback(){
 	CallbackInvocation* ptr;
 	
-//	int returncode;
+	int returncode;
 	
-//	while((returncode = sem_wait(&pendingCallbacks_semaphore)) == -1  && errno == EINTR);
-	dispatch_semaphore_wait(pendingCallbacks_semaphore, DISPATCH_TIME_FOREVER );
+    returncode = semaphore_wait(pendingCallbacks_semaphore);
 	
-/*	if(returncode == -1){
+	if(returncode == -1){
 		interpreterProxy->primitiveFailFor(1);
-		perror("addPendingCallback");
-		return;
-	}*/
+		perror("getNextCallback");
+		return NULL;
+	}
 	
 	if(firstPendingCallback == nextPendingCallback){
 		ptr = NULL;
@@ -51,21 +56,22 @@ CallbackInvocation* getNextCallback(){
 			firstPendingCallback = 0;
 	}
 	
-	dispatch_semaphore_signal(pendingCallbacks_semaphore);
-	return ptr;
+    semaphore_signal(pendingCallbacks_semaphore);
+
+    return ptr;
 }
 
 void addPendingCallback(CallbackInvocation* aCallbackInvocation){
-//	int returncode;
+	int returncode;
 	
-//	while((returncode = sem_wait(&pendingCallbacks_semaphore)) == -1  && errno == EINTR);
-	dispatch_semaphore_wait(pendingCallbacks_semaphore, DISPATCH_TIME_FOREVER );
+    returncode = semaphore_wait(pendingCallbacks_semaphore);
 	
-/*	if(returncode == -1){
+	if(returncode == -1){
 		interpreterProxy->primitiveFailFor(1);
 		perror("addPendingCallback");
 		return;
-	}*/
+	}
+      
 	
 	pendingCallbacks[nextPendingCallback] = aCallbackInvocation;
 	
@@ -73,7 +79,7 @@ void addPendingCallback(CallbackInvocation* aCallbackInvocation){
 	if(nextPendingCallback == MAX_PENDING_CALLBACKS)
 		nextPendingCallback = 0;
 	
-	dispatch_semaphore_signal(pendingCallbacks_semaphore);
+    semaphore_signal(pendingCallbacks_semaphore);
 	
 	interpreterProxy->signalSemaphoreWithIndex(pendingCallbackSemaphoreIndex);
 }
@@ -258,13 +264,12 @@ void callbackFrontend(ffi_cif *cif, void *ret, void* args[], void* ptr){
 	inv.callback = data;
 	inv.arguments = args;
 	inv.returnHolder = ret;
-	inv.semaphore = dispatch_semaphore_create(0);
+	inv.semaphore = semaphore_create(0);
 
 	addPendingCallback(&inv);
 	
-	dispatch_semaphore_wait(inv.semaphore, DISPATCH_TIME_FOREVER); 
-	
-	dispatch_release(inv.semaphore);
+    semaphore_wait(inv.semaphore);	
+	semaphore_release(inv.semaphore);
 }
 
 
@@ -310,7 +315,7 @@ void* defineCallbackWithParamsCountReturnType(CallbackData** callbackData, ffi_t
 }
 
 void callbackReturn(CallbackInvocation* invocation){
-	dispatch_semaphore_signal(invocation->semaphore);
+	semaphore_signal(invocation->semaphore);
 }
 
 
