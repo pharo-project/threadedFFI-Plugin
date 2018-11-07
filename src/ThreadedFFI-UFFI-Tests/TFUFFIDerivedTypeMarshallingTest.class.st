@@ -17,9 +17,21 @@ TFUFFIDerivedTypeMarshallingTest >> intToBoolean: int [
 ]
 
 { #category : #'ffi-calls' }
+TFUFFIDerivedTypeMarshallingTest >> pointerToString: cString [
+
+	^ self ffiCall: #(String dup_string(char *cString))
+]
+
+{ #category : #'ffi-calls' }
 TFUFFIDerivedTypeMarshallingTest >> size_t_identity: aSize [
 
 	^ self ffiCall: #(size_t id_size_t(size_t aSize))
+]
+
+{ #category : #'ffi-calls' }
+TFUFFIDerivedTypeMarshallingTest >> stringToPointer: aString [
+
+	^ self ffiCall: #(void *dup_string(String aString))
 ]
 
 { #category : #'ffi-calls' }
@@ -44,6 +56,29 @@ TFUFFIDerivedTypeMarshallingTest >> testMarshallingFalseReturnValue [
 TFUFFIDerivedTypeMarshallingTest >> testMarshallingSize_t [
 
 	self assert: (self size_t_identity: 1788) equals: 1788
+]
+
+{ #category : #tests }
+TFUFFIDerivedTypeMarshallingTest >> testMarshallingStringArgument [
+
+	| stringToMarshall cString |
+	[
+	stringToMarshall := 'áèïô å∫'.
+	cString := self stringToPointer: stringToMarshall.
+	self assert: cString readStringUTF8 equals: stringToMarshall.
+	] ensure: [ cString free ]
+]
+
+{ #category : #tests }
+TFUFFIDerivedTypeMarshallingTest >> testMarshallingStringReturnValue [
+
+	| cString originalString returnedString |
+	[
+	originalString := 'áèïô å∫'.
+	cString := ExternalAddress fromString: originalString utf8Encoded asString.
+	returnedString := self pointerToString: cString.
+	self assert: returnedString equals: originalString.
+	] ensure: [ cString free ]
 ]
 
 { #category : #tests }

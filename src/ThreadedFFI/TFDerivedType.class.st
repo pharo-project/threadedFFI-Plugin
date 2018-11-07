@@ -39,11 +39,8 @@ TFDerivedType >> getHandle [
 
 { #category : #'reading-writing' }
 TFDerivedType >> readValue: anExternalAddress [
-	"
-	  0 = false
-	~~0 = true
-	"
-	^ (self basicType readValue: anExternalAddress) ~~ 0
+	
+	self subclassResponsibility
 ]
 
 { #category : #validating }
@@ -55,5 +52,5 @@ TFDerivedType >> validate [
 { #category : #'reading-writing' }
 TFDerivedType >> write: anObject into: anExternalAddress [
 	
-	self subclassResponsibility
+	self basicType write: anObject into: anExternalAddress
 ]

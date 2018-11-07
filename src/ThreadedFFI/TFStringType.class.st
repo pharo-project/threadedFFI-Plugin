@@ -6,14 +6,26 @@ See my superclass for more details.
 "
 Class {
 	#name : #TFStringType,
-	#superclass : #TFPointerType,
+	#superclass : #TFDerivedType,
 	#category : #ThreadedFFI
 }
+
+{ #category : #accessing }
+TFStringType >> basicType [
+	
+	^ TFBasicType pointer
+]
 
 { #category : #writting }
 TFStringType >> freeValueIfNeeded: aCHeapValueHolder [
 	
 	(aCHeapValueHolder pointerAt: 1) free
+]
+
+{ #category : #writting }
+TFStringType >> readValue: anExternalAddress [
+
+	^ (self basicType readValue: anExternalAddress) readStringUTF8
 ]
 
 { #category : #writting }
@@ -25,5 +37,7 @@ TFStringType >> readValue: anExternalAddress offset: offset [
 { #category : #writting }
 TFStringType >> write: aString into: targetAddress [
 
-	super write: (ExternalAddress fromString: aString utf8Encoded) into: targetAddress
+	self basicType
+		write: (ExternalAddress fromString: aString utf8Encoded)
+		into: targetAddress
 ]
