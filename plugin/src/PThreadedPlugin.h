@@ -20,12 +20,12 @@
 #include "semaphoreWrapper.h"
 
 typedef struct {
-	void* anExternalFunction; 
+	void* anExternalFunction;
 	ffi_cif* cif; 
 	void* parametersAddress; 
 	void* returnHolderAddress; 
 	int semaphoreIndex;	
-} AsyncCallParameters;
+} WorkerTask;
 
 typedef struct {
 	ffi_closure* closure;
@@ -47,7 +47,7 @@ int getTypeByteSize(void* aType);
 
 void fillBasicType(sqInt aOop);
 
-void* doAsyncCall(AsyncCallParameters* asyncCallParameters);
+void* doAsyncCall(WorkerTask* asyncCallParameters);
 
 void performCallCifWithIntoUsing(void* anExternalFunction, void* aCif, void* parametersAddress, void* returnHolderAddress, int semaphoreIndex);
 void performSyncCallCifWithInto(void* anExternalFunction, void* aCif, void* parametersAddress, void* returnHolderAddress);
@@ -67,8 +67,8 @@ void releaseCallback(CallbackData* callbackData);
 // Callout worker functions (calloutWorker.c)
 
 sqInt initializeWorkerThread();
-AsyncCallParameters* take_queue();
-void put_queue(AsyncCallParameters* calloutParameters);
+WorkerTask* take_queue();
+void put_queue(WorkerTask* calloutParameters);
 void* worker(void*);
 
 // Util functions (utils.c)

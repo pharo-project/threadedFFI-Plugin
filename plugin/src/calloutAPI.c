@@ -1,7 +1,7 @@
 #include "PThreadedPlugin.h"
 
 void performCallCifWithIntoUsing(void* anExternalFunction, void* aCif, void* parametersAddress, void* returnHolderAddress, int semaphoreIndex){
-	AsyncCallParameters* asyncCallParameters = malloc(sizeof(AsyncCallParameters));
+	WorkerTask* asyncCallParameters = malloc(sizeof(WorkerTask));
 	asyncCallParameters->anExternalFunction = anExternalFunction;
 	asyncCallParameters->cif = (ffi_cif*) aCif;
 	asyncCallParameters->parametersAddress = parametersAddress;

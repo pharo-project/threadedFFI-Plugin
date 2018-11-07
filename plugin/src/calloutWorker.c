@@ -1,7 +1,7 @@
 #include "PThreadedPlugin.h"
 
 typedef struct QueueNode{
-	AsyncCallParameters *calloutParameters;
+	WorkerTask *calloutParameters;
 	struct QueueNode *next;
 } QueueNode;
 
@@ -41,7 +41,7 @@ sqInt initializeWorkerThread(){
 }
 
 void* worker(void* aParameter){
-	AsyncCallParameters *parameters;
+	WorkerTask *parameters;
 	while(true){
 		parameters = take_queue();
 		if (parameters){
@@ -52,7 +52,7 @@ void* worker(void* aParameter){
 	}
 }
 
-void* doAsyncCall(AsyncCallParameters* asyncCallParameters){
+void* doAsyncCall(WorkerTask* asyncCallParameters){
 
 	ffi_call(asyncCallParameters->cif, asyncCallParameters->anExternalFunction, asyncCallParameters->returnHolderAddress, asyncCallParameters->parametersAddress);
 	interpreterProxy->signalSemaphoreWithIndex(asyncCallParameters->semaphoreIndex);
@@ -60,8 +60,8 @@ void* doAsyncCall(AsyncCallParameters* asyncCallParameters){
 	return NULL;
 }
 
-AsyncCallParameters* take_queue(){
-	AsyncCallParameters *calloutParameters;
+WorkerTask* take_queue(){
+	WorkerTask *calloutParameters;
 	QueueNode *current;
 
 	pthread_mutex_lock(&queueCriticalSection);
@@ -94,7 +94,7 @@ AsyncCallParameters* take_queue(){
 	return calloutParameters;
 }
 
-void put_queue(AsyncCallParameters* calloutParameters){
+void put_queue(WorkerTask* calloutParameters){
 	QueueNode* current = malloc(sizeof(QueueNode));
 	current->calloutParameters = calloutParameters;
 	current->next=NULL;
