@@ -52,6 +52,14 @@ void* worker(void* aParameter){
 	}
 }
 
+void* doAsyncCall(AsyncCallParameters* asyncCallParameters){
+
+	ffi_call(asyncCallParameters->cif, asyncCallParameters->anExternalFunction, asyncCallParameters->returnHolderAddress, asyncCallParameters->parametersAddress);
+	interpreterProxy->signalSemaphoreWithIndex(asyncCallParameters->semaphoreIndex);
+	free(asyncCallParameters);
+	return NULL;
+}
+
 AsyncCallParameters* take_queue(){
 	AsyncCallParameters *calloutParameters;
 	QueueNode *current;
