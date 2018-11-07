@@ -41,11 +41,19 @@ sqInt initializeWorkerThread(){
 }
 
 void* worker(void* aParameter){
-	WorkerTask *parameters;
+	WorkerTask *task;
 	while(true){
-		parameters = take_queue();
-		if (parameters){
-			doAsyncCall(parameters);
+		task = take_queue();
+		if (task){
+      if (task->type == CALLOUT){
+        doAsyncCall(task);
+      } else if (task->type == CALLBACK_RETURN){
+        // stop consuming tasks and return
+        return NULL;
+      } else {
+        fprintf(stderr, "Unsupported task type: %d", task->type);
+        perror("");
+      }
 		} else {
 			perror("No callbacks in the queue");
 		}

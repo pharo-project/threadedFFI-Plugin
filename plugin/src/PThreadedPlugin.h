@@ -44,7 +44,6 @@ typedef struct {
 	CallbackData* callback;
 	void* returnHolder;
 	void** arguments;
-	SemaphoreWrapper semaphore;
 } CallbackInvocation;
 
 #define MAX_PENDING_CALLBACKS 100
