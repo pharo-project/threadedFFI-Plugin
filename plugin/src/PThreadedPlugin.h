@@ -19,7 +19,13 @@
 
 #include "semaphoreWrapper.h"
 
+typedef enum {
+  CALLOUT,
+  CALLBACK_RETURN
+} WorkerTaskType;
+
 typedef struct {
+  WorkerTaskType type;
 	void* anExternalFunction;
 	ffi_cif* cif; 
 	void* parametersAddress; 

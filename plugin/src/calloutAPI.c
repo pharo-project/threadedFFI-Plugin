@@ -1,13 +1,14 @@
 #include "PThreadedPlugin.h"
 
 void performCallCifWithIntoUsing(void* anExternalFunction, void* aCif, void* parametersAddress, void* returnHolderAddress, int semaphoreIndex){
-	WorkerTask* asyncCallParameters = malloc(sizeof(WorkerTask));
-	asyncCallParameters->anExternalFunction = anExternalFunction;
-	asyncCallParameters->cif = (ffi_cif*) aCif;
-	asyncCallParameters->parametersAddress = parametersAddress;
-	asyncCallParameters->returnHolderAddress = returnHolderAddress;
-	asyncCallParameters->semaphoreIndex = semaphoreIndex;
-	put_queue(asyncCallParameters);
+	WorkerTask* calloutTask = malloc(sizeof(WorkerTask));
+  calloutTask->type = CALLOUT;
+	calloutTask->anExternalFunction = anExternalFunction;
+	calloutTask->cif = (ffi_cif*) aCif;
+	calloutTask->parametersAddress = parametersAddress;
+	calloutTask->returnHolderAddress = returnHolderAddress;
+	calloutTask->semaphoreIndex = semaphoreIndex;
+	put_queue(calloutTask);
 }
 
 void performSyncCallCifWithInto(void* anExternalFunction, void* aCif, void* parametersAddress, void* returnHolderAddress){
