@@ -133,6 +133,7 @@ TFExternalAsyncCall >> parameters: anObject [
 { #category : #'private - marshalling' }
 TFExternalAsyncCall >> readReturnValue: aValueHolder [
 
+	function definition returnType isVoid ifTrue: [ ^ nil ].
 	^ function definition returnType readValue: aValueHolder
 ]
 

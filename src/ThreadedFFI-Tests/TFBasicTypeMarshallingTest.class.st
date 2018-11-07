@@ -1,6 +1,6 @@
 Class {
 	#name : #TFBasicTypeMarshallingTest,
-	#superclass : #TestCase,
+	#superclass : #TFTestCase,
 	#category : #'ThreadedFFI-Tests'
 }
 
@@ -29,12 +29,6 @@ TFBasicTypeMarshallingTest >> externalFunction: name ofType: type [
 		definition: (TFFunctionDefinition
 							parameterTypes: {type. type}
 							returnType: type)
-]
-
-{ #category : #accessing }
-TFBasicTypeMarshallingTest >> libraryPath [
-
-	^ Smalltalk os isUnix ifTrue: [ 'testLibrary.so' ] ifFalse: [ 'testLibrary.dylib' ] 
 ]
 
 { #category : #tests }

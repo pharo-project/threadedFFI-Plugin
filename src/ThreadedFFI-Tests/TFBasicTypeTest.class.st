@@ -1,6 +1,6 @@
 Class {
 	#name : #TFBasicTypeTest,
-	#superclass : #TestCase,
+	#superclass : #TFTestCase,
 	#category : #'ThreadedFFI-Tests'
 }
 

@@ -1,6 +1,6 @@
 Class {
 	#name : #TFBasicTypeSizeTest,
-	#superclass : #TestCase,
+	#superclass : #TFTestCase,
 	#category : #'ThreadedFFI-Tests'
 }
 
@@ -21,12 +21,6 @@ TFBasicTypeSizeTest >> externalFunction: name [
 		definition: (TFFunctionDefinition
 							parameterTypes: {}
 							returnType: TFBasicType uint)
-]
-
-{ #category : #accessing }
-TFBasicTypeSizeTest >> libraryPath [
-
-	^ Smalltalk os isUnix ifTrue: [ 'testLibrary.so' ] ifFalse: [ 'testLibrary.dylib' ] 
 ]
 
 { #category : #tests }

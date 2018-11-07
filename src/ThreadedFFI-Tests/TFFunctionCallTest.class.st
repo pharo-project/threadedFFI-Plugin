@@ -1,14 +1,8 @@
 Class {
 	#name : #TFFunctionCallTest,
-	#superclass : #TestCase,
+	#superclass : #TFTestCase,
 	#category : #'ThreadedFFI-Tests'
 }
-
-{ #category : #accessing }
-TFFunctionCallTest >> libraryPath [
-
-	^ Smalltalk os isUnix ifTrue: [ 'testLibrary.so' ] ifFalse: [ 'testLibrary.dylib' ] 
-]
 
 { #category : #tests }
 TFFunctionCallTest >> testCallbackAsFunction [

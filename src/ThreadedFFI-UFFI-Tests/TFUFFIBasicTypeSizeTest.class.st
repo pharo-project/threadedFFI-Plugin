@@ -22,12 +22,6 @@ TFUFFIBasicTypeSizeTest >> ffiLibraryName [
 	^ Smalltalk os isUnix ifTrue: [ 'testLibrary.so' ] ifFalse: [ 'testLibrary.dylib' ] 
 ]
 
-{ #category : #accessing }
-TFUFFIBasicTypeSizeTest >> libraryPath [
-
-	^ 'testLibrary.dylib'
-]
-
 { #category : #'ffi-calls' }
 TFUFFIBasicTypeSizeTest >> sizeof_char [
 	self ffiCall: #(size_t sizeof_char())
