@@ -1,47 +1,53 @@
 Class {
-	#name : #TUFFIFunctionCallTest,
+	#name : #TFUFFICallbackTest,
 	#superclass : #TFUFFITestCase,
 	#category : #'ThreadedFFI-UFFI-Tests'
 }
 
 { #category : #tests }
-TUFFIFunctionCallTest >> callbackInALoop: callback [
+TFUFFICallbackTest >> callbackInALoop: callback [
 
 	^ self ffiCall: #(int callbackInALoop(void* callback))
 ]
 
 { #category : #accessing }
-TUFFIFunctionCallTest >> ffiLibraryName [
+TFUFFICallbackTest >> ffiLibraryName [
 
 	^ Smalltalk os isUnix ifTrue: [ 'testLibrary.so' ] ifFalse: [ 'testLibrary.dylib' ] 
 ]
 
 { #category : #tests }
-TUFFIFunctionCallTest >> returnAnswer [
+TFUFFICallbackTest >> returnAnswer [
 
 	^ self ffiCall: #(int32 returnAnswer())
 ]
 
 { #category : #tests }
-TUFFIFunctionCallTest >> singleCallToCallback: callback value: value [
+TFUFFICallbackTest >> shortCallout [
+	
+	^ self ffiCall: #(int shortCallout())
+]
+
+{ #category : #tests }
+TFUFFICallbackTest >> singleCallToCallback: callback value: value [
 
 	^ self ffiCall: #(int singleCallToCallback(void* callback, int value))
 ]
 
 { #category : #tests }
-TUFFIFunctionCallTest >> sumFloat: a andDouble: b [
+TFUFFICallbackTest >> sumFloat: a andDouble: b [
 
 	^ self ffiCall: #(float sumAFloatAndADouble(float a, double b))
 ]
 
 { #category : #tests }
-TUFFIFunctionCallTest >> sumInt:a andInt: b [
+TFUFFICallbackTest >> sumInt:a andInt: b [
 
 	^ self ffiCall: #(int sumTwoNumbers(int a, int b))
 ]
 
 { #category : #tests }
-TUFFIFunctionCallTest >> testCallbackAsFunction [
+TFUFFICallbackTest >> testCallbackAsFunction [
 
 	| callback fun definition |
 	callback := self
@@ -60,7 +66,7 @@ TUFFIFunctionCallTest >> testCallbackAsFunction [
 ]
 
 { #category : #tests }
-TUFFIFunctionCallTest >> testCallbackInLoop [
+TFUFFICallbackTest >> testCallbackInLoop [
 
 	| callback |
 
@@ -73,29 +79,11 @@ TUFFIFunctionCallTest >> testCallbackInLoop [
 ]
 
 { #category : #tests }
-TUFFIFunctionCallTest >> testCallbackInSingleFunction [
+TFUFFICallbackTest >> testCallbackInSingleFunction [
 
 	| callback |
 
 	callback := self newCallbackWithSignature: #(int (int a)) block: [ :a | a + 1 ].
 	self assert: (self singleCallToCallback: callback value: 3) equals: 5
 
-]
-
-{ #category : #tests }
-TUFFIFunctionCallTest >> testWithFloatAndDouble [
-	
-	self assert: (self sumFloat: 1.0 andDouble: 2.5) equals: 3.5
-]
-
-{ #category : #tests }
-TUFFIFunctionCallTest >> testWithTwoInts [
-
-	self assert: (self sumInt: 2 andInt: 3) equals: 5
-]
-
-{ #category : #tests }
-TUFFIFunctionCallTest >> testWithoutArguments [
-
-	self assert: self returnAnswer equals: 42.
 ]
