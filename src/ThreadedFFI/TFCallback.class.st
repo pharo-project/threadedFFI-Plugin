@@ -3,6 +3,8 @@ Class {
 	#superclass : #FFIExternalReference,
 	#instVars : [
 		'callbackData',
+		'parameterHandlers',
+		'returnTypeHandler',
 		'parameterTypes',
 		'returnType',
 		'block'
@@ -54,6 +56,7 @@ TFCallback >> callbackData: anObject [
 TFCallback >> initialize [
 	super initialize.
 	callbackData := ExternalAddress new.
+	parameterHandlers := #()
 ]
 
 { #category : #accessing }
@@ -86,9 +89,8 @@ TFCallback >> primUnregister [
 TFCallback >> register [
 	
 	handle isNull ifFalse: [ ^ self error: 'Callback already registered' ].
-	self validateTypes.	
+	self validateTypes.
 	self primRegister.
-	
 	TFCallbackQueue uniqueInstance registerCallback: self.
 ]
 
@@ -122,5 +124,8 @@ TFCallback >> unregister [
 TFCallback >> validateTypes [
 
 	parameterTypes do: [ :each | each validate ].
-	returnType validate
+	returnType validate.
+
+	parameterHandlers := parameterTypes collect: [ :e | e basicType ] as: Array.
+	returnTypeHandler := returnType basicType.
 ]

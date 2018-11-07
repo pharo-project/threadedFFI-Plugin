@@ -263,6 +263,12 @@ TFBasicType class >> void [
 	^ VOID
 ]
 
+{ #category : #accessing }
+TFBasicType >> basicType [
+	
+	^ self
+]
+
 { #category : #size }
 TFBasicType >> byteSize [
 	self validate.
