@@ -11,6 +11,10 @@
 #include <unistd.h>
 #include <string.h>
 
+/************************************************************
+*** Macros
+************************************************************/
+
 // Macros to define common identity id_type() functions to test arguments and return types
 #define id(TYPE) id_with_name(TYPE, TYPE)
 #define id_with_name(TYPE, NAME) TYPE id_##NAME(TYPE a){ return a; }
@@ -29,42 +33,46 @@
 sizeof_with_name(TYPE, NAME) \
 sum_with_name(TYPE, NAME)
 
-// Floating point numbers
+/************************************************************
+*** Floating point number types
+************************************************************/
+
 test_functions(float)
 test_functions(double)
   
-// Characters
+/************************************************************
+*** Character types
+************************************************************/
 test_functions(char)
 test_functions_with_name(unsigned char, uchar)
 
-// Signed integers
+/************************************************************
+*** Signed Integer types
+************************************************************/
+test_functions(short)
 test_functions(int)
 test_functions(int8_t)
 test_functions(int16_t)
 test_functions(int32_t)
 test_functions(int64_t)
+test_functions(long)
+test_functions_with_name(long long, longlong)
 
-// Unsigned integers
+/************************************************************
+*** Unsigned Integer types
+************************************************************/
+test_functions_with_name(unsigned short, ushort)
 test_functions_with_name(unsigned int, uint)
 test_functions(uint8_t)
 test_functions(uint16_t)
 test_functions(uint32_t)
 test_functions(uint64_t)
-  
-// Shorts
-test_functions(short)
-test_functions_with_name(unsigned short, ushort)
-
-// Longs
-test_functions(long)
 test_functions_with_name(unsigned long, ulong)
-test_functions_with_name(long long, longlong)
 test_functions_with_name(unsigned long long, ulonglong)
 
-// size_t
-test_functions(size_t)
-
-// Pointers
+/************************************************************
+*** Pointer types
+************************************************************/
   
 id_with_name(void*, pointer)
 
@@ -78,7 +86,10 @@ size_t sizeof_pointer(){
   return sizeof(void*);
 }
 
-// Strings
+/************************************************************
+*** Derived types, e.g., size_t, String, etc
+************************************************************/
+test_functions(size_t)
 
 // Duplicates a string and returns a pointer to it
 // It's the caller's responsability to free it
