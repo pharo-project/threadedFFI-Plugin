@@ -43,15 +43,7 @@ typedef struct {
 
 #define MAX_PENDING_CALLBACKS 100
 
-sqInt initializeWorkerThread();
-void* readAddress(sqInt anExternalAddress);
-void writeAddress(sqInt anExternalAddress, void* value);
-
 int getTypeByteSize(void* aType);
-
-void* getHandler(sqInt anExternalObject);
-
-void setHandler(sqInt anExternalObject, void* value);
 
 void fillBasicType(sqInt aOop);
 
@@ -72,8 +64,22 @@ void callbackReturn(CallbackInvocation* handler);
 
 void releaseCallback(CallbackData* callbackData);
 
+// Callout worker functions (calloutWorker.c)
+
+sqInt initializeWorkerThread();
 AsyncCallParameters* take_queue();
 void put_queue(AsyncCallParameters* calloutParameters);
 void* worker(void*);
+
+// Util functions (utils.c)
+
+void* getHandler(sqInt anExternalObject);
+void setHandler(sqInt anExternalObject, void* value);
+void* readAddress(sqInt anExternalAddress);
+void writeAddress(sqInt anExternalAddress, void* value);
+
+// Accessing the VM Functions
+
+extern struct VirtualMachine* interpreterProxy;
 
 #endif
