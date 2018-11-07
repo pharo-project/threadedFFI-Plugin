@@ -44,6 +44,12 @@ TFDerivedType >> getHandle [
 	^ self basicType getHandle
 ]
 
+{ #category : #testing }
+TFDerivedType >> isVoid [
+	
+	^ self basicType isVoid
+]
+
 { #category : #'reading-writing' }
 TFDerivedType >> readValue: anExternalAddress [
 	
