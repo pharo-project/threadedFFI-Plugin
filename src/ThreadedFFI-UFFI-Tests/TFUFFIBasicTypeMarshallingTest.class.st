@@ -32,12 +32,6 @@ TFUFFIBasicTypeMarshallingTest >> externalFunction: name ofType: type [
 ]
 
 { #category : #accessing }
-TFUFFIBasicTypeMarshallingTest >> ffiLibraryName [
-
-	^ Smalltalk os isUnix ifTrue: [ 'testLibrary.so' ] ifFalse: [ 'testLibrary.dylib' ] 
-]
-
-{ #category : #accessing }
 TFUFFIBasicTypeMarshallingTest >> libraryPath [
 
 	^ Smalltalk os isUnix ifTrue: [ 'testLibrary.so' ] ifFalse: [ 'testLibrary.dylib' ] 

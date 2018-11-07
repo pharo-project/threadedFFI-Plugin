@@ -15,3 +15,9 @@ TFUFFITestCase >> calloutAPIClass [
 
 	^ TFCalloutAPI
 ]
+
+{ #category : #accessing }
+TFUFFITestCase >> ffiLibraryName [
+
+	^ Smalltalk os isUnix ifTrue: [ 'testLibrary.so' ] ifFalse: [ 'testLibrary.dylib' ] 
+]

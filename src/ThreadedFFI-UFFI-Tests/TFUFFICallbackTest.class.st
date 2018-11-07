@@ -10,12 +10,6 @@ TFUFFICallbackTest >> callbackInALoop: callback [
 	^ self ffiCall: #(int callbackInALoop(void* callback))
 ]
 
-{ #category : #accessing }
-TFUFFICallbackTest >> ffiLibraryName [
-
-	^ Smalltalk os isUnix ifTrue: [ 'testLibrary.so' ] ifFalse: [ 'testLibrary.dylib' ] 
-]
-
 { #category : #tests }
 TFUFFICallbackTest >> returnAnswer [
 

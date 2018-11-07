@@ -11,12 +11,6 @@ TFUFFIFunctionCallTest >> calloutWithManyArguments: arg1 and: arg2 and: arg3 and
 			#(int multipleArgumentCallout #(int arg1 , int arg2 , int arg3 , int arg4 , int arg5 , int arg6 , int arg7 , int arg8 , int arg9 , int arg10))
 ]
 
-{ #category : #accessing }
-TFUFFIFunctionCallTest >> ffiLibraryName [
-
-	^ Smalltalk os isUnix ifTrue: [ 'testLibrary.so' ] ifFalse: [ 'testLibrary.dylib' ] 
-]
-
 { #category : #tests }
 TFUFFIFunctionCallTest >> longCallout: seconds [
 	

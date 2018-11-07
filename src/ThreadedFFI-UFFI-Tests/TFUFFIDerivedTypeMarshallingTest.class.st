@@ -1,0 +1,67 @@
+Class {
+	#name : #TFUFFIDerivedTypeMarshallingTest,
+	#superclass : #TFUFFITestCase,
+	#category : #'ThreadedFFI-UFFI-Tests'
+}
+
+{ #category : #'ffi-calls' }
+TFUFFIDerivedTypeMarshallingTest >> booleanToInt: boolean [
+
+	^ self ffiCall: #(int id_int(Boolean boolean))
+]
+
+{ #category : #'ffi-calls' }
+TFUFFIDerivedTypeMarshallingTest >> intToBoolean: int [
+
+	^ self ffiCall: #(Boolean id_int(int int))
+]
+
+{ #category : #'ffi-calls' }
+TFUFFIDerivedTypeMarshallingTest >> size_t_identity: aSize [
+
+	^ self ffiCall: #(size_t id_size_t(size_t aSize))
+]
+
+{ #category : #'ffi-calls' }
+TFUFFIDerivedTypeMarshallingTest >> sum_longlong:a with: b [
+
+	^ self ffiCall: #(longlong sum_long(longlong a, longlong b))
+]
+
+{ #category : #tests }
+TFUFFIDerivedTypeMarshallingTest >> testMarshallingFalseArgument [
+
+	self assert: (self booleanToInt: false) equals: 0
+]
+
+{ #category : #tests }
+TFUFFIDerivedTypeMarshallingTest >> testMarshallingFalseReturnValue [
+
+	self assert: (self intToBoolean: 0) equals: false
+]
+
+{ #category : #tests }
+TFUFFIDerivedTypeMarshallingTest >> testMarshallingSize_t [
+
+	self assert: (self size_t_identity: 1788) equals: 1788
+]
+
+{ #category : #tests }
+TFUFFIDerivedTypeMarshallingTest >> testMarshallingTrueArgument [
+
+	self assert: (self booleanToInt: true) equals: 1
+]
+
+{ #category : #tests }
+TFUFFIDerivedTypeMarshallingTest >> testMarshallingTrueReturnValue [
+
+	self assert: (self intToBoolean: 17) equals: true
+]
+
+{ #category : #tests }
+TFUFFIDerivedTypeMarshallingTest >> testSumLongLong [
+
+	| return |
+	return := self sum_longlong: 3 with: 2.
+	self assert: return equals: 5
+]
