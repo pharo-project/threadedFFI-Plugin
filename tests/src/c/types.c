@@ -6,8 +6,10 @@
 **/
 
 #include "testLibrary.h"
+#include <stdlib.h>
 #include <stdint.h>
 #include <unistd.h>
+#include <string.h>
 
 // Macros to define common identity id_type() functions to test arguments and return types
 #define id(TYPE) id_with_name(TYPE, TYPE)
@@ -63,6 +65,8 @@ test_functions_with_name(unsigned long long, ulonglong)
 test_functions(size_t)
 
 // Pointers
+  
+id_with_name(void*, pointer)
 
 // Receive a pointer as argument
 // Dereference its value and return it
@@ -72,4 +76,15 @@ void *unref_pointer(void **pointer) {
 
 size_t sizeof_pointer(){ 
   return sizeof(void*);
+}
+
+// Strings
+
+// Duplicates a string and returns a pointer to it
+// It's the caller's responsability to free it
+char* dup_string(char* aString){ 
+  int len = strlen(aString);
+  char *dst = malloc(len + 1);
+  strcpy(dst, aString);
+  return dst;
 }
