@@ -9,6 +9,10 @@
 #include <stdint.h>
 #include <unistd.h>
 
+// Macros to define common identity id_type() functions to test arguments and return types
+#define id(TYPE) id_with_name(TYPE, TYPE)
+#define id_with_name(TYPE, NAME) TYPE id_##NAME(TYPE a){ return a; }
+
 // Macros to define common sum_type() functions to test arguments and return types
 #define sum(TYPE) sum_with_name(TYPE, TYPE)
 #define sum_with_name(TYPE, NAME) TYPE sum_##NAME(TYPE a, TYPE b){ return a + b; }
