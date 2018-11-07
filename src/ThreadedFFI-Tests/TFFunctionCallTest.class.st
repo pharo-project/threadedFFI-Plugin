@@ -127,15 +127,6 @@ TFFunctionCallTest >> testWithTwoInts [
 
 { #category : #tests }
 TFFunctionCallTest >> testWithoutArguments [
-	| fun return |
-	fun := TFExternalFunction
-		name: 'returnAnswer'
-		moduleName: self libraryPath
-		definition: (TFFunctionDefinition parameterTypes: {} returnType: TFBasicType sint32).
-
-	return := fun newAsyncCall
-		parameters: #();
-		execute.
-
-	self assert: return equals: 42.
+	
+	self assert: self shortCallout equals: 42.
 ]
