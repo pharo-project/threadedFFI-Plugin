@@ -54,6 +54,11 @@ simple_callback_with_name(unsigned long long, ulonglong)
   
 simple_callback_with_name(void*, pointer)
 
+/************************************************************
+*** Derived types, e.g., size_t, String, etc
+************************************************************/
+simple_callback(size_t)
+
 // Deprecated
 typedef int (*SIMPLE_CALLBACK)(int);
 

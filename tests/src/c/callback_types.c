@@ -52,3 +52,8 @@ simple_callback_with_name_f(unsigned long long, ulonglong)
 ************************************************************/
   
 simple_callback_with_name_f(void*, pointer)
+  
+/************************************************************
+*** Derived types, e.g., size_t, String, etc
+************************************************************/
+simple_callback_f(size_t)
