@@ -23,7 +23,8 @@
 
 // Macros to define common functions
 #define test_functions(TYPE) test_functions_with_name(TYPE, TYPE)
-#define test_functions_with_name(TYPE, NAME) sizeof_with_name(TYPE, NAME) \
+#define test_functions_with_name(TYPE, NAME) id_with_name(TYPE, NAME) \
+sizeof_with_name(TYPE, NAME) \
 sum_with_name(TYPE, NAME)
 
 // Floating point numbers
