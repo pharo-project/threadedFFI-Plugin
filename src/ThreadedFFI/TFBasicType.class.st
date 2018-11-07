@@ -49,7 +49,6 @@ Class {
 		'SINT8',
 		'SLONG',
 		'SSHORT',
-		'STRING',
 		'TypeMap',
 		'Types',
 		'UCHAR',
@@ -98,12 +97,6 @@ TFBasicType class >> createBasicTypes [
 
 			ULONG := self newIntTypeName: #ulong code: 19 signed: false.
 			SLONG := self newIntTypeName: #slong code: 20 signed: true.	
-			
-			"Derived pointer types"
-			STRING := TFStringType new
-				typeName: #string;
-				typeCode: 12;
-				yourself.
 			}
 ]
 
@@ -213,11 +206,6 @@ TFBasicType class >> slong [
 { #category : #accessing }
 TFBasicType class >> sshort [
 	^SSHORT
-]
-
-{ #category : #accessing }
-TFBasicType class >> string [
-	^ STRING
 ]
 
 { #category : #accessing }

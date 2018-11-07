@@ -29,12 +29,6 @@ TFStringType >> readValue: anExternalAddress [
 ]
 
 { #category : #writting }
-TFStringType >> readValue: anExternalAddress offset: offset [
-
-	^ (super readValue: anExternalAddress offset: offset) readStringUTF8
-]
-
-{ #category : #writting }
 TFStringType >> write: aString into: targetAddress [
 
 	self basicType

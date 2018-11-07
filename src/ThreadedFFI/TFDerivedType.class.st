@@ -2,7 +2,8 @@ Class {
 	#name : #TFDerivedType,
 	#superclass : #Object,
 	#classVars : [
-		'BOOLEAN'
+		'BOOLEAN',
+		'STRING'
 	],
 	#category : #ThreadedFFI
 }
@@ -11,6 +12,12 @@ Class {
 TFDerivedType class >> boolean [
 	
 	^ BOOLEAN ifNil: [ BOOLEAN := TFBooleanType new ]
+]
+
+{ #category : #accessing }
+TFDerivedType class >> string [
+	
+	^ STRING ifNil: [ STRING := TFStringType new ]
 ]
 
 { #category : #accessing }
