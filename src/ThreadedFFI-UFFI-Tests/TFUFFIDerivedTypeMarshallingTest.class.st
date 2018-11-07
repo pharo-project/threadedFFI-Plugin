@@ -37,7 +37,13 @@ TFUFFIDerivedTypeMarshallingTest >> stringToPointer: aString [
 { #category : #'ffi-calls' }
 TFUFFIDerivedTypeMarshallingTest >> sum_longlong:a with: b [
 
-	^ self ffiCall: #(longlong sum_long(longlong a, longlong b))
+	^ self ffiCall: #(longlong sum_longlong(longlong a, longlong b))
+]
+
+{ #category : #'ffi-calls' }
+TFUFFIDerivedTypeMarshallingTest >> sum_ulonglong:a with: b [
+
+	^ self ffiCall: #(ulonglong sum_ulonglong(ulonglong a, ulonglong b))
 ]
 
 { #category : #tests }
@@ -94,9 +100,17 @@ TFUFFIDerivedTypeMarshallingTest >> testMarshallingTrueReturnValue [
 ]
 
 { #category : #tests }
-TFUFFIDerivedTypeMarshallingTest >> testSumLongLong [
+TFUFFIDerivedTypeMarshallingTest >> testSumSignedLongLong [
 
 	| return |
 	return := self sum_longlong: 3 with: 2.
 	self assert: return equals: 5
+]
+
+{ #category : #tests }
+TFUFFIDerivedTypeMarshallingTest >> testUnsignedSumLongLong [
+
+	| return |
+	return := self sum_longlong: -3 with: 2.
+	self assert: return equals: -1
 ]

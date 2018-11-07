@@ -42,6 +42,12 @@ TFBasicTypeSizeTest >> testSizeFloat [
 ]
 
 { #category : #tests }
+TFBasicTypeSizeTest >> testSizeLongLong [
+
+	self assertType: 'longlong' equals: 8
+]
+
+{ #category : #tests }
 TFBasicTypeSizeTest >> testSizePointer [
 
 	self assertType: 'pointer' equals: Smalltalk wordSize
