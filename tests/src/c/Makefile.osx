@@ -15,5 +15,5 @@ $(BUILDDIR)/%.o: %.c $(HEADERS)
 	clang -arch i386 -arch x86_64 -c $< -o $@
 
 clean: 
-	rm -rf build
+	rm -rf $(BUILDDIR)
 	

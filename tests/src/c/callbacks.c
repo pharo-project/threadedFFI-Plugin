@@ -1,4 +1,4 @@
-#include "testLibrary.h"
+#include "callbacks.h"
 
 int singleCallToCallback(SIMPLE_CALLBACK fun, int base){
 	return fun(base + 1);

@@ -1,3 +1,10 @@
+#ifndef TEST_LIBRARY_H
+#define TEST_LIBRARY_H
+
+#include <stdlib.h>
+#include <stdint.h>
+#include <unistd.h>
+#include <string.h>
 #include <stdio.h>
 
-typedef int (*SIMPLE_CALLBACK)(int);
+#endif
