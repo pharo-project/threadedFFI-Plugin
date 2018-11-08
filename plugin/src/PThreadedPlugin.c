@@ -1,35 +1,10 @@
 #include "PThreadedPlugin.h"
 
-/*** Function Prototypes ***/
-const char* getModuleName(void);
-sqInt initialiseModule(void);
-sqInt primitiveCallbackReturn(void);
-sqInt primitiveDefineFunction(void);
-sqInt primitiveFillBasicType(void);
-sqInt primitiveFreeDefinition(void);
-sqInt primitiveInitializeCallbacksQueue(void);
-sqInt primitivePerformCall(void);
-sqInt primitivePerformSyncCall(void);
-sqInt primitiveReadNextCallback(void);
-sqInt primitiveRegisterCallback(void);
-sqInt primitiveTypeByteSize(void);
-sqInt primitiveUnregisterCallback(void);
-sqInt setInterpreter(struct VirtualMachine*anInterpreter);
-
-
 /*** Variables ***/
 
 struct VirtualMachine* interpreterProxy;
 static const char *moduleName = "PThreadedPlugin * ThreadedFFI-Plugin-pt.2 (e)";
 
-
-
-/*	Note: This is hardcoded so it can be run from Squeak.
-	The module name is used for validating a module *after*
-	it is loaded to check if it does really contain the module
-	we're thinking it contains. This is important! */
-
-	/* InterpreterPlugin>>#getModuleName */
 const char * getModuleName(void)
 {
 	return moduleName;
@@ -40,7 +15,6 @@ sqInt initialiseModule(void)
 	return initializeWorkerThread();
 }
 
-	/* PThreadedPlugin>>#primitiveCallbackReturn */
 sqInt primitiveCallbackReturn(void)
 {
     void*  handler;
@@ -52,7 +26,6 @@ sqInt primitiveCallbackReturn(void)
 	return 0;
 }
 
-	/* PThreadedPlugin>>#primitiveDefineFunction */
 sqInt primitiveDefineFunction(void)
 {
     sqInt count;
@@ -87,14 +60,12 @@ sqInt primitiveDefineFunction(void)
 	return 0;
 }
 
-	/* PThreadedPlugin>>#primitiveFillBasicType */
 sqInt primitiveFillBasicType(void)
 {
 	fillBasicType(interpreterProxy->stackValue(0));
 	return 0;
 }
 
-	/* PThreadedPlugin>>#primitiveFreeDefinition */
 sqInt primitiveFreeDefinition(void)
 {
     void*handler;
@@ -111,7 +82,6 @@ sqInt primitiveFreeDefinition(void)
 	return 0;
 }
 
-	/* PThreadedPlugin>>#primitiveInitializeCallbacksQueue */
 sqInt primitiveInitializeCallbacksQueue(void)
 {
     int index;
@@ -124,7 +94,6 @@ sqInt primitiveInitializeCallbacksQueue(void)
 	return 0;
 }
 
-	/* PThreadedPlugin>>#primitivePerformCall */
 sqInt primitivePerformCall(void)
 {
     void*aCif;
@@ -151,9 +120,7 @@ sqInt primitivePerformCall(void)
 	return 0;
 }
 
-	/* PThreadedPlugin>>#primitivePerformCall */
-sqInt
-primitivePerformSyncCall(void)
+sqInt primitivePerformSyncCall(void)
 {
     void*aCif;
     void*aExternalFunction;
@@ -179,7 +146,6 @@ primitivePerformSyncCall(void)
 
 
 
-	/* PThreadedPlugin>>#primitiveReadNextCallback */
 sqInt primitiveReadNextCallback(void)
 {
     CallbackInvocation* address;
@@ -194,7 +160,6 @@ sqInt primitiveReadNextCallback(void)
 	return 0;
 }
 
-	/* PThreadedPlugin>>#primitiveRegisterCallback */
 sqInt primitiveRegisterCallback(void)
 {
     sqInt callbackData;
@@ -231,7 +196,6 @@ sqInt primitiveRegisterCallback(void)
 	return 0;
 }
 
-	/* PThreadedPlugin>>#primitiveTypeByteSize */
 sqInt primitiveTypeByteSize(void)
 {
     void* handler;
@@ -247,7 +211,6 @@ sqInt primitiveTypeByteSize(void)
 	return 0;
 }
 
-	/* PThreadedPlugin>>#primitiveUnregisterCallback */
 sqInt primitiveUnregisterCallback(void)
 {
     sqInt callbackData;
@@ -261,10 +224,6 @@ sqInt primitiveUnregisterCallback(void)
 	return 0;
 }
 
-
-/*	Note: This is coded so that it can be run in Squeak. */
-
-	/* InterpreterPlugin>>#setInterpreter: */
 sqInt setInterpreter(struct VirtualMachine* anInterpreter)
 {
     sqInt ok;

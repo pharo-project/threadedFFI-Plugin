@@ -22,7 +22,7 @@ sqInt initializeWorkerThread(){
 		perror("pthread_mutex_init(&workerLock) error");
 		return -1;
 	}
-	
+
 	if (pthread_mutex_init(&queueCriticalSection, NULL) != 0){
 		perror("pthread_mutex_init(&queueCriticalSection) error");
 		return -1;
@@ -85,7 +85,7 @@ WorkerTask* take_queue(){
 
 	if(!current){
 		pthread_mutex_unlock(&queueCriticalSection);
-		return NULL;  	
+		return NULL;
 	}
 
 	calloutParameters = current->calloutParameters;
@@ -95,10 +95,10 @@ WorkerTask* take_queue(){
 	if(queue.first == NULL){
 		queue.last = NULL;
 	}
-	
+
 	// Free the queue mutex
 	pthread_mutex_unlock(&queueCriticalSection);
-	
+
 	return calloutParameters;
 }
 
@@ -109,7 +109,7 @@ void put_queue(WorkerTask* calloutParameters){
 
 	pthread_mutex_lock(&queueCriticalSection);
 	if (queue.last){
-		queue.last->next = current;    
+		queue.last->next = current;
 	} else {
 		queue.first = current;
 	}

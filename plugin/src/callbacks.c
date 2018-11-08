@@ -91,8 +91,8 @@ void callbackFrontend(ffi_cif *cif, void *ret, void* args[], void* ptr){
 	inv.returnHolder = ret;
 	addPendingCallback(&inv);
 	
-  // Manage callouts while waiting this callback to return
-  worker(NULL);
+	// Manage callouts while waiting this callback to return
+	worker(NULL);
 }
 
 void* defineCallbackWithParamsCountReturnType(CallbackData** callbackData, ffi_type** parameters, sqInt count, ffi_type* returnType){
@@ -138,7 +138,7 @@ void* defineCallbackWithParamsCountReturnType(CallbackData** callbackData, ffi_t
 
 void callbackReturn(CallbackInvocation* invocation){
 	WorkerTask* callbackReturnTask = malloc(sizeof(WorkerTask));
-  callbackReturnTask->type = CALLBACK_RETURN;
+	callbackReturnTask->type = CALLBACK_RETURN;
 	put_queue(callbackReturnTask);
 //	semaphore_signal(invocation->semaphore);
 }
