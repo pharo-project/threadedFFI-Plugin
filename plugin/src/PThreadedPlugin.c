@@ -5,18 +5,58 @@
 struct VirtualMachine* interpreterProxy;
 static const char *moduleName = "PThreadedPlugin * ThreadedFFI-Plugin-pt.2 (e)";
 
-const char * getModuleName(void)
-{
+/*
+ * The primitives should be defined with a depth parameter.
+ * For this, the following macros are generated.
+ *
+ * Primitive macro generates with 0, because it is the normal value for depth.
+ * PrimitiveWithDepth receives a parameters for the depth.
+ *
+ * What is depth?
+ *
+ * Initially when the VM executes a primitive it does not handle the forwarding
+ * of the parameters. It sends the parameters as they are.
+ * A primitive should validate the parameters sent to it.
+ * If they are not valid (or they are a forwarder, and they need to be used) it should fail.
+ *
+ * The VM will handle the resolution of the forwarders and recall the primitive.
+ * If the depth is -1, the VM will not do nothing and just fail the call.
+ * If the depth is >=0, the VM will resolve the forwarders and then recall the primitive.
+ *
+ * The depth, is the levels of accessors used in the primitive.
+ *
+ * If the primitive only uses the objects received by parameter the depth is 0,
+ * if it uses one of the objects refereced by the parameters the depth is 1, and so on.
+ *
+ * Example
+ * =======
+ *
+ * [ p ] --> [ a ] -> [ x ]
+ * 		 --> [ b ]
+ * 		 \-> [ c ] -> [ y ]
+ *
+ *
+ * If we only require to use the object p (that is a parameter to the primitive in the stack),
+ * the depth is 0, if we want to use the object a, b or c (that are referenciated by p) the depth
+ * should be 1. In the case of wanting to use x or y, depth should be 2.
+ *
+ */
+
+#define Primitive(functionName) signed char functionName ##AccessorDepth = 0; \
+	sqInt functionName (void)
+
+#define PrimitiveWithDepth(functionName, N) signed char functionName ##AccessorDepth = N; \
+	sqInt functionName (void)
+
+const char * getModuleName(void){
 	return moduleName;
 }
 
-sqInt initialiseModule(void)
-{
+sqInt initialiseModule(void){
 	return initializeWorkerThread();
 }
 
-sqInt primitiveCallbackReturn(void)
-{
+PrimitiveWithDepth(primitiveCallbackReturn, 1){
     void*  handler;
     sqInt receiver;
 
@@ -26,8 +66,7 @@ sqInt primitiveCallbackReturn(void)
 	return 0;
 }
 
-sqInt primitiveDefineFunction(void)
-{
+PrimitiveWithDepth(primitiveDefineFunction, 2){
     sqInt count;
     void*handler;
     sqInt idx;
@@ -60,14 +99,12 @@ sqInt primitiveDefineFunction(void)
 	return 0;
 }
 
-sqInt primitiveFillBasicType(void)
-{
+Primitive(primitiveFillBasicType){
 	fillBasicType(interpreterProxy->stackValue(0));
 	return 0;
 }
 
-sqInt primitiveFreeDefinition(void)
-{
+PrimitiveWithDepth(primitiveFreeDefinition, 1){
     void*handler;
     sqInt receiver;
 
@@ -82,8 +119,7 @@ sqInt primitiveFreeDefinition(void)
 	return 0;
 }
 
-sqInt primitiveInitializeCallbacksQueue(void)
-{
+Primitive(primitiveInitializeCallbacksQueue){
     int index;
 
 	index = interpreterProxy->integerValueOf(interpreterProxy->stackValue(0));
@@ -94,8 +130,7 @@ sqInt primitiveInitializeCallbacksQueue(void)
 	return 0;
 }
 
-sqInt primitivePerformCall(void)
-{
+PrimitiveWithDepth(primitivePerformCall, 2){
     void*aCif;
     void*aExternalFunction;
     void*parametersAddress;
@@ -120,8 +155,7 @@ sqInt primitivePerformCall(void)
 	return 0;
 }
 
-sqInt primitivePerformSyncCall(void)
-{
+PrimitiveWithDepth(primitivePerformSyncCall, 2){
     void*aCif;
     void*aExternalFunction;
     void*parametersAddress;
@@ -146,8 +180,7 @@ sqInt primitivePerformSyncCall(void)
 
 
 
-sqInt primitiveReadNextCallback(void)
-{
+PrimitiveWithDepth(primitiveReadNextCallback, 1){
     CallbackInvocation* address;
     sqInt externalAddress;
 
@@ -160,8 +193,7 @@ sqInt primitiveReadNextCallback(void)
 	return 0;
 }
 
-sqInt primitiveRegisterCallback(void)
-{
+PrimitiveWithDepth(primitiveRegisterCallback, 3){
     sqInt callbackData;
     CallbackData*  callbackDataPtr;
     sqInt count;
@@ -185,19 +217,18 @@ sqInt primitiveRegisterCallback(void)
 		parameters[idx] = (getHandler(interpreterProxy->stObjectat(paramArray, idx + 1)));
 	}
 	if (interpreterProxy->failed()) {
-		return null;
+		return -1;
 	}
 	handler = defineCallbackWithParamsCountReturnType((&callbackDataPtr), parameters, count, returnType);
 	if (interpreterProxy->failed()) {
-		return null;
+		return -1;
 	}
 	setHandler(receiver, handler);
 	writeAddress(callbackData, callbackDataPtr);
 	return 0;
 }
 
-sqInt primitiveTypeByteSize(void)
-{
+PrimitiveWithDepth(primitiveTypeByteSize, 1){
     void* handler;
     sqInt receiver;
     sqInt size;
@@ -211,8 +242,43 @@ sqInt primitiveTypeByteSize(void)
 	return 0;
 }
 
-sqInt primitiveUnregisterCallback(void)
-{
+/*
+ * This primitive returns the address of an image object.
+ * It fails if the object is not pinned.
+ *
+ * Receives an OOP as parameter and returns an SmallInteger
+ */
+Primitive(primitiveGetAddressOfOOP){
+	sqInt oop;
+
+	oop = interpreterProxy->stackValue(0);
+
+	if(!interpreterProxy->isPinned(oop)){
+//		interpreterProxy->primitiveFailFor(PrimErrBadReceiver);
+		interpreterProxy->primitiveFail();
+		return -1;
+	}
+
+	interpreterProxy->pop(2);
+	interpreterProxy->pushInteger(oop + BaseHeaderSize);
+	return 0;
+}
+
+/*
+ * This primitive returns the object in an oop passed as integer.
+ */
+
+Primitive(primitiveGetObjectFromAddress){
+	sqInt oop;
+
+	oop = interpreterProxy->integerValueOf(interpreterProxy->stackValue(0)) - BaseHeaderSize;
+
+	interpreterProxy->popthenPush(2, oop);
+	return 0;
+}
+
+
+PrimitiveWithDepth(primitiveUnregisterCallback, 1){
     sqInt callbackData;
     CallbackData*  callbackDataPtr;
     sqInt receiver;
