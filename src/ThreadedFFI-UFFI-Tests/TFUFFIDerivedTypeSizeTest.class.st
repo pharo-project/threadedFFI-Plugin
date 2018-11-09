@@ -11,12 +11,6 @@ TFUFFIDerivedTypeSizeTest >> assertType: typename equals: aSize [
 ]
 
 { #category : #helpers }
-TFUFFIDerivedTypeSizeTest >> libraryPath [
-
-	^ 'testLibrary.dylib'
-]
-
-{ #category : #helpers }
 TFUFFIDerivedTypeSizeTest >> sizeof_size_t [
 	self ffiCall: #(size_t sizeof_size_t())
 ]

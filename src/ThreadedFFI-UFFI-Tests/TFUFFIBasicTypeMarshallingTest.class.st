@@ -31,12 +31,6 @@ TFUFFIBasicTypeMarshallingTest >> externalFunction: name ofType: type [
 							returnType: type)
 ]
 
-{ #category : #accessing }
-TFUFFIBasicTypeMarshallingTest >> libraryPath [
-
-	^ Smalltalk os isUnix ifTrue: [ 'testLibrary.so' ] ifFalse: [ 'testLibrary.dylib' ] 
-]
-
 { #category : #'ffi-calls' }
 TFUFFIBasicTypeMarshallingTest >> sum_char:a with: b [
 	^ self ffiCall: #(char sum_char(char a, char b))

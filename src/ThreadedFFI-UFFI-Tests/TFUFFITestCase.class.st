@@ -19,5 +19,9 @@ TFUFFITestCase >> calloutAPIClass [
 { #category : #accessing }
 TFUFFITestCase >> ffiLibraryName [
 
-	^ Smalltalk os isUnix ifTrue: [ 'testLibrary.so' ] ifFalse: [ 'testLibrary.dylib' ] 
+	Smalltalk os isUnix ifTrue: [ ^ 'testLibrary.so' ].
+	Smalltalk os isMacOS ifTrue: [ ^ 'testLibrary.dylib' ].
+	Smalltalk os isWindows ifTrue: [ ^ 'testLibrary.dll' ].
+
+	self error: 'Unsupported Platform'
 ]
