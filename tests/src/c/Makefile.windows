@@ -1,0 +1,24 @@
+SOURCES=$(notdir $(shell find . -iname '*.c'))
+HEADERS=$(notdir $(shell find . -iname '*.h'))
+OBJS=$(SOURCES:.c=.o)
+BUILDDIR=../../../results/testLibrary/$(ARCHITECTURE)
+
+ifeq ($(ARCHITECTURE),32)
+	CC="/usr/bin/i686-w64-mingw32-gcc.exe"
+else
+	CC="/usr/bin/x86_64-w64-mingw32-gcc.exe"
+endif
+
+all: $(BUILDDIR)/testLibrary.dll
+
+$(BUILDDIR)/testLibrary.dll: $(BUILDDIR) $(addprefix $(BUILDDIR)/,$(OBJS))
+	$(CC) --shared $(EXTRA) $(BUILDDIR)/*.o -o $(BUILDDIR)/testLibrary.dll
+
+$(BUILDDIR): 
+	mkdir -p $(BUILDDIR)
+
+$(BUILDDIR)/%.o: %.c $(HEADERS)
+	$(CC) $(EXTRA) -c $< -o $@
+
+clean: 
+	rm -rf $(BUILDDIR)

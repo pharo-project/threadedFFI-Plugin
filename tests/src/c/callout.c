@@ -20,7 +20,7 @@ int shortCallout(){
 }
 
 int longCallout(int seconds){
-	usleep(seconds * 1000000); // will sleep for number of seconds
+  sleep(seconds); // will sleep for number of seconds
   return 1;
 }
 

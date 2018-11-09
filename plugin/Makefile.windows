@@ -8,8 +8,8 @@ else
 	CC="/usr/bin/x86_64-w64-mingw32-gcc.exe"
 endif
 
-BUILD_DIR=../results/plugin/osx$(ARCHITECTURE)
-PACKAGE_NAME=PharoThreadedFFI-osx$(ARCHITECTURE).zip
+BUILD_DIR=../results/plugin/windows$(ARCHITECTURE)
+PACKAGE_NAME=PharoThreadedFFI-windows$(ARCHITECTURE).zip
 
 libFFI_ADDITIONAL_CFG= CC=$(CC) CXX=$(CC)
 
@@ -18,7 +18,7 @@ LD=$(CC)
 
 SRCS=./src
 VMSOURCES=../results/vm/src
-PLUGIN_NAME=libPThreadedPlugin.dll
+PLUGIN_NAME=PThreadedPlugin.dll
 
 SOURCES=$(notdir $(shell find $(SRCS) -iname *.c))
 HEADERS=$(shell find $(SRCS) -iname *.h)
@@ -30,7 +30,7 @@ libFFI_SOURCES=../results/libffi
 ADDITIONAL_LIBS=-lffi
 ADDITIONAL_LIB_PATHS=-L../results/libffi/$(libFFI_TARGET)/.libs
 
-CFLAGS=-g3 -I$(VMSOURCES)/platforms/iOS/vm/OSX/ -I$(VMSOURCES)/platforms/Cross/vm/ -I$(VMSOURCES)/$(SPURVM)/vm/ -I../results/libffi/$(libFFI_TARGET)/include
+CFLAGS=-g3 -I$(VMSOURCES)/platforms/win32/vm/ -I$(VMSOURCES)/platforms/Cross/vm/ -I$(VMSOURCES)/$(SPURVM)/vm/ -I../results/libffi/$(libFFI_TARGET)/include
 LDFLAGS=$(ADDITIONAL_LIB_PATHS) -shared $(ARCH_OPTS) $(ADDITIONAL_LIBS)
 
 .DEFAULT: all

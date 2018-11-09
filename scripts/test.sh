@@ -13,19 +13,26 @@ __root="$(cd "$(dirname "${__dir}")" && pwd)"
 ${__root}/scripts/buildPlugin.sh
 ${__root}/scripts/buildTestLibrary.sh
 
-SYSTEM_NAME=`uname -s`
+SYSTEM_NAME=`${__root}/scripts/getOS.sh`
 
-if [ $SYSTEM_NAME == "Darwin" ] 
+if [ $SYSTEM_NAME == "osx" ] 
 then
 	${__root}/scripts/testOSX.sh 32
 	${__root}/scripts/testOSX.sh 64
 	exit 0
 fi
 
-if [ $SYSTEM_NAME == "Linux" ] 
+if [ $SYSTEM_NAME == "linux" ] 
 then
 	${__root}/scripts/testLinux.sh 32
 	${__root}/scripts/testLinux.sh 64
+	exit 0
+fi
+
+if [ $SYSTEM_NAME == "windows" ] 
+then
+	${__root}/scripts/testWindows.sh 32
+	${__root}/scripts/testWindows.sh 64
 	exit 0
 fi
 

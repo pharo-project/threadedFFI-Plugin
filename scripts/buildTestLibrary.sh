@@ -26,4 +26,10 @@ then
     make -f Makefile.linux ARCHITECTURE=64 EXTRA=-fPIC
 fi
 
+if [ $OS == "windows" ]
+then
+    make -f Makefile.windows ARCHITECTURE=32 EXTRA=-m32
+    make -f Makefile.windows ARCHITECTURE=64 EXTRA=-fPIC
+fi
+
 cd "${LOCAL_DIR}"
