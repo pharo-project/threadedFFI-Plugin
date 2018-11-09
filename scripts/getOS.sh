@@ -20,5 +20,11 @@ then
 	exit 0
 fi
 
-#I have no fucking where we are
+if [ $SYSTEM_NAME == 'CYGWIN_NT-10.0' ] 
+then
+	echo 'windows'
+	exit 0
+fi
+
+#I have no idea where we are
 exit 99

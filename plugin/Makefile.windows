@@ -1,0 +1,42 @@
+ifeq ($(ARCHITECTURE),32)
+	SPURVM=spursrc
+	libFFI_TARGET=i686-unknown-cygwin
+	CC="/usr/bin/i686-w64-mingw32-gcc.exe"
+else
+	SPURVM=spursrc
+	libFFI_TARGET=x86_64-unknown-cygwin
+	CC="/usr/bin/x86_64-w64-mingw32-gcc.exe"
+endif
+
+BUILD_DIR=../results/plugin/osx$(ARCHITECTURE)
+PACKAGE_NAME=PharoThreadedFFI-osx$(ARCHITECTURE).zip
+
+libFFI_ADDITIONAL_CFG= CC=$(CC) CXX=$(CC)
+
+CXX=$(CC)
+LD=$(CC)
+
+SRCS=./src
+VMSOURCES=../results/vm/src
+PLUGIN_NAME=libPThreadedPlugin.dll
+
+SOURCES=$(notdir $(shell find $(SRCS) -iname *.c))
+HEADERS=$(shell find $(SRCS) -iname *.h)
+OBJS=$(addprefix $(BUILD_DIR)/,$(addsuffix .o,$(basename $(SOURCES))))
+
+libFFI=../results/libffi/$(libFFI_TARGET)/.libs/cygffi-7.dll
+libFFI_SOURCES=../results/libffi
+
+ADDITIONAL_LIBS=-lffi
+ADDITIONAL_LIB_PATHS=-L../results/libffi/$(libFFI_TARGET)/.libs
+
+CFLAGS=-g3 -I$(VMSOURCES)/platforms/iOS/vm/OSX/ -I$(VMSOURCES)/platforms/Cross/vm/ -I$(VMSOURCES)/$(SPURVM)/vm/ -I../results/libffi/$(libFFI_TARGET)/include
+LDFLAGS=$(ADDITIONAL_LIB_PATHS) -shared $(ARCH_OPTS) $(ADDITIONAL_LIBS)
+
+.DEFAULT: all
+
+$(libFFI): $(libFFI_SOURCES)/configure
+	cd $(libFFI_SOURCES) && ./configure --target=$(libFFI_TARGET) $(libFFI_ADDITIONAL_CFG)
+	cd $(libFFI_SOURCES)/$(libFFI_TARGET) && $(MAKE)
+	
+include Makefile.common
