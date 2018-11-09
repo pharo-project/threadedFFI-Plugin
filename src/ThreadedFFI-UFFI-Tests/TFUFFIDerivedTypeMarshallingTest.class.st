@@ -11,6 +11,12 @@ TFUFFIDerivedTypeMarshallingTest >> booleanToInt: boolean [
 ]
 
 { #category : #'ffi-calls' }
+TFUFFIDerivedTypeMarshallingTest >> fillByteArray: aByteArray size: size [
+
+	^ self ffiCall: #(void fillByteArray(oop aByteArray, int size))
+]
+
+{ #category : #'ffi-calls' }
 TFUFFIDerivedTypeMarshallingTest >> intToBoolean: int [
 
 	^ self ffiCall: #(Boolean id_int(int int))
@@ -20,6 +26,12 @@ TFUFFIDerivedTypeMarshallingTest >> intToBoolean: int [
 TFUFFIDerivedTypeMarshallingTest >> pointerToString: cString [
 
 	^ self ffiCall: #(String dup_string(char *cString))
+]
+
+{ #category : #'ffi-calls' }
+TFUFFIDerivedTypeMarshallingTest >> returnSameByteArray: aByteArray [
+
+	^ self ffiCall: #(oop returnSameByteArray(oop aByteArray))
 ]
 
 { #category : #'ffi-calls' }
@@ -56,6 +68,32 @@ TFUFFIDerivedTypeMarshallingTest >> testMarshallingFalseArgument [
 TFUFFIDerivedTypeMarshallingTest >> testMarshallingFalseReturnValue [
 
 	self assert: (self intToBoolean: 0) equals: false
+]
+
+{ #category : #tests }
+TFUFFIDerivedTypeMarshallingTest >> testMarshallingOOP [
+	| aByteArray |
+	aByteArray := ByteArray new: 10.
+	aByteArray pinInMemory.
+	
+	self fillByteArray: aByteArray size: aByteArray size.
+	
+	self assert: aByteArray equals: #[1 2 3 4 5 6 7 8 9 10].
+	
+	aByteArray unpinInMemory.
+]
+
+{ #category : #tests }
+TFUFFIDerivedTypeMarshallingTest >> testMarshallingOOPIsSameObject [
+	| aByteArray otherByteArray |
+	aByteArray := ByteArray new: 2300000.
+	aByteArray pinInMemory.
+	
+	otherByteArray := self returnSameByteArray: aByteArray.
+	
+	self assert: aByteArray == otherByteArray.
+	
+	aByteArray unpinInMemory.
 ]
 
 { #category : #tests }

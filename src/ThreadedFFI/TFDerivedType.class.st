@@ -3,6 +3,7 @@ Class {
 	#superclass : #Object,
 	#classVars : [
 		'BOOLEAN',
+		'OOP',
 		'STRING'
 	],
 	#category : #ThreadedFFI
@@ -12,6 +13,12 @@ Class {
 TFDerivedType class >> boolean [
 	
 	^ BOOLEAN ifNil: [ BOOLEAN := TFBooleanType new ]
+]
+
+{ #category : #accessing }
+TFDerivedType class >> objectPointer [
+	
+	^ OOP ifNil: [ OOP := TFOOPType new ]
 ]
 
 { #category : #accessing }

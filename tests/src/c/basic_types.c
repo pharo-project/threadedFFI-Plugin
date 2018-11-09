@@ -95,3 +95,13 @@ char* dup_string(char* aString){
   strcpy(dst, aString);
   return dst;
 }
+
+void fillByteArray(char* aByteArray, int size){
+	for(int i = 0; i < size; i++){
+		aByteArray[i] = i + 1;
+	}
+}
+
+char* returnSameByteArray(char *aByteArray){
+	return aByteArray;
+}
