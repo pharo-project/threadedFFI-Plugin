@@ -5,49 +5,6 @@
 struct VirtualMachine* interpreterProxy;
 static const char *moduleName = "PThreadedPlugin * ThreadedFFI-Plugin-pt.2 (e)";
 
-/*
- * The primitives should be defined with a depth parameter.
- * For this, the following macros are generated.
- *
- * Primitive macro generates with 0, because it is the normal value for depth.
- * PrimitiveWithDepth receives a parameters for the depth.
- *
- * What is depth?
- *
- * Initially when the VM executes a primitive it does not handle the forwarding
- * of the parameters. It sends the parameters as they are.
- * A primitive should validate the parameters sent to it.
- * If they are not valid (or they are a forwarder, and they need to be used) it should fail.
- *
- * The VM will handle the resolution of the forwarders and recall the primitive.
- * If the depth is -1, the VM will not do nothing and just fail the call.
- * If the depth is >=0, the VM will resolve the forwarders and then recall the primitive.
- *
- * The depth, is the levels of accessors used in the primitive.
- *
- * If the primitive only uses the objects received by parameter the depth is 0,
- * if it uses one of the objects refereced by the parameters the depth is 1, and so on.
- *
- * Example
- * =======
- *
- * [ p ] --> [ a ] -> [ x ]
- * 		 --> [ b ]
- * 		 \-> [ c ] -> [ y ]
- *
- *
- * If we only require to use the object p (that is a parameter to the primitive in the stack),
- * the depth is 0, if we want to use the object a, b or c (that are referenciated by p) the depth
- * should be 1. In the case of wanting to use x or y, depth should be 2.
- *
- */
-
-#define Primitive(functionName) signed char functionName ##AccessorDepth = 0; \
-	sqInt functionName (void)
-
-#define PrimitiveWithDepth(functionName, N) signed char functionName ##AccessorDepth = N; \
-	sqInt functionName (void)
-
 const char * getModuleName(void){
 	return moduleName;
 }
@@ -60,10 +17,13 @@ PrimitiveWithDepth(primitiveCallbackReturn, 1){
     void*  handler;
     sqInt receiver;
 
-	receiver = interpreterProxy->stackValue(0);
-	handler = getHandler(receiver);
+    receiver = interpreterProxy->stackValue(0);
+    checkFailed();
+
+    handler = getHandler(receiver);
+    checkFailed();
+
 	callbackReturn(handler);
-	return 0;
 }
 
 PrimitiveWithDepth(primitiveDefineFunction, 2){
@@ -76,32 +36,40 @@ PrimitiveWithDepth(primitiveDefineFunction, 2){
     void*returnType;
 
 	returnType = readAddress(interpreterProxy->stackValue(0));
+	checkFailed();
+
 	count = interpreterProxy->stSizeOf(interpreterProxy->stackValue(1));
+	checkFailed();
+
 	paramsArray = interpreterProxy->stackValue(1);
+	checkFailed();
 
 	/* The parameters are freed by the primitiveFreeDefinition, if there is an error it is freed by #defineFunction:With:And: */
 	receiver = interpreterProxy->stackValue(2);
+	checkFailed();
+
 	parameters = malloc(count*sizeof(void*));
 	for (idx = 0; idx < count; idx += 1) {
 		parameters[idx] = (readAddress(interpreterProxy->stObjectat(paramsArray, idx + 1)));
 	}
+
 	if (interpreterProxy->failed()) {
-		return null;
+		return;
 	}
+
 	handler = defineFunctionWithAnd(parameters, count, returnType);
 	if (interpreterProxy->failed()) {
-		return null;
+		return;
 	}
+
 	setHandler(receiver, handler);
-	if (!(interpreterProxy->failed())) {
-		interpreterProxy->pop(2);
-	}
-	return 0;
+	checkFailed();
+
+	interpreterProxy->pop(2);
 }
 
 Primitive(primitiveFillBasicType){
 	fillBasicType(interpreterProxy->stackValue(0));
-	return 0;
 }
 
 PrimitiveWithDepth(primitiveFreeDefinition, 1){
@@ -109,14 +77,15 @@ PrimitiveWithDepth(primitiveFreeDefinition, 1){
     sqInt receiver;
 
 	receiver = interpreterProxy->stackValue(0);
+	checkFailed();
+
 	handler = getHandler(receiver);
-	if (handler == 0) {
-		return 0;
-	}
+	checkFailed();
+
 	free(((ffi_cif*)handler)->arg_types);
 	free(handler);
+
 	setHandler(receiver, 0);
-	return 0;
 }
 
 Primitive(primitiveInitializeCallbacksQueue){
@@ -124,10 +93,9 @@ Primitive(primitiveInitializeCallbacksQueue){
 
 	index = interpreterProxy->integerValueOf(interpreterProxy->stackValue(0));
 	initCallbackQueue(index);
-	if (!(interpreterProxy->failed())) {
-		interpreterProxy->pop(1);
-	}
-	return 0;
+	checkFailed();
+
+	interpreterProxy->pop(1);
 }
 
 PrimitiveWithDepth(primitivePerformCall, 2){
@@ -138,21 +106,24 @@ PrimitiveWithDepth(primitivePerformCall, 2){
     sqInt semaphoreIndex;
 
 	semaphoreIndex = interpreterProxy->integerValueOf(interpreterProxy->stackValue(0));
+	checkFailed();
+
 	returnHolderAddress = readAddress(interpreterProxy->stackValue(1));
+	checkFailed();
+
 	parametersAddress = readAddress(interpreterProxy->stackValue(2));
+	checkFailed();
+
 	aExternalFunction = getHandler(interpreterProxy->stackValue(3));
+	checkFailed();
+
 	aCif = getHandler(interpreterProxy->fetchPointerofObject(1, interpreterProxy->stackValue(3)));
-	if (interpreterProxy->failed()) {
-		return null;
-	}
+	checkFailed();
+
 	performCallCifWithIntoUsing(aExternalFunction, aCif, parametersAddress, returnHolderAddress, semaphoreIndex);
-	if (interpreterProxy->failed()) {
-		return null;
-	}
-	if (!(interpreterProxy->failed())) {
-		interpreterProxy->pop(4);
-	}
-	return 0;
+	checkFailed();
+
+	interpreterProxy->pop(4);
 }
 
 PrimitiveWithDepth(primitivePerformSyncCall, 2){
@@ -162,20 +133,21 @@ PrimitiveWithDepth(primitivePerformSyncCall, 2){
     void*returnHolderAddress;
 
 	returnHolderAddress = readAddress(interpreterProxy->stackValue(0));
+	checkFailed();
+
 	parametersAddress = readAddress(interpreterProxy->stackValue(1));
+	checkFailed();
+
 	aExternalFunction = getHandler(interpreterProxy->stackValue(2));
+	checkFailed();
+
 	aCif = getHandler(interpreterProxy->fetchPointerofObject(1, interpreterProxy->stackValue(2)));
-	if (interpreterProxy->failed()) {
-		return null;
-	}
+	checkFailed();
+
 	performSyncCallCifWithInto(aExternalFunction, aCif, parametersAddress, returnHolderAddress);
-	if (interpreterProxy->failed()) {
-		return null;
-	}
-	if (!(interpreterProxy->failed())) {
-		interpreterProxy->pop(3);
-	}
-	return 0;
+	checkFailed();
+
+	interpreterProxy->pop(3);
 }
 
 
@@ -185,12 +157,15 @@ PrimitiveWithDepth(primitiveReadNextCallback, 1){
     sqInt externalAddress;
 
 	externalAddress = interpreterProxy->stackValue(0);
+	checkFailed();
+
 	address = getNextCallback();
+	checkFailed();
+
 	writeAddress(externalAddress, address);
-	if (!(interpreterProxy->failed())) {
-		interpreterProxy->pop(1);
-	}
-	return 0;
+	checkFailed();
+
+	interpreterProxy->pop(1);
 }
 
 PrimitiveWithDepth(primitiveRegisterCallback, 3){
@@ -205,9 +180,16 @@ PrimitiveWithDepth(primitiveRegisterCallback, 3){
     ffi_type*  returnType;
 
 	receiver = interpreterProxy->stackValue(0);
+	checkFailed();
+
 	callbackData = interpreterProxy->fetchPointerofObject(1, receiver);
+	checkFailed();
+
 	paramArray = interpreterProxy->fetchPointerofObject(2, receiver);
+	checkFailed();
+
 	count = interpreterProxy->stSizeOf(paramArray);
+	checkFailed();
 
 	/* The parameters are freed by the primitiveFreeDefinition, if there is an error it is freed by #defineCallback:WithParams:Count:ReturnType: */
 	callbackDataPtr = NULL;
@@ -216,16 +198,16 @@ PrimitiveWithDepth(primitiveRegisterCallback, 3){
 	for (idx = 0; idx < count; idx += 1) {
 		parameters[idx] = (getHandler(interpreterProxy->stObjectat(paramArray, idx + 1)));
 	}
-	if (interpreterProxy->failed()) {
-		return -1;
-	}
+	checkFailed();
+
 	handler = defineCallbackWithParamsCountReturnType((&callbackDataPtr), parameters, count, returnType);
-	if (interpreterProxy->failed()) {
-		return -1;
-	}
+	checkFailed();
+
 	setHandler(receiver, handler);
+	checkFailed();
+
 	writeAddress(callbackData, callbackDataPtr);
-	return 0;
+	checkFailed();
 }
 
 PrimitiveWithDepth(primitiveTypeByteSize, 1){
@@ -234,12 +216,14 @@ PrimitiveWithDepth(primitiveTypeByteSize, 1){
     sqInt size;
 
 	receiver = interpreterProxy->stackValue(0);
+
 	handler = getHandler(receiver);
+	checkFailed();
+
 	size = getTypeByteSize(handler);
-	if (!(interpreterProxy->failed())) {
-		interpreterProxy->methodReturnInteger(size);
-	}
-	return 0;
+	checkFailed();
+
+	interpreterProxy->methodReturnInteger(size);
 }
 
 /*
@@ -252,16 +236,17 @@ Primitive(primitiveGetAddressOfOOP){
 	sqInt oop;
 
 	oop = interpreterProxy->stackValue(0);
+	checkFailed();
 
 	if(!interpreterProxy->isPinned(oop)){
-//		interpreterProxy->primitiveFailFor(PrimErrBadReceiver);
 		interpreterProxy->primitiveFail();
-		return -1;
+		return;
 	}
 
 	interpreterProxy->pop(2);
+	checkFailed();
+
 	interpreterProxy->pushInteger(oop + BaseHeaderSize);
-	return 0;
 }
 
 /*
@@ -272,9 +257,9 @@ Primitive(primitiveGetObjectFromAddress){
 	sqInt oop;
 
 	oop = interpreterProxy->integerValueOf(interpreterProxy->stackValue(0)) - BaseHeaderSize;
+	checkFailed();
 
 	interpreterProxy->popthenPush(2, oop);
-	return 0;
 }
 
 
@@ -284,10 +269,15 @@ PrimitiveWithDepth(primitiveUnregisterCallback, 1){
     sqInt receiver;
 
 	receiver = interpreterProxy->stackValue(0);
+	checkFailed();
+
 	callbackData = interpreterProxy->fetchPointerofObject(1, receiver);
+	checkFailed();
+
 	callbackDataPtr = readAddress(callbackData);
+	checkFailed();
+
 	releaseCallback(callbackDataPtr);
-	return 0;
 }
 
 sqInt setInterpreter(struct VirtualMachine* anInterpreter)

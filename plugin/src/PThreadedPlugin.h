@@ -19,6 +19,8 @@
 
 #include "semaphoreWrapper.h"
 
+#include "macros.h"
+
 typedef enum {
   CALLOUT,
   CALLBACK_RETURN
