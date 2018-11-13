@@ -3,5 +3,5 @@ Extension { #name : #FFITypeArrayType }
 { #category : #'*ThreadedFFI-UFFI' }
 FFITypeArrayType >> tfexternalTypeForStructure [
 
-	^ Array new: self objectClass numberOfElements withAll: self tfexternalType
+	^ Array new: self objectClass numberOfElements withAll: self objectClass type tfexternalTypeWithArity 
 ]
