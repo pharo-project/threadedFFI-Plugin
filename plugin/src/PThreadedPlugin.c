@@ -82,6 +82,11 @@ PrimitiveWithDepth(primitiveFreeDefinition, 1){
 	handler = getHandler(receiver);
 	checkFailed();
 
+	if(!handler){
+		interpreterProxy->primitiveFail();
+		return;
+	}
+
 	free(((ffi_cif*)handler)->arg_types);
 	free(handler);
 
@@ -278,6 +283,206 @@ PrimitiveWithDepth(primitiveUnregisterCallback, 1){
 	checkFailed();
 
 	releaseCallback(callbackDataPtr);
+}
+
+/**
+ * This primitive initialize a struct type.
+ * It assumes that the struct type is an external object.
+ * It should have as slots:
+ *
+ * 1) An External Address (it should be a external object)
+ * 2) An array with the members of the struct. Each member should be a valid type.
+ * 3) An array with the same size of members that will receive the offsets of the members
+ *
+ * This primitive will allocate the required structs and fails if it cannot be allocated
+ * or the parameters are no good.
+ *
+ * Also it calculates the offsets of the struct.
+ *
+ */
+
+PrimitiveWithDepth(primitiveInitializeStructType, 2){
+	sqInt receiver;
+	sqInt arrayOfMembers;
+	sqInt arrayOfOffsets;
+	sqInt membersSize;
+	ffi_type* structType;
+	ffi_type** memberTypes;
+	size_t* offsets;
+
+	receiver = interpreterProxy->stackValue(0);
+	checkFailed();
+
+	getHandler(receiver);
+	checkFailed();
+
+	arrayOfMembers = interpreterProxy->fetchPointerofObject(1, receiver);
+	checkFailed();
+
+	arrayOfOffsets = interpreterProxy->fetchPointerofObject(2, receiver);
+	checkFailed();
+
+	//Validating that they are arrays.
+	checkIsArray(arrayOfMembers);
+	checkIsArray(arrayOfOffsets);
+
+	membersSize = interpreterProxy->stSizeOf(arrayOfMembers);
+	if(membersSize < 1){
+		interpreterProxy->primitiveFail();
+		return;
+	}
+
+	if(membersSize != interpreterProxy->stSizeOf(arrayOfOffsets)){
+		interpreterProxy->primitiveFail();
+		return;
+	}
+
+	//Validating that the members are of valid size
+	for(int i=0; i < membersSize; i++){
+		checkIsPointerSize(interpreterProxy->stObjectat(arrayOfMembers, i + 1), 1);
+	}
+
+	// Allocating the structure type
+	structType = malloc(sizeof(ffi_type));
+	if(!structType){
+		interpreterProxy->primitiveFail();
+		return;
+	}
+
+	memberTypes = malloc(sizeof(ffi_type*) * (membersSize+1));
+	if(!memberTypes){
+		free(structType);
+		interpreterProxy->primitiveFail();
+		return;
+	}
+
+	offsets = malloc(sizeof(size_t) * (membersSize));
+	if(!offsets){
+		free(memberTypes);
+		free(structType);
+		interpreterProxy->primitiveFail();
+		return;
+	}
+
+	//The members list is ended by a NULL
+	memberTypes[membersSize] = NULL;
+
+	structType->alignment = 0;
+	structType->size = 0;
+	structType->type = FFI_TYPE_STRUCT;
+	structType->elements = memberTypes;
+
+	for(int i=0; i < membersSize; i++){
+		memberTypes[i] = getHandler(interpreterProxy->stObjectat(arrayOfMembers, i + 1));
+	}
+
+	setHandler(receiver, structType);
+	if(interpreterProxy->failed()){
+		free(memberTypes);
+		free(structType);
+		free(offsets);
+		return;
+	}
+
+	if(ffi_get_struct_offsets(FFI_DEFAULT_ABI, structType, offsets)!=FFI_OK){
+		free(memberTypes);
+		free(structType);
+		free(offsets);
+		interpreterProxy->primitiveFail();
+		return;
+	}
+
+	for(int i=0; i < membersSize; i++){
+		interpreterProxy->stObjectatput(arrayOfOffsets, i+1, interpreterProxy->integerObjectOf(offsets[i]));
+	}
+
+	free(offsets);
+}
+
+/**
+ * This primitive frees the struct type ffi_type memory and the array used to hold the members.
+ */
+
+PrimitiveWithDepth(primitiveFreeStruct, 1){
+	sqInt receiver;
+	ffi_type* structType;
+
+	receiver = interpreterProxy->stackValue(0);
+	checkFailed();
+
+	structType = (ffi_type*)getHandler(receiver);
+	checkFailed();
+
+	if(!structType){
+		interpreterProxy->primitiveFail();
+		return;
+	}
+
+	free(structType->elements);
+	free(structType);
+
+	setHandler(receiver, NULL);
+}
+
+/**
+ * This primitive returns the size of the struct type.
+ */
+PrimitiveWithDepth(primitiveStructByteSize, 1){
+	sqInt receiver;
+	ffi_type* structType;
+
+	receiver = interpreterProxy->stackValue(0);
+	checkFailed();
+
+	structType = (ffi_type*)getHandler(receiver);
+	checkFailed();
+
+	if(!structType){
+		interpreterProxy->primitiveFail();
+		return;
+	}
+
+	interpreterProxy->pop(1);
+	interpreterProxy->pushInteger(structType->size);
+}
+
+/**
+ * This primitive copy the memory from an object to the other.
+ * The parameters could be ByteArrays or ExternalAddress.
+ *
+ * It receives three parameters:
+ *
+ * - A From
+ * - A To
+ * - A Size
+ */
+PrimitiveWithDepth(primitiveCopyFromTo, 1){
+	sqInt from;
+	sqInt to;
+	sqInt size;
+
+	void* fromAddress;
+	void* toAddress;
+
+	size = interpreterProxy->stackIntegerValue(0);
+	checkFailed();
+
+	to = interpreterProxy->stackObjectValue(1);
+	checkFailed();
+
+	from = interpreterProxy->stackObjectValue(2);
+	checkFailed();
+
+
+	fromAddress = getAddressFromExternalAddressOrByteArray(from);
+	checkFailed();
+
+	toAddress = getAddressFromExternalAddressOrByteArray(to);
+	checkFailed();
+
+	memcpy(toAddress, fromAddress, size);
+
+	interpreterProxy->pop(3);
 }
 
 sqInt setInterpreter(struct VirtualMachine* anInterpreter)

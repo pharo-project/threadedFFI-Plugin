@@ -101,7 +101,3 @@ void fillByteArray(char* aByteArray, int size){
 		aByteArray[i] = i + 1;
 	}
 }
-
-char* returnSameByteArray(char *aByteArray){
-	return aByteArray;
-}

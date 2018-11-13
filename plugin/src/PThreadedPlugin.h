@@ -13,6 +13,7 @@
 #include <pthread.h>
 #include <errno.h>
 #include <stdlib.h>
+#include <strings.h>
 
 #include "config.h"
 #include "sqVirtualMachine.h"
@@ -20,6 +21,10 @@
 #include "semaphoreWrapper.h"
 
 #include "macros.h"
+
+#ifndef FFI_OK
+#define FFI_OK 0
+#endif
 
 typedef enum {
   CALLOUT,
@@ -84,6 +89,8 @@ void* getHandler(sqInt anExternalObject);
 void setHandler(sqInt anExternalObject, void* value);
 void* readAddress(sqInt anExternalAddress);
 void writeAddress(sqInt anExternalAddress, void* value);
+
+void* getAddressFromExternalAddressOrByteArray(sqInt anExternalAddressOrByteArray);
 
 // Accessing the VM Functions
 

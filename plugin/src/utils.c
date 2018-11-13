@@ -34,3 +34,16 @@ void setHandler(sqInt anExternalObject, void* value){
 	}
 	writeAddress(interpreterProxy->fetchPointerofObject(0, anExternalObject), value);
 }
+
+void* getAddressFromExternalAddressOrByteArray(sqInt anExternalAddressOrByteArray){
+	if(interpreterProxy->isKindOfClass(anExternalAddressOrByteArray, interpreterProxy->classExternalAddress())){
+		return readAddress(anExternalAddressOrByteArray);
+	}
+
+	if(interpreterProxy->isKindOfClass(anExternalAddressOrByteArray, interpreterProxy->classByteArray())){
+		return interpreterProxy->firstIndexableField(anExternalAddressOrByteArray);
+	}
+
+	interpreterProxy->primitiveFail();
+	return NULL;
+}

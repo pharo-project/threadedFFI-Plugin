@@ -45,4 +45,21 @@
 
 #define checkFailed() if(interpreterProxy->failed()) return;
 
+#define checkIsArray(anObject) 	if(!interpreterProxy->isKindOfClass(anObject, interpreterProxy->classArray())){ \
+		interpreterProxy->primitiveFail(); \
+		return;\
+	} \
+
+#define checkIsClassOf(anObject, aClass) 	if(!interpreterProxy->isKindOfClass(anObject, aClass)){ \
+		interpreterProxy->primitiveFail(); \
+		return;\
+	} \
+
+
+#define checkIsPointerSize(anObject, size)	if(!(interpreterProxy->isPointers(anObject) && interpreterProxy->slotSizeOf(anObject) >= size)) {\
+		interpreterProxy->primitiveFail();\
+		return;\
+	}
+
+
 #endif /* _MACROS_H_ */
