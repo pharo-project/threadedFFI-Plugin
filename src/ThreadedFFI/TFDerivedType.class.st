@@ -58,6 +58,12 @@ TFDerivedType >> isVoid [
 ]
 
 { #category : #'reading-writing' }
+TFDerivedType >> readReturnValue: anExternalAddress [
+
+	^ self readValue: anExternalAddress
+]
+
+{ #category : #'reading-writing' }
 TFDerivedType >> readValue: anExternalAddress [
 	
 	self subclassResponsibility

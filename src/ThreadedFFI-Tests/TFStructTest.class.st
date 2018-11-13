@@ -5,8 +5,29 @@ Class {
 }
 
 { #category : #tests }
+TFStructTest >> longStructSize [ 
+	^ self ffiCall: #(int sizeOfLongStruct()) module: self libraryPath asFFILibrary 
+]
+
+{ #category : #tests }
 TFStructTest >> pointSize [ 
 	^ self ffiCall: #(int sizeOfPoint()) module: self libraryPath asFFILibrary 
+]
+
+{ #category : #tests }
+TFStructTest >> testLongStructSize [
+	| pointType |
+	pointType := TFStructType
+		forClass: TFLongTestStruct
+		withMembers:
+			(Array new: 100 withAll: TFBasicType schar)
+				,	{TFBasicType float.
+					TFBasicType double.
+					TFBasicType slong.
+					TFBasicType sint.
+					TFBasicType sshort}.
+	self assert: pointType byteSize equals: self longStructSize.
+	self assert: TFLongTestStruct byteSize equals: self longStructSize
 ]
 
 { #category : #tests }
