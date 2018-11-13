@@ -10,7 +10,7 @@ Class {
 	#instVars : [
 		'signed'
 	],
-	#category : #ThreadedFFI
+	#category : #'ThreadedFFI-Types'
 }
 
 { #category : #reading }

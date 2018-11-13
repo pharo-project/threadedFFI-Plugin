@@ -11,7 +11,7 @@ Class {
 	#classVars : [
 		'UniqueInstance'
 	],
-	#category : #ThreadedFFI
+	#category : #'ThreadedFFI-Callbacks'
 }
 
 { #category : #handlers }

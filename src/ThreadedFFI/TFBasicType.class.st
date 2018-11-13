@@ -32,7 +32,7 @@ My subclasses should redefine #readValue:offset: to provide correct type marshal
 "
 Class {
 	#name : #TFBasicType,
-	#superclass : #FFIExternalReference,
+	#superclass : #TFAbstractType,
 	#instVars : [
 		'typeName',
 		'typeCode'
@@ -61,7 +61,7 @@ Class {
 		'USHORT',
 		'VOID'
 	],
-	#category : #ThreadedFFI
+	#category : #'ThreadedFFI-Types'
 }
 
 { #category : #'instance creation' }
@@ -269,22 +269,10 @@ TFBasicType >> basicType [
 	^ self
 ]
 
-{ #category : #size }
-TFBasicType >> byteSize [
-	self validate.
-	^ self primByteSize
-]
-
 { #category : #writing }
 TFBasicType >> freeValueIfNeeded: aValue [ 
 	
 	"Do nothing. Basic types do not need to be free'd"
-]
-
-{ #category : #accessing }
-TFBasicType >> isValid [ 
-
-	^ handle isNull not
 ]
 
 { #category : #accessing }
@@ -294,15 +282,15 @@ TFBasicType >> isVoid [
 ]
 
 { #category : #primitives }
-TFBasicType >> primByteSize [
-	<primitive: 'primitiveTypeByteSize' module: 'PThreadedPlugin'>
+TFBasicType >> primFillType [
+	<primitive: 'primitiveFillBasicType' module: 'PThreadedPlugin'>
 
 	^ self primitiveFailed	
 ]
 
 { #category : #primitives }
-TFBasicType >> primFillType [
-	<primitive: 'primitiveFillBasicType' module: 'PThreadedPlugin'>
+TFBasicType >> primitiveByteSize [
+	<primitive: 'primitiveTypeByteSize' module: 'PThreadedPlugin'>
 
 	^ self primitiveFailed	
 ]
@@ -319,15 +307,9 @@ TFBasicType >> printOn: aStream [
 ]
 
 { #category : #reading }
-TFBasicType >> readValue: anExternalAddress [
+TFBasicType >> readReturnValue: anExternalAddress [
 
-	^ self readValue: anExternalAddress offset: 1
-]
-
-{ #category : #reading }
-TFBasicType >> readValue: anExternalAddress offset: offset [
-
-	^ self subclassResponsibility
+	^ self readValue: anExternalAddress
 ]
 
 { #category : #accessing }
@@ -350,14 +332,8 @@ TFBasicType >> typeName: anObject [
 	typeName := anObject
 ]
 
-{ #category : #accessing }
+{ #category : #validating }
 TFBasicType >> validate [ 
 	
 	self isValid ifFalse: [ self primFillType ]
-]
-
-{ #category : #writing }
-TFBasicType >> write: aNumber into: anExternalAddress [
-
-	self subclassResponsibility
 ]

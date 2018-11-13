@@ -1,7 +1,7 @@
 Class {
 	#name : #TFBooleanType,
 	#superclass : #TFDerivedType,
-	#category : #ThreadedFFI
+	#category : #'ThreadedFFI-Types'
 }
 
 { #category : #accessing }

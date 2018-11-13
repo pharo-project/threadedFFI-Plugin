@@ -6,7 +6,7 @@ Class {
 		'OOP',
 		'STRING'
 	],
-	#category : #ThreadedFFI
+	#category : #'ThreadedFFI-Types'
 }
 
 { #category : #accessing }

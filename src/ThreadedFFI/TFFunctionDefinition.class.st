@@ -21,6 +21,8 @@ Class {
 { #category : #'instance creation' }
 TFFunctionDefinition class >> finalizeResourceData: handle [
 
+	handle isNull ifTrue: [ ^ self ].
+
 	self new
 		setHandle: handle;
 		primFreeDefinition.

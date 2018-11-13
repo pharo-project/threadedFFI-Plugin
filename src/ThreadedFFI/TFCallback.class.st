@@ -9,7 +9,7 @@ Class {
 		'returnType',
 		'block'
 	],
-	#category : #ThreadedFFI
+	#category : #'ThreadedFFI-Callbacks'
 }
 
 { #category : #'as yet unclassified' }

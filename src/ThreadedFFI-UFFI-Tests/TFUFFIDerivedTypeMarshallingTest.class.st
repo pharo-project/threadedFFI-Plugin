@@ -31,7 +31,7 @@ TFUFFIDerivedTypeMarshallingTest >> pointerToString: cString [
 { #category : #'ffi-calls' }
 TFUFFIDerivedTypeMarshallingTest >> returnSameByteArray: aByteArray [
 
-	^ self ffiCall: #(oop returnSameByteArray(oop aByteArray))
+	^ self ffiCall: #(oop id_pointer(oop aByteArray))
 ]
 
 { #category : #'ffi-calls' }

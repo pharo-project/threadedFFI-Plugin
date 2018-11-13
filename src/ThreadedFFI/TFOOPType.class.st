@@ -1,7 +1,7 @@
 Class {
 	#name : #TFOOPType,
 	#superclass : #TFDerivedType,
-	#category : #ThreadedFFI
+	#category : #'ThreadedFFI-Types'
 }
 
 { #category : #accessing }

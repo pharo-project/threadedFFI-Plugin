@@ -134,7 +134,7 @@ TFExternalAsyncCall >> parameters: anObject [
 TFExternalAsyncCall >> readReturnValue: aValueHolder [
 
 	function definition returnType isVoid ifTrue: [ ^ nil ].
-	^ function definition returnType readValue: aValueHolder
+	^ function definition returnType readReturnValue: aValueHolder
 ]
 
 { #category : #'private - semaphore' }

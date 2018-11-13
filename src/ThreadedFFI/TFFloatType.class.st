@@ -7,7 +7,7 @@ See my superclass for more details.
 Class {
 	#name : #TFFloatType,
 	#superclass : #TFBasicType,
-	#category : #ThreadedFFI
+	#category : #'ThreadedFFI-Types'
 }
 
 { #category : #reading }

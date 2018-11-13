@@ -7,7 +7,7 @@ See my superclass for more details.
 Class {
 	#name : #TFStringType,
 	#superclass : #TFDerivedType,
-	#category : #ThreadedFFI
+	#category : #'ThreadedFFI-Types'
 }
 
 { #category : #accessing }

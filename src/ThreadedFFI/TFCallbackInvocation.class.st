@@ -1,7 +1,7 @@
 Class {
 	#name : #TFCallbackInvocation,
 	#superclass : #FFIExternalObject,
-	#category : #ThreadedFFI
+	#category : #'ThreadedFFI-Callbacks'
 }
 
 { #category : #operations }
