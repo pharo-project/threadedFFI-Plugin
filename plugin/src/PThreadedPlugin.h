@@ -13,7 +13,7 @@
 #include <pthread.h>
 #include <errno.h>
 #include <stdlib.h>
-#include <strings.h>
+#include <string.h>
 
 #include "config.h"
 #include "sqVirtualMachine.h"
