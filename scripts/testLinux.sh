@@ -33,10 +33,14 @@ unzip pharo-vm/lib/pharo/5.0-201806281256/PharoThreadedFFI-linux$ARCH.zip -d pha
 
 ./pharo Pharo.image eval "
 
-Metacello new
+[Metacello new
         baseline: 'ThreadedFFI';
         repository: 'tonel://${__root}/src';
-        load.
+        ignoreImage;
+        onConflictUseIncoming;
+        onUpgradeUseLoaded: false;
+        onDowngradeUseIncoming;
+        load] on: MetacelloIgnorePackageLoaded do: [ :e | e resume: true ].
 		
 Smalltalk saveAs:'testFFI'.
 		"

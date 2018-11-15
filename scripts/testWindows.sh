@@ -34,10 +34,14 @@ unzip pharo-vm/PharoThreadedFFI-windows$ARCH.zip -d pharo-vm
 __winroot=`cygpath -w ${__root}`
 ./pharo Pharo.image eval "
 
-Metacello new
+[Metacello new
         baseline: 'ThreadedFFI';
         repository: 'tonel://${__winroot}/src';
-        load.
+        ignoreImage;
+        onConflictUseIncoming;
+        onUpgradeUseLoaded: false;
+        onDowngradeUseIncoming;
+        load] on: MetacelloIgnorePackageLoaded do: [ :e | e resume: true ].
 		
 Smalltalk saveAs:'testFFI'.
 		"
