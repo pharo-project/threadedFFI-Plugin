@@ -11,6 +11,12 @@
 #define simple_callback(TYPE) simple_callback_with_name(TYPE, TYPE)
 #define simple_callback_with_name(TYPE, NAME) typedef TYPE (*simple_callback_##NAME)(TYPE);
 
+#define simple_callback_byRef(TYPE) simple_callback_byRef_with_name(TYPE, TYPE)
+#define simple_callback_byRef_with_name(TYPE, NAME) typedef TYPE (*simple_callback_byRef_##NAME)(TYPE*);
+
+#define simple_callback_byCopy_and_ref(TYPE) simple_callback(TYPE) \
+		simple_callback_byRef(TYPE)
+
 /************************************************************
 *** Floating point number types
 ************************************************************/
@@ -53,6 +59,14 @@ simple_callback_with_name(unsigned long long, ulonglong)
 ************************************************************/
   
 simple_callback_with_name(void*, pointer)
+
+/************************************************************
+*** Struct types
+************************************************************/
+
+simple_callback_byCopy_and_ref(NESTED_STRUCTS)
+simple_callback_byCopy_and_ref(LONG_STRUCT)
+simple_callback_byCopy_and_ref(POINT)
 
 /************************************************************
 *** Derived types, e.g., size_t, String, etc

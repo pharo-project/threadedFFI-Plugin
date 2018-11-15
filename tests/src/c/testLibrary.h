@@ -7,4 +7,6 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "structures.h"
+
 #endif
