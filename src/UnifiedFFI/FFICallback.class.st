@@ -14,8 +14,7 @@ Class {
 	#instVars : [
 		'backendCallback',
 		'functionSpec',
-		'block',
-		'thunk'
+		'block'
 	],
 	#category : #'UnifiedFFI-Callbacks'
 }
@@ -114,11 +113,8 @@ FFICallback >> signature: signature block: aBlock [
 { #category : #accessing }
 FFICallback >> thunk [
 
-	"The instance variable is for compatibility if somebody generates it with NULL address.
-	It should be changed. Damn Libgit-Bindings, you are doing it wrong!!"
-
-	(thunk isNotNil and: [ thunk isNull ])
-		ifTrue: [ ^ thunk ].
+	(block isNil or: [functionSpec isNil])
+		ifTrue: [ ^ ExternalAddress null ].
 
 	^ self backendCallback thunk
 ]
