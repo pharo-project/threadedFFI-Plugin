@@ -148,6 +148,6 @@ FFICallback >> valueWithArguments: args [
 
 	^ [ block valueWithArguments: args ]
 		on: Error 
-		fork: [ :e | e pass ]
+		fork: [ :e | e debug ]
 		return: [ self returnOnError ]
 ]
