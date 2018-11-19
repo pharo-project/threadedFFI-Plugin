@@ -156,6 +156,18 @@ FFICalloutMethodBuilder >> moduleName [
 	^ self module asFFILibrary moduleName
 ]
 
+{ #category : #'private - parsing' }
+FFICalloutMethodBuilder >> newParser [
+	^ FFIFunctionParser new  
+		requestor: self requestor;
+		yourself
+]
+
+{ #category : #'private - parsing' }
+FFICalloutMethodBuilder >> parseSignature: aSignature [
+	^ self newParser parseNamedFunction: aSignature
+]
+
 { #category : #accessing }
 FFICalloutMethodBuilder >> requestor [
 	^ requestor ifNil: [ requestor := self createFFICallout ]

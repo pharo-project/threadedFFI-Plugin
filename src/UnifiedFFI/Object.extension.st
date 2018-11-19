@@ -44,6 +44,16 @@ Object >> ffiCallingConvention [
 ]
 
 { #category : #'*UnifiedFFI' }
+Object >> ffiCallout [
+	^ self calloutAPIClass inContext: thisContext sender
+]
+
+{ #category : #'*UnifiedFFI' }
+Object >> ffiCalloutIn: aContext [
+	^ self calloutAPIClass inContext: aContext
+]
+
+{ #category : #'*UnifiedFFI' }
 Object >> ffiLibraryName [
 	self flag: 'HACK: avoid direct subclassResponsibility to not break RB test cases..'.
 	^ SubclassResponsibility signalFor: thisContext selector
