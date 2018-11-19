@@ -47,7 +47,7 @@ TFUFFICallbackTest >> testCallbackAsFunction [
 	callback := self
 		newCallbackWithSignature: #(float (int a, float b))
 		block: [ :a :b | a + b ].
-	callback parameterTypes at: 1 put: TFBasicType sint.
+
 	definition := TFFunctionDefinition
 		parameterTypes: {TFBasicType sint. TFBasicType float.}
 		returnType: TFBasicType float.

@@ -14,7 +14,8 @@ Class {
 	#instVars : [
 		'backendCallback',
 		'functionSpec',
-		'block'
+		'block',
+		'calloutAPIClass'
 	],
 	#category : #'UnifiedFFI-Callbacks'
 }
@@ -71,8 +72,19 @@ FFICallback class >> signature: aSignature block: aBlock [
 { #category : #accessing }
 FFICallback >> backendCallback [
 	"declare the backend callback"
-	^ backendCallback ifNil: [ backendCallback := FFIAlienCallback fromFrontendCallback: self ].
+	^ backendCallback ifNil: [ backendCallback := self calloutAPIClass newCallbackBackendFor: self ].
 
+]
+
+{ #category : #accessing }
+FFICallback >> calloutAPIClass [
+
+	^ calloutAPIClass ifNil: [ super calloutAPIClass ]
+]
+
+{ #category : #accessing }
+FFICallback >> calloutAPIClass: anObject [
+	calloutAPIClass := anObject
 ]
 
 { #category : #private }
@@ -92,6 +104,11 @@ FFICallback >> ffiInstVarArgument: argName generator: generator [
 { #category : #accessing }
 FFICallback >> functionSpec [
 	^ functionSpec
+]
+
+{ #category : #accessing }
+FFICallback >> getHandle [
+	^ self thunk
 ]
 
 { #category : #private }

@@ -109,6 +109,11 @@ TFCallback >> returnType: anObject [
 	returnType := anObject
 ]
 
+{ #category : #accessing }
+TFCallback >> thunk [
+	^ self getHandle 
+]
+
 { #category : #operations }
 TFCallback >> unregister [
 	
