@@ -120,6 +120,13 @@ FFICallback >> newParser [
 		yourself
 ]
 
+{ #category : #private }
+FFICallback >> returnOnError [
+
+	^ functionSpec returnType defaultReturnOnError
+
+]
+
 { #category : #initialization }
 FFICallback >> signature: signature block: aBlock [
 	functionSpec := self newParser parseAnonymousFunction: signature.
@@ -139,5 +146,8 @@ FFICallback >> thunk [
 { #category : #evaluating }
 FFICallback >> valueWithArguments: args [
 
-	^ block valueWithArguments: args
+	^ [ block valueWithArguments: args ]
+		on: Error 
+		fork: [ :e | e pass ]
+		return: [ self returnOnError ]
 ]
