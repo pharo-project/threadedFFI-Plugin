@@ -73,11 +73,32 @@ TFUFFICallbackTest >> testCallbackInLoop [
 ]
 
 { #category : #tests }
+TFUFFICallbackTest >> testCallbackInLoopUsingSubclassOfFFICallback [
+
+	| callback |
+
+	callback := TFUFFIIncrementCallback new.
+
+	self assert: (self callbackInALoop: callback) equals: 42
+
+]
+
+{ #category : #tests }
 TFUFFICallbackTest >> testCallbackInSingleFunction [
 
 	| callback |
 
 	callback := self newCallbackWithSignature: #(int (int a)) block: [ :a | a + 1 ].
+	self assert: (self singleCallToCallback: callback value: 3) equals: 5
+
+]
+
+{ #category : #tests }
+TFUFFICallbackTest >> testCallbackInSingleFunctionUsingSubclassOfFFICallback [
+
+	| callback |
+
+	callback := TFUFFIIncrementCallback new.
 	self assert: (self singleCallToCallback: callback value: 3) equals: 5
 
 ]
