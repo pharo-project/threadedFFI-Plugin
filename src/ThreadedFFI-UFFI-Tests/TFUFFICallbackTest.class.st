@@ -106,7 +106,7 @@ TFUFFICallbackTest >> testCallbackInSingleFunctionUsingSubclassOfFFICallback [
 { #category : #tests }
 TFUFFICallbackTest >> testCallbackWithErrorHanlded [
 
-	| callback fun definition win |
+	| callback fun definition |
 	callback := TFUFFIFailingCallbackWithDefault new.
 
 	definition := TFFunctionDefinition
@@ -117,15 +117,6 @@ TFUFFICallbackTest >> testCallbackWithErrorHanlded [
 		fromAddress: callback getHandle 
 		definition: definition.
 
-	self assert: (fun invokeWithArguments: {1}) equals: -1.
-	
-	"It should have open a window with the error"
-"
-	100 milliSecond asDelay wait.
+	UIManager nonInteractiveDuring: [self assert: (fun invokeWithArguments: {1}) equals: -1]
 
-	win := (SpecWindow allInstances reject: [:aWindow | aWindow isInWorld not ]) 
-		detect: [:aWindow | aWindow title = 'Error: An error in a callback']
-		ifNone: [ self fail: 'It should open a debugger'].
-
-	win close."
 ]
