@@ -47,11 +47,14 @@ cp "${__root}/results/testLibrary/testLibrary.dylib" ${__root}/dev/
 cd ${__root}/dev/
 
 ./pharo Pharo.image eval --save "
-
-Metacello new
+[Metacello new
         baseline: 'ThreadedFFI';
         repository: 'tonel://${__root}/src';
-        load.
-		"
+        ignoreImage;
+        onConflictUseIncoming;
+        onUpgradeUseLoaded: false;
+        onDowngradeUseIncoming;
+        load] on: MetacelloIgnorePackageLoaded do: [ :e | e resume: true ].
+"
 
 cd ${__root}
