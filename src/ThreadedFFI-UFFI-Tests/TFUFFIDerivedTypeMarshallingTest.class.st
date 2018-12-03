@@ -1,6 +1,9 @@
 Class {
 	#name : #TFUFFIDerivedTypeMarshallingTest,
 	#superclass : #TFUFFITestCase,
+	#classVars : [
+		'gchar'
+	],
 	#category : #'ThreadedFFI-UFFI-Tests'
 }
 
@@ -29,9 +32,21 @@ TFUFFIDerivedTypeMarshallingTest >> pointerToString: cString [
 ]
 
 { #category : #'ffi-calls' }
+TFUFFIDerivedTypeMarshallingTest >> pointerToStringWithAlias: cString [
+
+	^ self ffiCall: #(String dup_string(gchar *cString))
+]
+
+{ #category : #'ffi-calls' }
 TFUFFIDerivedTypeMarshallingTest >> returnSameByteArray: aByteArray [
 
 	^ self ffiCall: #(oop id_pointer(oop aByteArray))
+]
+
+{ #category : #running }
+TFUFFIDerivedTypeMarshallingTest >> setUp [
+	"Hooks that subclasses may override to define the fixture of test."
+	gchar := 'char'
 ]
 
 { #category : #'ffi-calls' }
@@ -103,6 +118,17 @@ TFUFFIDerivedTypeMarshallingTest >> testMarshallingSize_t [
 ]
 
 { #category : #tests }
+TFUFFIDerivedTypeMarshallingTest >> testMarshallingSmalltalkStringReturnValueWithAlias [
+
+	| originalString returnedString |
+
+	originalString := 'áèïô å∫'.
+	returnedString := self pointerToStringWithAlias: originalString.
+	self assert: returnedString equals: originalString.
+
+]
+
+{ #category : #tests }
 TFUFFIDerivedTypeMarshallingTest >> testMarshallingStringArgument [
 
 	| stringToMarshall cString |
@@ -121,6 +147,18 @@ TFUFFIDerivedTypeMarshallingTest >> testMarshallingStringReturnValue [
 	originalString := 'áèïô å∫'.
 	cString := ExternalAddress fromString: originalString utf8Encoded asString.
 	returnedString := self pointerToString: cString.
+	self assert: returnedString equals: originalString.
+	] ensure: [ cString free ]
+]
+
+{ #category : #tests }
+TFUFFIDerivedTypeMarshallingTest >> testMarshallingStringReturnValueWithAlias [
+
+	| cString originalString returnedString |
+	[
+	originalString := 'áèïô å∫'.
+	cString := ExternalAddress fromString: originalString utf8Encoded asString.
+	returnedString := self pointerToStringWithAlias: cString.
 	self assert: returnedString equals: originalString.
 	] ensure: [ cString free ]
 ]

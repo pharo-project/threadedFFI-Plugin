@@ -7,8 +7,27 @@ See my superclass for more details.
 Class {
 	#name : #TFStringType,
 	#superclass : #TFDerivedType,
+	#classVars : [
+		'AllocatedStrings'
+	],
 	#category : #'ThreadedFFI-Types'
 }
+
+{ #category : #writting }
+TFStringType >> allocateString: aString [
+	
+	| anExternalAddress |
+	
+	anExternalAddress := (ExternalAddress fromString: aString utf8Encoded).
+	self allocatedStrings add: anExternalAddress.
+	^ anExternalAddress 
+]
+
+{ #category : #'as yet unclassified' }
+TFStringType >> allocatedStrings [
+
+	^ AllocatedStrings ifNil: [ AllocatedStrings := Set new ]
+]
 
 { #category : #accessing }
 TFStringType >> basicType [
@@ -19,7 +38,13 @@ TFStringType >> basicType [
 { #category : #writting }
 TFStringType >> freeValueIfNeeded: aCHeapValueHolder [
 	
-	(aCHeapValueHolder pointerAt: 1) free
+	| pointer |
+	pointer := aCHeapValueHolder pointerAt: 1.
+	
+	(self allocatedStrings includes: pointer) ifTrue: [ 
+		self allocatedStrings remove: pointer.
+		pointer free.]
+	
 ]
 
 { #category : #writting }
@@ -29,9 +54,13 @@ TFStringType >> readValue: anExternalAddress [
 ]
 
 { #category : #writting }
-TFStringType >> write: aString into: targetAddress [
+TFStringType >> write: aStringOrExternalAddress into: targetAddress [
 
+	"If the argument is a aString I have to allocate it and later free it"
+	| anAddress |
+	anAddress := aStringOrExternalAddress isString ifTrue: [ self allocateString: aStringOrExternalAddress ] ifFalse: [ aStringOrExternalAddress ].
+	
 	self basicType
-		write: (ExternalAddress fromString: aString utf8Encoded)
+		write: anAddress
 		into: targetAddress
 ]
