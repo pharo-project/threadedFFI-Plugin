@@ -1,7 +1,7 @@
 Extension { #name : #FFIVoid }
 
 { #category : #'*ThreadedFFI-UFFI' }
-FFIVoid >> tfexternalType [
+FFIVoid >> tfExternalType [
 	
 	^ TFBasicType void
 ]

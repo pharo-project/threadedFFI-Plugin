@@ -1,7 +1,7 @@
 Extension { #name : #FFISizeT }
 
 { #category : #'*ThreadedFFI-UFFI' }
-FFISizeT >> tfexternalType [
+FFISizeT >> tfExternalType [
 
 	^ FFIArchitecture forCurrentArchitecture tfexternalSizeTType
 ]

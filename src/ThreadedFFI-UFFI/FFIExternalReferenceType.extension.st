@@ -1,7 +1,7 @@
 Extension { #name : #FFIExternalReferenceType }
 
 { #category : #'*ThreadedFFI-UFFI' }
-FFIExternalReferenceType >> tfexternalType [
+FFIExternalReferenceType >> tfExternalType [
 	
 	^ TFBasicType pointer
 ]

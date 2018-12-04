@@ -1,7 +1,7 @@
 Extension { #name : #FFIBool }
 
 { #category : #'*ThreadedFFI-UFFI' }
-FFIBool >> tfexternalType [
+FFIBool >> tfExternalType [
 	
 	^ TFDerivedType boolean
 ]

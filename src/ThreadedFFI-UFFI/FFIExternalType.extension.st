@@ -1,29 +1,29 @@
 Extension { #name : #FFIExternalType }
 
 { #category : #'*ThreadedFFI-UFFI' }
-FFIExternalType >> tfexternalType [
+FFIExternalType >> tfExternalType [
 		
 	^ self subclassResponsibility
 ]
 
 { #category : #'*ThreadedFFI-UFFI' }
-FFIExternalType >> tfexternalTypeForStructure [
+FFIExternalType >> tfExternalTypeForStructure [
 
-	^ {self tfexternalType}
+	^ {self tfExternalType}
 ]
 
 { #category : #'*ThreadedFFI-UFFI' }
-FFIExternalType >> tfexternalTypeForStructureWithArity [
+FFIExternalType >> tfExternalTypeForStructureWithArity [
 	
 	^ self pointerArity > 0 
 		ifTrue: [ {TFBasicType pointer} ]
-		ifFalse: [ self tfexternalTypeForStructure ]
+		ifFalse: [ self tfExternalTypeForStructure ]
 ]
 
 { #category : #'*ThreadedFFI-UFFI' }
-FFIExternalType >> tfexternalTypeWithArity [
+FFIExternalType >> tfExternalTypeWithArity [
 	
 	^ self pointerArity > 0 
 		ifTrue: [ TFBasicType pointer ]
-		ifFalse: [ self tfexternalType ]
+		ifFalse: [ self tfExternalType ]
 ]

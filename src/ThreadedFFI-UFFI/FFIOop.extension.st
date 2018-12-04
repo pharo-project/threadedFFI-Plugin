@@ -1,7 +1,7 @@
 Extension { #name : #FFIOop }
 
 { #category : #'*ThreadedFFI-UFFI' }
-FFIOop >> tfexternalType [
+FFIOop >> tfExternalType [
 	
 	^ TFDerivedType objectPointer
 ]

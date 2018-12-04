@@ -1,10 +1,10 @@
 Extension { #name : #FFIExternalStructureType }
 
 { #category : #'*ThreadedFFI-UFFI' }
-FFIExternalStructureType >> tfexternalType [
+FFIExternalStructureType >> tfExternalType [
 	^ TFStructType
 		forClass: objectClass
 		withMembers:
 			(objectClass fieldSpec fields values
-				flatCollect: [ :aField | aField tfexternalTypeForStructureWithArity ])
+				flatCollect: [ :aField | aField tfExternalTypeForStructureWithArity ])
 ]

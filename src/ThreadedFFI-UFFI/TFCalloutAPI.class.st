@@ -9,8 +9,8 @@ TFCalloutAPI class >> newCallbackBackendFor: aCallback [
 
 	^ TFCallback
 		forBlock: aCallback
-		parameters: (aCallback functionSpec arguments collect: #tfexternalTypeWithArity) asArray
-		returnType: aCallback functionSpec returnType tfexternalTypeWithArity
+		parameters: (aCallback functionSpec arguments collect: #tfExternalTypeWithArity) asArray
+		returnType: aCallback functionSpec returnType tfExternalTypeWithArity
 ]
 
 { #category : #action }

@@ -1,7 +1,7 @@
 Extension { #name : #FFIUInt16 }
 
 { #category : #'*ThreadedFFI-UFFI' }
-FFIUInt16 >> tfexternalType [
+FFIUInt16 >> tfExternalType [
 	
 	^ TFBasicType uint16
 ]
