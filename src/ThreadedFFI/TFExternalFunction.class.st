@@ -28,10 +28,18 @@ Class {
 		'handle',
 		'definition',
 		'functionName',
-		'moduleName'
+		'moduleName',
+		'callTypeId',
+		'callType'
 	],
 	#category : #ThreadedFFI
 }
+
+{ #category : #private }
+TFExternalFunction class >> defaultCallType [
+
+	^ TFExternalFunctionCallType async
+]
 
 { #category : #'instance creation' }
 TFExternalFunction class >> fromAddress: anExternalAddress definition: aFunctionDefinition [
@@ -66,6 +74,21 @@ TFExternalFunction class >> name: aName moduleName: aModuleName parameterTypes: 
 
 ]
 
+{ #category : #'instance creation' }
+TFExternalFunction class >> name: aName moduleName: aModuleName parameterTypes: parameterTypes returnType: returnType type: aFunctionCallType [
+
+
+	^ (self
+		name: aName
+		moduleName: aModuleName
+		definition: (TFFunctionDefinition 
+			parameterTypes: parameterTypes
+			returnType: returnType))
+		type: aFunctionCallType;
+		yourself
+
+]
+
 { #category : #accessing }
 TFExternalFunction >> address [
 	^ handle
@@ -74,6 +97,26 @@ TFExternalFunction >> address [
 { #category : #accessing }
 TFExternalFunction >> address: anObject [
 	handle := anObject
+]
+
+{ #category : #accessing }
+TFExternalFunction >> callType [
+	^ callType
+]
+
+{ #category : #accessing }
+TFExternalFunction >> callType: aCallType [
+
+	callType := aCallType.
+	callTypeId := callType id.
+]
+
+{ #category : #accessing }
+TFExternalFunction >> callTypeId [
+	"This is utilitary for the plugin side. 
+	 Is easier and faster to check for a code than inspects an object"
+
+	^ callTypeId
 ]
 
 { #category : #accessing }
@@ -105,7 +148,7 @@ TFExternalFunction >> invoke [
 { #category : #operations }
 TFExternalFunction >> invokeWithArguments: arguments [
 
-	^ self newAsyncCall
+	^ self newCall
 		parameters: arguments;
 		execute
 ]
@@ -127,9 +170,9 @@ TFExternalFunction >> newAsyncCall [
 ]
 
 { #category : #operations }
-TFExternalFunction >> newSyncCall [
+TFExternalFunction >> newCall [
 
-	^ TFExternalSyncCall forFunction: self
+	^ self callType newCallFor: self
 ]
 
 { #category : #operations }

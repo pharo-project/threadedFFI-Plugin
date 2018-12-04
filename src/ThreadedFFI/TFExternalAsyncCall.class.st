@@ -73,7 +73,11 @@ TFExternalAsyncCall >> execute [
 	index := self registerSemaphore.
 	
 	^ [
-		self scheduleFunctionExecution: function withArguments: parameterArray withReturnHolder: returnHolder usingSemaphore: index.
+		self 
+			scheduleFunctionExecution: function 
+			withArguments: parameterArray 
+			withReturnHolder: returnHolder 
+			usingSemaphore: index.
 		semaphore wait. 
 		self readReturnValue: returnHolder
 	] ensure: [ 
