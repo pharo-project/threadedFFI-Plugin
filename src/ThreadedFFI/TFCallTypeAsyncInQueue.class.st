@@ -1,13 +1,14 @@
+"
+I define an asyncronic call using a system queue. 
+I will create a TFExternalAsyncCallInQueue object.
+"
 Class {
 	#name : #TFCallTypeAsyncInQueue,
-	#superclass : #TFExternalFunctionCallType,
+	#superclass : #TFCallTypeAsync,
 	#instVars : [
 		'queueName'
 	],
-	#classInstVars : [
-		'types'
-	],
-	#category : #ThreadedFFI
+	#category : #'ThreadedFFI-Base'
 }
 
 { #category : #'instance creation' }
@@ -36,12 +37,6 @@ TFCallTypeAsyncInQueue class >> queueNamed: aName [
 TFCallTypeAsyncInQueue class >> types [ 
 
 	^ types ifNil: [ types := Dictionary new ]
-]
-
-{ #category : #accessing }
-TFCallTypeAsyncInQueue >> id [ 
-
-	^ 3
 ]
 
 { #category : #'instance creation' }

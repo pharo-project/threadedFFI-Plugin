@@ -32,7 +32,7 @@ Class {
 		'callTypeId',
 		'callType'
 	],
-	#category : #ThreadedFFI
+	#category : #'ThreadedFFI-Base'
 }
 
 { #category : #private }

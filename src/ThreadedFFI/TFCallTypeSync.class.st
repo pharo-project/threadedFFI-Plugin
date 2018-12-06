@@ -1,7 +1,11 @@
+"
+I define a syncronic call. 
+I will create a TFExternalSyncCall object.
+"
 Class {
 	#name : #TFCallTypeSync,
 	#superclass : #TFExternalFunctionCallType,
-	#category : #ThreadedFFI
+	#category : #'ThreadedFFI-Base'
 }
 
 { #category : #'instance creation' }
@@ -14,12 +18,6 @@ TFCallTypeSync class >> new [
 TFCallTypeSync class >> uniqueInstance [ 
 
 	^ uniqueInstance ifNil: [ uniqueInstance := super new ]
-]
-
-{ #category : #accessing }
-TFCallTypeSync >> id [ 
-
-	^ 2
 ]
 
 { #category : #'instance creation' }

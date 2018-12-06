@@ -6,7 +6,7 @@ Class {
 		'semaphore',
 		'arguments'
 	],
-	#category : #ThreadedFFI
+	#category : #'ThreadedFFI-Base'
 }
 
 { #category : #'instance creation' }

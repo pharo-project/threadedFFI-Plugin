@@ -180,7 +180,11 @@ FFICallout >> initialize [
 
 { #category : #private }
 FFICallout >> integerConstantArgument: anInteger [
-	^ FFIConst value: anInteger type: (self resolveExternalType:  #uint32)
+	^ FFIConst 
+		value: anInteger
+		type: (anInteger >=0 
+			ifTrue: [ self resolveExternalType: #uint32 ]
+			ifFalse: [ self resolveExternalType: #int32 ])
 ]
 
 { #category : #'argument loaders' }

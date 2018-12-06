@@ -1,7 +1,11 @@
+"
+I define an asyncronic call. 
+I will create a TFExternalAsyncCall object.
+"
 Class {
 	#name : #TFCallTypeAsync,
 	#superclass : #TFExternalFunctionCallType,
-	#category : #ThreadedFFI
+	#category : #'ThreadedFFI-Base'
 }
 
 { #category : #'instance creation' }
@@ -14,12 +18,6 @@ TFCallTypeAsync class >> new [
 TFCallTypeAsync class >> uniqueInstance [ 
 
 	^ uniqueInstance ifNil: [ uniqueInstance := super new ]
-]
-
-{ #category : #accessing }
-TFCallTypeAsync >> id [ 
-
-	^ 1
 ]
 
 { #category : #'instance creation' }

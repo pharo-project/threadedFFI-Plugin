@@ -1,10 +1,14 @@
+"
+I execute the asynchronic call into a system queue.
+
+"
 Class {
 	#name : #TFExternalAsyncCallInQueue,
 	#superclass : #TFExternalAsyncCall,
 	#instVars : [
 		'queueName'
 	],
-	#category : #ThreadedFFI
+	#category : #'ThreadedFFI-Base'
 }
 
 { #category : #'as yet unclassified' }
