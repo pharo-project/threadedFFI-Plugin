@@ -1,3 +1,8 @@
+"
+I'm a constant in an ffi call. 
+Constants can be used while doing a call, under a very restrictive rule: it has to be possible to parse it to understand which basic type it is.
+
+"
 Class {
 	#name : #FFIConst,
 	#superclass : #FFIExternalType,
@@ -14,10 +19,10 @@ FFIConst class >> value: aValue [
 ]
 
 { #category : #'instance creation' }
-FFIConst class >> value: anObject type: anExternalType [
+FFIConst class >> value: anObject type: aType [
 	^ self new 
 		value: anObject;
-		type: anExternalType;
+		type: aType;
 		yourself
 ]
 

@@ -145,11 +145,11 @@ FFICallout >> directArgName: typeName ptrArity: ptrArity [
 		self, nil,true, false or a constant (like a number)"
 
 	typeName = 'nil'
-		ifTrue: [ ^ FFIConst value: 0 type: (self resolveExternalType: #uint32) ].
+		ifTrue: [ ^ FFIConst value: 0 type: (self resolveType: #ulong) ].
 	typeName = 'false'
-		ifTrue: [ ^ FFIConst value: 0 type: (self resolveExternalType: #bool) ].
+		ifTrue: [ ^ FFIConst value: 0 type: (self resolveType: #bool) ].
 	typeName = 'true'
-		ifTrue: [ ^ FFIConst value: 1 type: (self resolveExternalType: #bool) ].
+		ifTrue: [ ^ FFIConst value: 1 type: (self resolveType: #bool) ].
 	ptrArity > 0
 		ifTrue: [ self error: 'missing argument name' ].	"lone self"
 	typeName = 'self'
