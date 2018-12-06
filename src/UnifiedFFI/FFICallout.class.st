@@ -183,8 +183,8 @@ FFICallout >> integerConstantArgument: anInteger [
 	^ FFIConst 
 		value: anInteger
 		type: (anInteger >=0 
-			ifTrue: [ self resolveExternalType: #uint32 ]
-			ifFalse: [ self resolveExternalType: #int32 ])
+			ifTrue: [ self resolveType: #uint32 ]
+			ifFalse: [ self resolveType: #int32 ])
 ]
 
 { #category : #'argument loaders' }

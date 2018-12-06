@@ -3,7 +3,7 @@ Class {
 	#superclass : #FFIExternalType,
 	#instVars : [
 		'value',
-		'externalType'
+		'type'
 	],
 	#category : #'UnifiedFFI-Types'
 }
@@ -17,7 +17,7 @@ FFIConst class >> value: aValue [
 FFIConst class >> value: anObject type: anExternalType [
 	^ self new 
 		value: anObject;
-		externalType: anExternalType;
+		type: anExternalType;
 		yourself
 ]
 
@@ -38,23 +38,20 @@ FFIConst >> emitReturnArgument: builder context: aContext [
 
 { #category : #accessing }
 FFIConst >> externalType [ 
-	^ externalType
-	
-]
 
-{ #category : #accessing }
-FFIConst >> externalType: anExternalType [ 
-	externalType := anExternalType
+	^ self type externalType
 ]
 
 { #category : #accessing }
 FFIConst >> externalTypeAlignment [
-	^ externalType externalTypeAlignment
+
+	^ self externalType externalTypeAlignment
 ]
 
 { #category : #accessing }
 FFIConst >> externalTypeSize [
-	^ externalType byteSize
+
+	^ self externalType byteSize
 ]
 
 { #category : #accessing }
@@ -71,6 +68,16 @@ FFIConst >> pointerArity: additionalArity [
 FFIConst >> stackValueParameterClass [
 	^ value isFloat ifTrue: [#float] ifFalse: [#integer]
 
+]
+
+{ #category : #accessing }
+FFIConst >> type [
+	^ type
+]
+
+{ #category : #accessing }
+FFIConst >> type: anObject [
+	type := anObject
 ]
 
 { #category : #accessing }
