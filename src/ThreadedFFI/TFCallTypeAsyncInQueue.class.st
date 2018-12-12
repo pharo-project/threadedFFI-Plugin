@@ -8,6 +8,9 @@ Class {
 	#instVars : [
 		'queueName'
 	],
+	#classInstVars : [
+		'types'
+	],
 	#category : #'ThreadedFFI-Base'
 }
 

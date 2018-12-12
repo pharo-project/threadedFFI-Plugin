@@ -8,7 +8,7 @@ Class {
 TFCalloutAPI class >> newCallbackBackendFor: aCallback [
 
 	^ TFCallback
-		forBlock: aCallback
+		forCallback: aCallback
 		parameters: (aCallback functionSpec arguments collect: #tfExternalTypeWithArity) asArray
 		returnType: aCallback functionSpec returnType tfExternalTypeWithArity
 ]

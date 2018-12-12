@@ -28,9 +28,8 @@ Class {
 		'handle',
 		'definition',
 		'functionName',
-		'moduleName',
-		'callTypeId',
-		'callType'
+		'callType',
+		'moduleName'
 	],
 	#category : #'ThreadedFFI-Base'
 }
@@ -107,16 +106,7 @@ TFExternalFunction >> callType [
 { #category : #accessing }
 TFExternalFunction >> callType: aCallType [
 
-	callType := aCallType.
-	callTypeId := callType id.
-]
-
-{ #category : #accessing }
-TFExternalFunction >> callTypeId [
-	"This is utilitary for the plugin side. 
-	 Is easier and faster to check for a code than inspects an object"
-
-	^ callTypeId
+	callType := aCallType
 ]
 
 { #category : #accessing }
@@ -161,12 +151,6 @@ TFExternalFunction >> moduleName [
 { #category : #accessing }
 TFExternalFunction >> moduleName: anObject [
 	moduleName := anObject
-]
-
-{ #category : #operations }
-TFExternalFunction >> newAsyncCall [
-
-	^ TFExternalAsyncCall forFunction: self
 ]
 
 { #category : #operations }

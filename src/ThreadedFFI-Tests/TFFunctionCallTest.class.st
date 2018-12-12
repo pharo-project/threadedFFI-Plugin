@@ -10,7 +10,7 @@ TFFunctionCallTest >> testCallbackAsFunction [
 	| callback fun definition returnValue |
 
 	callback := TFCallback 
-		forBlock: [ :a :b | a + b ] 
+		forCallback: [ :a :b | a + b ] 
 		parameters: { TFBasicType sint. TFBasicType float } 
 		returnType: TFBasicType float.
 
@@ -22,7 +22,7 @@ TFFunctionCallTest >> testCallbackAsFunction [
 		fromAddress: callback getHandle 
 		definition: definition.
 	
-	returnValue := fun newAsyncCall 
+	returnValue := fun newCall 
 		parameters: {1. 2.0};
 		execute.
 		
@@ -35,7 +35,7 @@ TFFunctionCallTest >> testCallbackInLoop [
 	| callback fun returnValue |
 
 	callback := TFCallback 
-		forBlock: [ :a | a + 1 ] 
+		forCallback: [ :a | a + 1 ] 
 		parameters: { TFBasicType sint. } 
 		returnType: TFBasicType sint.
 
@@ -48,7 +48,7 @@ TFFunctionCallTest >> testCallbackInLoop [
 					{TFBasicType pointer}
 				returnType: TFBasicType sint).
 
-	returnValue := fun newAsyncCall 
+	returnValue := fun newCall 
 		parameters: {callback getHandle};
 		execute.
 
@@ -62,7 +62,7 @@ TFFunctionCallTest >> testCallbackInSingleFunction [
 	| callback fun returnValue |
 
 	callback := TFCallback 
-		forBlock: [ :a | a + 1 ] 
+		forCallback: [ :a | a + 1 ] 
 		parameters: { TFBasicType sint. } 
 		returnType: TFBasicType sint.
 
@@ -74,7 +74,7 @@ TFFunctionCallTest >> testCallbackInSingleFunction [
 				parameterTypes: {TFBasicType pointer. TFBasicType sint}
 				returnType: TFBasicType sint).
 
-	returnValue := fun newAsyncCall 
+	returnValue := fun newCall 
 		parameters: {callback getHandle. 3};
 		execute.
 
@@ -96,7 +96,7 @@ TFFunctionCallTest >> testWithFloatAndDouble [
 					TFBasicType double}
 				returnType: TFBasicType float).
 
-	return := fun newAsyncCall
+	return := fun newCall
 		parameters: #(1.0 2.5);
 		execute.
 		
@@ -118,7 +118,7 @@ TFFunctionCallTest >> testWithTwoInts [
 					TFBasicType sint}
 				returnType: TFBasicType sint).
 				
-	return := fun newAsyncCall
+	return := fun newCall
 					parameters:{3. 	2};
 					execute.
 	

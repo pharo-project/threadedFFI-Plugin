@@ -7,7 +7,7 @@ Class {
 		'returnTypeHandler',
 		'parameterTypes',
 		'returnType',
-		'block'
+		'frontendCallback'
 	],
 	#category : #'ThreadedFFI-Callbacks'
 }
@@ -21,25 +21,15 @@ TFCallback class >> finalizeResourceData: anArray [
 ]
 
 { #category : #'as yet unclassified' }
-TFCallback class >> forBlock: aBlock parameters: parameterTypes returnType: returnType [
+TFCallback class >> forCallback: aCallback parameters: parameterTypes returnType: returnType [
 
 	^ self new
-		block: aBlock;
+		frontendCallback: aCallback;
 		parameterTypes: parameterTypes;
 		returnType: returnType;
 		autoRelease;
 		register;
 		yourself
-]
-
-{ #category : #accessing }
-TFCallback >> block [
-	^ block
-]
-
-{ #category : #accessing }
-TFCallback >> block: anObject [
-	block := anObject
 ]
 
 { #category : #accessing }
@@ -50,6 +40,17 @@ TFCallback >> callbackData [
 { #category : #accessing }
 TFCallback >> callbackData: anObject [
 	callbackData := anObject
+]
+
+{ #category : #accessing }
+TFCallback >> frontendCallback [
+
+	^ frontendCallback
+]
+
+{ #category : #accessing }
+TFCallback >> frontendCallback: anObject [
+	frontendCallback := anObject
 ]
 
 { #category : #initialization }
@@ -69,29 +70,33 @@ TFCallback >> parameterTypes: anObject [
 	parameterTypes := anObject
 ]
 
-{ #category : #'private - operations' }
-TFCallback >> primRegister [
-
-	<primitive: 'primitiveRegisterCallback' module: 'PThreadedPlugin'>
-
-	^ self primitiveFailed	
-]
-
-{ #category : #'private - operations' }
-TFCallback >> primUnregister [
-
-	<primitive: 'primitiveUnregisterCallback' module: 'PThreadedPlugin'>
+{ #category : #'private operations' }
+TFCallback >> primRegister: workerHandle [
+	<primitive: 'primitiveRegisterWorkerCallback' module: 'PThreadedPlugin'>
 
 	^ self primitiveFailed	
 ]
 
-{ #category : #operations }
+{ #category : #'private operations' }
+TFCallback >> primUnregister: workerHandle [
+	<primitive: 'primitiveUnregisterWorkerCallback' module: 'PThreadedPlugin'>
+
+	^ self primitiveFailed
+]
+
+{ #category : #registering }
 TFCallback >> register [
 	
 	handle isNull ifFalse: [ ^ self error: 'Callback already registered' ].
 	self validateTypes.
-	self primRegister.
-	TFCallbackQueue uniqueInstance registerCallback: self.
+	self primRegister: self workerHandle.
+	self registerCallback: self.
+]
+
+{ #category : #registering }
+TFCallback >> registerCallback: aCallback [
+
+	^ self worker registerCallback: aCallback
 ]
 
 { #category : #accessing }
@@ -114,18 +119,18 @@ TFCallback >> thunk [
 	^ self getHandle 
 ]
 
-{ #category : #operations }
+{ #category : #registering }
 TFCallback >> unregister [
 	
 	handle isNull ifTrue: [ ^ self ].
-	self primUnregister.
+	self primUnregister: self workerHandle.
 	
 	handle beNull.
 	callbackData beNull.
 
 ]
 
-{ #category : #'private - operations' }
+{ #category : #'private operations' }
 TFCallback >> validateTypes [
 
 	parameterTypes do: [ :each | each validate ].
@@ -133,4 +138,16 @@ TFCallback >> validateTypes [
 
 	parameterHandlers := parameterTypes collect: [ :e | e basicType ] as: Array.
 	returnTypeHandler := returnType basicType.
+]
+
+{ #category : #'private accessing' }
+TFCallback >> worker [
+
+	^ self frontendCallback worker
+]
+
+{ #category : #'private accessing' }
+TFCallback >> workerHandle [
+
+	^ self worker handle
 ]

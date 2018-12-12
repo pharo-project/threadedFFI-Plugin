@@ -7,14 +7,18 @@ Class {
 { #category : #private }
 TFCalloutMethodBuilder >> callType [
 	
-	(requestor optionAt: #optSync) ifTrue: [ 
+	"(requestor optionAt: #optSync) ifTrue: [ 
 		^ TFExternalFunctionCallType sync ].
 	(requestor optionAt: #optMainQueue) ifTrue: [ 
 		^ TFExternalFunctionCallType asyncQueue ].
 	(requestor optionAt: #optQueue) == false ifFalse: [ 
 		^ (TFExternalFunctionCallType asyncQueue: (requestor optionAt: #optQueue)) ].
 	
-	^ TFExternalFunctionCallType async
+	^ TFExternalFunctionCallType async"
+	
+	^ TFCallTypeWorker new 
+		worker: self module asFFILibrary worker;
+		yourself
 ]
 
 { #category : #private }

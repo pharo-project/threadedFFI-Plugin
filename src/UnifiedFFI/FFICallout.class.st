@@ -180,6 +180,7 @@ FFICallout >> initialize [
 
 { #category : #private }
 FFICallout >> integerConstantArgument: anInteger [
+
 	^ FFIConst 
 		value: anInteger
 		type: (anInteger >=0 

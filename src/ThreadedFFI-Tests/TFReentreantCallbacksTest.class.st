@@ -21,7 +21,7 @@ TFReentreantCallbacksTest >> testReentrantCalloutsDuringCallback [
 				returnType: TFBasicType sint).
 
 	callback := TFCallback 
-		forBlock: [ :times | 
+		forCallback: [ :times | 
 			times = 42
 				ifTrue: [ times ]
 				ifFalse: [ fun invokeWithArguments: {callback getHandle. times + 1} ] ] 
@@ -38,7 +38,7 @@ TFReentreantCallbacksTest >> testSingleCalloutDuringCallback [
 	| callback fun returnValue |
 
 	callback := TFCallback 
-		forBlock: [ :a | self shortCallout ] 
+		forCallback: [ :a | self shortCallout ] 
 		parameters: { TFBasicType sint. } 
 		returnType: TFBasicType sint.
 

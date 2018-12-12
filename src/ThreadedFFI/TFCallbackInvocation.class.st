@@ -1,38 +1,35 @@
 Class {
 	#name : #TFCallbackInvocation,
 	#superclass : #FFIExternalObject,
+	#instVars : [
+		'worker'
+	],
 	#category : #'ThreadedFFI-Callbacks'
 }
 
 { #category : #operations }
 TFCallbackInvocation >> arguments [
-
-	| parameterTypes argumentsAddress|
+	| parameterTypes argumentsAddress |
 	
 	parameterTypes := self callback parameterTypes.
 	argumentsAddress := self argumentsAddress.
 	
 	^ parameterTypes withIndexCollect: [ :type :idx |
-		type readValue: (argumentsAddress pointerAt: 1 + ((idx - 1) * Smalltalk wordSize))
-	].
-	
-	
-	
-
-	
-	
+		type readValue: (argumentsAddress pointerAt: 1 + ((idx - 1) * Smalltalk wordSize)) ]
 ]
 
 { #category : #accessing }
 TFCallbackInvocation >> argumentsAddress [
 
-	^ TFBasicType pointer readValue: handle offset: 1 + (TFBasicType pointer byteSize * 2)
+	^ TFBasicType pointer 
+		readValue: handle 
+		offset: 1 + (TFBasicType pointer byteSize * 2)
 ]
 
 { #category : #accessing }
 TFCallbackInvocation >> callback [ 
 	
-	^ TFCallbackQueue uniqueInstance lookupCallback: (self callbackData)
+	^ self worker lookupCallback: (self callbackData)
 ]
 
 { #category : #accessing }
@@ -46,28 +43,25 @@ TFCallbackInvocation >> execute [
 	| callback returnValue |
 	
 	callback := self callback.
-	returnValue := callback block valueWithArguments: self arguments.
+	returnValue := callback frontendCallback valueWithArguments: self arguments.
 
 	callback returnType isVoid ifFalse: [ self writeReturnValue: returnValue ].
 
-	self returnExecution.
-	
+	self returnExecution
 ]
 
-{ #category : #operations }
+{ #category : #private }
 TFCallbackInvocation >> primCallbackReturn [
-
 	<primitive: 'primitiveCallbackReturn' module: 'PThreadedPlugin'>
 
-	^ self primitiveFailed		
+	^ self primitiveFailed
 ]
 
 { #category : #operations }
 TFCallbackInvocation >> returnExecution [
 
 	self primCallbackReturn.
-	handle beNull.
-	
+	handle beNull
 ]
 
 { #category : #accessing }
@@ -76,8 +70,22 @@ TFCallbackInvocation >> returnHolder [
 	^ TFBasicType pointer readValue: handle offset: 1 + TFBasicType pointer byteSize
 ]
 
+{ #category : #accessing }
+TFCallbackInvocation >> worker [ 
+
+	^ worker
+]
+
+{ #category : #accessing }
+TFCallbackInvocation >> worker: aWorker [
+
+	worker := aWorker
+]
+
 { #category : #operations }
 TFCallbackInvocation >> writeReturnValue: aValue [
 
-	self callback returnType write: aValue into: self returnHolder.
+	self callback returnType 
+		write: aValue 
+		into: self returnHolder
 ]

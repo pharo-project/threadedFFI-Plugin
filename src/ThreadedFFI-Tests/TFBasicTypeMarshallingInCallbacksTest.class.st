@@ -30,7 +30,7 @@ TFBasicTypeMarshallingInCallbacksTest >> call: typeName type: type value: aValue
 	| callback fun received |
 
 	callback := TFCallback 
-		forBlock: [ :a | received := a ] 
+		forCallback: [ :a | received := a ] 
 		parameters: { type } 
 		returnType: TFBasicType void.
 
