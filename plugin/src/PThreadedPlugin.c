@@ -1,29 +1,62 @@
 #include "PThreadedPlugin.h"
+#include "worker.h"
 
 /*** Variables ***/
 
 struct VirtualMachine* interpreterProxy;
-static const char *moduleName = "PThreadedPlugin * ThreadedFFI-Plugin-pt.2 (e)";
+static const char *moduleName = "PThreadedPlugin * ThreadedFFI-Plugin-PGE.1 (e)";
 
 const char * getModuleName(void){
 	return moduleName;
 }
 
 sqInt initialiseModule(void){
-	return initializeWorkerThread();
+    return 1;
 }
 
-PrimitiveWithDepth(primitiveCallbackReturn, 1){
-    void*  handler;
+/* primitiveRegisterWorker
+ *   adds a worker and answers its handle
+ *   arguments:
+ *   - name <String>
+ */
+PrimitiveWithDepth(primitiveRegisterWorker, 2) {
+    char *name = readString(interpreterProxy->stackValue(0));
+    checkFailed();
+    
+    Worker *worker = worker_new(name);
+    worker_register(worker);
+    
+    sqInt workerHandle = newExternalAddress();
+    checkFailed();
+    
+    writeAddress(workerHandle, worker);
+    checkFailed();
+    
+    primitiveEndReturn(workerHandle);
+}
+
+/* primitiveWorkerCallbackReturn
+ *   returns from a callback
+ *   arguments:
+ *   - workerHandle <ExternalAddress>
+ */
+PrimitiveWithDepth(primitiveWorkerCallbackReturn, 1) {
+    void *handler;
+    Worker *worker;
     sqInt receiver;
 
-    receiver = interpreterProxy->stackValue(0);
+    receiver = getReceiver();
     checkFailed();
 
     handler = getHandler(receiver);
     checkFailed();
 
-	callbackReturn(handler);
+    worker = (Worker *)readAddress(interpreterProxy->stackValue(1));
+    checkFailed();
+
+	worker_callback_return(worker, handler);
+
+    primitiveEnd();
 }
 
 PrimitiveWithDepth(primitiveDefineFunction, 2){
@@ -52,20 +85,15 @@ PrimitiveWithDepth(primitiveDefineFunction, 2){
 	for (idx = 0; idx < count; idx += 1) {
 		parameters[idx] = (readAddress(interpreterProxy->stObjectat(paramsArray, idx + 1)));
 	}
-
-	if (interpreterProxy->failed()) {
-		return;
-	}
+    checkFailed()
 
 	handler = defineFunctionWithAnd(parameters, count, returnType);
-	if (interpreterProxy->failed()) {
-		return;
-	}
+    checkFailed();
 
 	setHandler(receiver, handler);
 	checkFailed();
 
-	interpreterProxy->pop(2);
+	primitiveEnd();
 }
 
 Primitive(primitiveFillBasicType){
@@ -93,134 +121,158 @@ PrimitiveWithDepth(primitiveFreeDefinition, 1){
 	setHandler(receiver, 0);
 }
 
-Primitive(primitiveInitializeCallbacksQueue){
+PrimitiveWithDepth(primitiveInitializeWorkerCallbackQueue, 1) {
     int index;
-
-	index = interpreterProxy->integerValueOf(interpreterProxy->stackValue(0));
-	initCallbackQueue(index);
-	checkFailed();
-
-	interpreterProxy->pop(1);
+    
+    Worker *worker = (Worker *)readAddress(interpreterProxy->stackValue(1));
+    checkFailed();
+    
+    index = interpreterProxy->integerValueOf(interpreterProxy->stackValue(0));
+    worker_set_callback_semaphore_index(worker, index);
+    checkFailed();
+    
+    primitiveEnd();
 }
 
-PrimitiveWithDepth(primitivePerformCall, 2){
-    void*aCif;
-    void*aExternalFunction;
-    void*parametersAddress;
-    void*returnHolderAddress;
+/* prepareWorkerTaskFromPrimitiveParameters
+ *  recognises a call with parameters (externalFunction, parametersAddress, returnHolderAddress, semaphoreIndex)
+ *  and creates a WorkerTask with it.
+ */
+static WorkerTask *prepareWorkerTaskFromPrimitiveParameters() {
+    void *cif;
+    void *externalFunction;
+    void *parameters;
+    void *returnHolder;
     sqInt semaphoreIndex;
+    
+    semaphoreIndex = interpreterProxy->integerValueOf(interpreterProxy->stackValue(0));
+    checkFailedReturn(NULL);
+    
+    returnHolder = readAddress(interpreterProxy->stackValue(1));
+    checkFailedReturn(NULL);
 
-	semaphoreIndex = interpreterProxy->integerValueOf(interpreterProxy->stackValue(0));
-	checkFailed();
+    parameters = readAddress(interpreterProxy->stackValue(2));
+    checkFailedReturn(NULL);
 
-	returnHolderAddress = readAddress(interpreterProxy->stackValue(1));
-	checkFailed();
+    externalFunction = getHandler(interpreterProxy->stackValue(3));
+    checkFailedReturn(NULL);
 
-	parametersAddress = readAddress(interpreterProxy->stackValue(2));
-	checkFailed();
+    cif = getHandler(interpreterProxy->fetchPointerofObject(1, interpreterProxy->stackValue(3)));
+    checkFailedReturn(NULL);
 
-	aExternalFunction = getHandler(interpreterProxy->stackValue(3));
-	checkFailed();
-
-	aCif = getHandler(interpreterProxy->fetchPointerofObject(1, interpreterProxy->stackValue(3)));
-	checkFailed();
-
-	performCallCifWithIntoUsing(aExternalFunction, aCif, parametersAddress, returnHolderAddress, semaphoreIndex);
-	checkFailed();
-
-	interpreterProxy->pop(4);
+    return worker_task_new(externalFunction, cif, parameters, returnHolder, semaphoreIndex);
 }
 
-PrimitiveWithDepth(primitivePerformSyncCall, 2){
-    void*aCif;
-    void*aExternalFunction;
-    void*parametersAddress;
-    void*returnHolderAddress;
+/* primitivePerformWorkerCall
+ *  arguments:
+ *  - externalFunction        <ExternalAddress>
+ *  - arguments               <ExternalAddress>
+ *  - returnHolder            <ExternalAddress>
+ *  - semaphoreIndex          <Integer>
+ */
+PrimitiveWithDepth(primitivePerformWorkerCall, 2) {
 
-	returnHolderAddress = readAddress(interpreterProxy->stackValue(0));
-	checkFailed();
+    sqInt receiver = getReceiver();
+    checkFailed();
 
-	parametersAddress = readAddress(interpreterProxy->stackValue(1));
-	checkFailed();
+    // handler is in third position. This is kind of bad so maybe pass it by parameter
+    Worker *worker = (Worker *)readAddress(getAttributeOf(receiver, 3));
+    checkFailed();
 
-	aExternalFunction = getHandler(interpreterProxy->stackValue(2));
-	checkFailed();
+    WorkerTask *task = prepareWorkerTaskFromPrimitiveParameters();
+    checkFailed();
 
-	aCif = getHandler(interpreterProxy->fetchPointerofObject(1, interpreterProxy->stackValue(2)));
-	checkFailed();
+    worker_dispatch_callout(worker, task);
+    checkFailed();
 
-	performSyncCallCifWithInto(aExternalFunction, aCif, parametersAddress, returnHolderAddress);
-	checkFailed();
-
-	interpreterProxy->pop(3);
+    primitiveEnd();
 }
 
+/* primitiveReadNextWorkerCallback
+ *  answers next pending callback
+ *  arguments:
+ *  - workerHandle <ExternalAddress>
+ */
+PrimitiveWithDepth(primitiveReadNextWorkerCallback, 1){
+    Worker *worker;
+    CallbackInvocation *address;
+    
+    worker = (Worker *)readAddress(interpreterProxy->stackValue(0));
+    checkFailed();
 
-
-PrimitiveWithDepth(primitiveReadNextCallback, 1){
-    CallbackInvocation* address;
+    address = worker_next_pending_callback(worker);
+    checkFailed();
+   
     sqInt externalAddress;
+    if(address) {
+        externalAddress = interpreterProxy->instantiateClassindexableSize(interpreterProxy->classExternalAddress(), sizeof(void*));
+        checkFailed();
 
-	externalAddress = interpreterProxy->stackValue(0);
-	checkFailed();
-
-	address = getNextCallback();
-	checkFailed();
-
-	writeAddress(externalAddress, address);
-	checkFailed();
-
-	interpreterProxy->pop(1);
+        writeAddress(externalAddress, address);
+        checkFailed();
+    } else {
+        externalAddress = interpreterProxy->nilObject();
+    }
+    
+    primitiveEndReturn(externalAddress);
 }
 
-PrimitiveWithDepth(primitiveRegisterCallback, 3){
-    sqInt callbackData;
-    CallbackData*  callbackDataPtr;
+PrimitiveWithDepth(primitiveRegisterWorkerCallback, 3){
+    sqInt callbackHandle;
+    Callback *callback;
     sqInt count;
-    void*  handler;
+    void *handler;
     sqInt idx;
     sqInt paramArray;
-    ffi_type**  parameters;
+    ffi_type **parameters;
     sqInt receiver;
-    ffi_type*  returnType;
-
-	receiver = interpreterProxy->stackValue(0);
-	checkFailed();
-
-	callbackData = interpreterProxy->fetchPointerofObject(1, receiver);
-	checkFailed();
-
-	paramArray = interpreterProxy->fetchPointerofObject(2, receiver);
-	checkFailed();
-
-	count = interpreterProxy->stSizeOf(paramArray);
-	checkFailed();
-
-	/* The parameters are freed by the primitiveFreeDefinition, if there is an error it is freed by #defineCallback:WithParams:Count:ReturnType: */
-	callbackDataPtr = NULL;
-	parameters = malloc(count*sizeof(void*));
-	returnType = getHandler(interpreterProxy->fetchPointerofObject(3, receiver));
-	for (idx = 0; idx < count; idx += 1) {
-		parameters[idx] = (getHandler(interpreterProxy->stObjectat(paramArray, idx + 1)));
-	}
-	checkFailed();
-
-	handler = defineCallbackWithParamsCountReturnType((&callbackDataPtr), parameters, count, returnType);
-	checkFailed();
-
-	setHandler(receiver, handler);
-	checkFailed();
-
-	writeAddress(callbackData, callbackDataPtr);
-	checkFailed();
+    ffi_type *returnType;
+    
+    receiver = getReceiver();
+    checkFailed();
+    
+    Worker *worker = (Worker *)readAddress(interpreterProxy->stackValue(0));
+    checkFailed();
+    
+    callbackHandle = getAttributeOf(receiver, 1);
+    checkFailed();
+    
+    paramArray = getAttributeOf(receiver, 2);
+    checkFailed();
+    
+    count = interpreterProxy->stSizeOf(paramArray);
+    checkFailed();
+    
+    /*
+       The parameters are freed by the primitiveFreeDefinition, if there is an error it is freed
+       by #defineCallback:WithParams:Count:ReturnType:
+     */
+    parameters = malloc(count*sizeof(void*));
+    returnType = getHandler(getAttributeOf(receiver, 3));
+    for (idx = 0; idx < count; idx += 1) {
+        parameters[idx] = (getHandler(interpreterProxy->stObjectat(paramArray, idx + 1)));
+    }
+    checkFailed();
+    
+    callback = callback_new(worker, parameters, count, returnType);
+    checkFailed();
+    
+    setHandler(receiver, callback->functionAddress);
+    checkFailed();
+    
+    writeAddress(callbackHandle, callback);
+    checkFailed();
+    
+    primitiveEnd();
 }
+
 
 PrimitiveWithDepth(primitiveTypeByteSize, 1){
     void* handler;
     sqInt receiver;
     sqInt size;
 
-	receiver = interpreterProxy->stackValue(0);
+	receiver = getReceiver();
 
 	handler = getHandler(receiver);
 	checkFailed();
@@ -248,41 +300,38 @@ Primitive(primitiveGetAddressOfOOP){
 		return;
 	}
 
-	interpreterProxy->pop(2);
-	checkFailed();
-
-	interpreterProxy->pushInteger(oop + BaseHeaderSize);
+    primitiveEndReturnInteger(oop + BaseHeaderSize);
 }
 
 /*
  * This primitive returns the object in an oop passed as integer.
  */
-
 Primitive(primitiveGetObjectFromAddress){
 	sqInt oop;
 
 	oop = interpreterProxy->integerValueOf(interpreterProxy->stackValue(0)) - BaseHeaderSize;
 	checkFailed();
 
-	interpreterProxy->popthenPush(2, oop);
+    primitiveEndReturn(oop);
 }
 
-
-PrimitiveWithDepth(primitiveUnregisterCallback, 1){
-    sqInt callbackData;
-    CallbackData*  callbackDataPtr;
+PrimitiveWithDepth(primitiveUnregisterWorkerCallback, 1){
+    sqInt callbackHandle;
+    Callback *callback;
     sqInt receiver;
 
-	receiver = interpreterProxy->stackValue(0);
+	receiver = getReceiver();
 	checkFailed();
 
-	callbackData = interpreterProxy->fetchPointerofObject(1, receiver);
+	callbackHandle = getAttributeOf(receiver, 1);
 	checkFailed();
 
-	callbackDataPtr = readAddress(callbackData);
+	callback = (Callback *)readAddress(callbackHandle);
 	checkFailed();
 
-	releaseCallback(callbackDataPtr);
+	callback_release(callback);
+    
+    //primitiveEnd(); //No need to call it
 }
 
 /**
@@ -300,7 +349,6 @@ PrimitiveWithDepth(primitiveUnregisterCallback, 1){
  * Also it calculates the offsets of the struct.
  *
  */
-
 PrimitiveWithDepth(primitiveInitializeStructType, 2){
 	sqInt receiver;
 	sqInt arrayOfMembers;
@@ -310,16 +358,17 @@ PrimitiveWithDepth(primitiveInitializeStructType, 2){
 	ffi_type** memberTypes;
 	size_t* offsets;
 
-	receiver = interpreterProxy->stackValue(0);
+	receiver = getReceiver();
 	checkFailed();
 
+    // Verify we have a valid handle
 	getHandler(receiver);
 	checkFailed();
 
-	arrayOfMembers = interpreterProxy->fetchPointerofObject(1, receiver);
+	arrayOfMembers = getAttributeOf(receiver, 1);
 	checkFailed();
 
-	arrayOfOffsets = interpreterProxy->fetchPointerofObject(2, receiver);
+	arrayOfOffsets = getAttributeOf(receiver, 2);
 	checkFailed();
 
 	//Validating that they are arrays.
@@ -397,20 +446,21 @@ PrimitiveWithDepth(primitiveInitializeStructType, 2){
 	}
 
 	free(offsets);
+    
+    //primitiveEnd(); // No need to call it
 }
 
 /**
  * This primitive frees the struct type ffi_type memory and the array used to hold the members.
  */
-
 PrimitiveWithDepth(primitiveFreeStruct, 1){
 	sqInt receiver;
 	ffi_type* structType;
 
-	receiver = interpreterProxy->stackValue(0);
+	receiver = getReceiver();
 	checkFailed();
 
-	structType = (ffi_type*)getHandler(receiver);
+	structType = (ffi_type *)getHandler(receiver);
 	checkFailed();
 
 	if(!structType){
@@ -422,6 +472,8 @@ PrimitiveWithDepth(primitiveFreeStruct, 1){
 	free(structType);
 
 	setHandler(receiver, NULL);
+
+    //primitiveEnd(); //No need to call it
 }
 
 /**
@@ -442,8 +494,7 @@ PrimitiveWithDepth(primitiveStructByteSize, 1){
 		return;
 	}
 
-	interpreterProxy->pop(1);
-	interpreterProxy->pushInteger(structType->size);
+    primitiveEndReturnInteger(structType->size);
 }
 
 /**
@@ -482,7 +533,7 @@ PrimitiveWithDepth(primitiveCopyFromTo, 1){
 
 	memcpy(toAddress, fromAddress, size);
 
-	interpreterProxy->pop(3);
+	primitiveEnd();
 }
 
 sqInt setInterpreter(struct VirtualMachine* anInterpreter)

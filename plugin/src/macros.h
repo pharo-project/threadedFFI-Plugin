@@ -45,6 +45,8 @@
 
 #define checkFailed() if(interpreterProxy->failed()) return;
 
+#define checkFailedReturn(ret) if(interpreterProxy->failed()) return ret;
+
 #define checkIsArray(anObject) 	if(!interpreterProxy->isKindOfClass(anObject, interpreterProxy->classArray())){ \
 		interpreterProxy->primitiveFail(); \
 		return;\
