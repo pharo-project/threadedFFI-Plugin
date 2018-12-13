@@ -17,10 +17,20 @@ TFTestCase >> libraryPath [
 { #category : #tests }
 TFTestCase >> shortCallout [
 	| fun |
+
 	fun := TFExternalFunction
 		name: 'shortCallout'
 		moduleName: self libraryPath
-		definition: (TFFunctionDefinition parameterTypes: {} returnType: TFBasicType sint32).
+		definition: (TFFunctionDefinition 
+			parameterTypes: {} 
+			returnType: TFBasicType sint32)
+		worker: self worker.
 
 	^ fun invoke
+]
+
+{ #category : #accessing }
+TFTestCase >> worker [
+
+	^ TFWorkerManager uniqueInstance defaultWorker
 ]

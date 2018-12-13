@@ -22,16 +22,6 @@ TFCallback class >> finalizeResourceData: anArray [
 ]
 
 { #category : #'instance creation' }
-TFCallback class >> forCallback: aCallback parameters: parameterTypes returnType: returnType [
-
-	^ self 
-		forCallback: aCallback 
-		parameters: parameterTypes 
-		returnType: returnType 
-		worker: TFWorkerManager uniqueInstance defaultWorker
-]
-
-{ #category : #'instance creation' }
 TFCallback class >> forCallback: aCallback parameters: parameterTypes returnType: returnType worker: aWorker [
 
 	^ self new

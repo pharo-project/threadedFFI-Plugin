@@ -54,7 +54,8 @@ TFUFFICallbackTest >> testCallbackAsFunction [
 
 	fun := TFExternalFunction 
 		fromAddress: callback getHandle 
-		definition: definition.
+		definition: definition
+		worker: self worker.
 
 	self assert: (fun invokeWithArguments: {1. 2.0}) equals: 3.0
 ]
@@ -115,7 +116,8 @@ TFUFFICallbackTest >> testCallbackWithErrorHanlded [
 
 	fun := TFExternalFunction 
 		fromAddress: callback getHandle 
-		definition: definition.
+		definition: definition
+		worker: self worker.
 
 	UIManager nonInteractiveDuring: [self assert: (fun invokeWithArguments: {1}) equals: -1]
 

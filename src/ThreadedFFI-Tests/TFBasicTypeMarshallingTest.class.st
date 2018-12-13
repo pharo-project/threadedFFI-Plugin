@@ -27,8 +27,9 @@ TFBasicTypeMarshallingTest >> externalFunction: name ofType: type [
 		name: name
 		moduleName: self libraryPath
 		definition: (TFFunctionDefinition
-							parameterTypes: {type. type}
-							returnType: type)
+			parameterTypes: {type. type}
+			returnType: type)
+		worker: self worker
 ]
 
 { #category : #tests }
@@ -187,8 +188,9 @@ TFBasicTypeMarshallingTest >> testUnrefPointer [
 		name: 'unref_pointer'
 		moduleName: self libraryPath
 		definition: (TFFunctionDefinition
-							parameterTypes: {TFBasicType pointer}
-							returnType: TFBasicType pointer).
+			parameterTypes: {TFBasicType pointer}
+			returnType: TFBasicType pointer)
+		worker: self worker.
 	
 	holder := ExternalAddress allocate: TFBasicType sshort byteSize.
 	TFBasicType sshort write: 17 into: holder.

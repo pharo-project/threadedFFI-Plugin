@@ -15,10 +15,10 @@ TFReentreantCallbacksTest >> testReentrantCalloutsDuringCallback [
 	fun := TFExternalFunction
 		name: 'singleCallToCallback'
 		moduleName: self libraryPath
-		definition:
-			(TFFunctionDefinition
-				parameterTypes: {TFBasicType pointer. TFBasicType sint}
-				returnType: TFBasicType sint).
+		definition: (TFFunctionDefinition
+			parameterTypes: {TFBasicType pointer. TFBasicType sint}
+			returnType: TFBasicType sint)
+		worker: self worker.
 
 	callback := TFCallback 
 		forCallback: [ :times | 
@@ -26,7 +26,8 @@ TFReentreantCallbacksTest >> testReentrantCalloutsDuringCallback [
 				ifTrue: [ times ]
 				ifFalse: [ fun invokeWithArguments: {callback getHandle. times + 1} ] ] 
 		parameters: { TFBasicType sint. } 
-		returnType: TFBasicType sint.
+		returnType: TFBasicType sint
+		worker: self worker.
 
 	returnValue := fun invokeWithArguments: {callback getHandle. 0}.
 	self assert: returnValue equals: 42
@@ -40,15 +41,16 @@ TFReentreantCallbacksTest >> testSingleCalloutDuringCallback [
 	callback := TFCallback 
 		forCallback: [ :a | self shortCallout ] 
 		parameters: { TFBasicType sint. } 
-		returnType: TFBasicType sint.
+		returnType: TFBasicType sint
+		worker: self worker.
 
 	fun := TFExternalFunction
 		name: 'singleCallToCallback'
 		moduleName: self libraryPath
-		definition:
-			(TFFunctionDefinition
-				parameterTypes: {TFBasicType pointer. TFBasicType sint}
-				returnType: TFBasicType sint).
+		definition: (TFFunctionDefinition
+			parameterTypes: {TFBasicType pointer. TFBasicType sint}
+			returnType: TFBasicType sint)
+		worker: self worker.
 
 	returnValue := fun invokeWithArguments: {callback getHandle. 3}.
 	self assert: returnValue equals: 42

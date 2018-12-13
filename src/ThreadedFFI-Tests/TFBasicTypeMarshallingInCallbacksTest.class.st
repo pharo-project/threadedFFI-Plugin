@@ -32,14 +32,16 @@ TFBasicTypeMarshallingInCallbacksTest >> call: typeName type: type value: aValue
 	callback := TFCallback 
 		forCallback: [ :a | received := a ] 
 		parameters: { type } 
-		returnType: TFBasicType void.
+		returnType: TFBasicType void
+		worker: self worker.
 
 	fun := TFExternalFunction
 		name: 'simple_callback_f_', typeName
 		moduleName: self libraryPath
 		definition: (TFFunctionDefinition
-				parameterTypes: {TFBasicType pointer . type}
-				returnType: TFBasicType void).
+			parameterTypes: { TFBasicType pointer. type }
+			returnType: TFBasicType void)
+		worker: self worker.
 
 	fun invokeWithArguments: { callback getHandle . aValue}.
 	^ received

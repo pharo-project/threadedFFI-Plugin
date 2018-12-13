@@ -28,35 +28,58 @@ Class {
 		'handle',
 		'definition',
 		'functionName',
-		'callType',
-		'moduleName'
+		'moduleName',
+		'worker',
+		'callType'
 	],
 	#category : #'ThreadedFFI-Base'
 }
 
+{ #category : #private }
+TFExternalFunction class >> defaultCallType [
+
+	^ TFCallTypeWorker new
+]
+
 { #category : #'instance creation' }
-TFExternalFunction class >> fromAddress: anExternalAddress definition: aFunctionDefinition [
+TFExternalFunction class >> fromAddress: anExternalAddress definition: aFunctionDefinition worker: aWorker [
 
 	^ self new
 		address: anExternalAddress;
 		definition: aFunctionDefinition;
+		worker: aWorker;
 		yourself
 ]
 
 { #category : #'instance creation' }
-TFExternalFunction class >> name: aName moduleName: aModuleName definition: aFunctionDefinition [
+TFExternalFunction class >> name: aName moduleName: aModuleName definition: aFunctionDefinition worker: aWorker [
 
 	^ self new
 		address: ExternalAddress new;
 		moduleName: aModuleName;
 		functionName: aName;
 		definition: aFunctionDefinition;
+		worker: aWorker;
 		yourself
 ]
 
 { #category : #'instance creation' }
-TFExternalFunction class >> name: aName moduleName: aModuleName parameterTypes: parameterTypes returnType: returnType [
+TFExternalFunction class >> name: aName moduleName: aModuleName parameterTypes: parameterTypes returnType: returnType type: aFunctionCallType worker: aWorker [
 
+	^ (self
+		name: aName
+		moduleName: aModuleName
+		definition: (TFFunctionDefinition 
+			parameterTypes: parameterTypes
+			returnType: returnType)
+		worker: aWorker)
+		type: aFunctionCallType;
+		yourself
+
+]
+
+{ #category : #'instance creation' }
+TFExternalFunction class >> name: aName moduleName: aModuleName parameterTypes: parameterTypes returnType: returnType worker: aWorker [
 
 	^ self
 		name: aName
@@ -64,22 +87,7 @@ TFExternalFunction class >> name: aName moduleName: aModuleName parameterTypes: 
 		definition: (TFFunctionDefinition 
 			parameterTypes: parameterTypes
 			returnType: returnType)
-
-]
-
-{ #category : #'instance creation' }
-TFExternalFunction class >> name: aName moduleName: aModuleName parameterTypes: parameterTypes returnType: returnType type: aFunctionCallType [
-
-
-	^ (self
-		name: aName
-		moduleName: aModuleName
-		definition: (TFFunctionDefinition 
-			parameterTypes: parameterTypes
-			returnType: returnType))
-		type: aFunctionCallType;
-		yourself
-
+		worker: aWorker
 ]
 
 { #category : #accessing }
@@ -95,7 +103,7 @@ TFExternalFunction >> address: anObject [
 { #category : #accessing }
 TFExternalFunction >> callType [
 
-	^ callType
+	^ callType ifNil: [ callType := self class defaultCallType ]
 ]
 
 { #category : #accessing }
@@ -159,4 +167,14 @@ TFExternalFunction >> validate [
 	definition validate.
 	handle isNull
 		ifTrue: [ handle := ExternalAddress loadSymbol: functionName module: moduleName ]
+]
+
+{ #category : #accessing }
+TFExternalFunction >> worker [
+	^ worker
+]
+
+{ #category : #accessing }
+TFExternalFunction >> worker: anObject [
+	worker := anObject
 ]

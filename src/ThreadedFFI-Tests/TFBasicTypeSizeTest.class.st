@@ -19,8 +19,9 @@ TFBasicTypeSizeTest >> externalFunction: name [
 		name: name
 		moduleName: self libraryPath
 		definition: (TFFunctionDefinition
-							parameterTypes: {}
-							returnType: TFBasicType uint)
+			parameterTypes: {}
+			returnType: TFBasicType uint)
+		worker: self worker
 ]
 
 { #category : #tests }

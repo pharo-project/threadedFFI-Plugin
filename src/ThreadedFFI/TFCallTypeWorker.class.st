@@ -17,16 +17,6 @@ TFCallTypeWorker class >> worker: aWorker [
 TFCallTypeWorker >> newCallFor: aFunction [
 
 	^ (TFExternalWorkerCall forFunction: aFunction)
-		workerHandle: self worker handle;
+		workerHandle: aFunction worker handle;
 		yourself
-]
-
-{ #category : #accessing }
-TFCallTypeWorker >> worker [
-	^ worker
-]
-
-{ #category : #accessing }
-TFCallTypeWorker >> worker: anObject [
-	worker := anObject
 ]

@@ -44,12 +44,18 @@ TFStructTest >> testPointStructSize [
 { #category : #tests }
 TFStructTest >> testReturnsAnStruct [
 	| pointType fun aPoint |
-	pointType := TFStructType forClass: TFPointTestStruct withMembers: { TFBasicType sint. TFBasicType sint. }.
+	
+	pointType := TFStructType 
+		forClass: TFPointTestStruct 
+		withMembers: { 
+			TFBasicType sint. 
+			TFBasicType sint }.
 	
 	fun := TFExternalFunction
 		name: 'newPoint' moduleName: self libraryPath
 		parameterTypes:	{TFBasicType sint. TFBasicType sint}
-		returnType: pointType.
+		returnType: pointType
+		worker: self worker.
 		
 	aPoint := fun invokeWithArguments:#(1 5).
 
