@@ -110,7 +110,7 @@ TFWorkerCallbackQueue >> nextPendingCallback [
 	externalAddress ifNil: [ ^ nil ].
 	
 	^ (TFCallbackInvocation fromHandle: externalAddress)
-		worker: self;
+		worker: self worker;
 		yourself
 ]
 

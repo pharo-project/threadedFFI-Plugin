@@ -26,10 +26,17 @@ TFWorkerManager class >> initialize [
 	self startUp: true
 ]
 
-{ #category : #accessing }
+{ #category : #'instance creation' }
 TFWorkerManager class >> new [ 
 
 	^ self error: 'Use #uniqueInstances'
+]
+
+{ #category : #accessing }
+TFWorkerManager class >> reset [ 
+	<script>
+	
+	self shutDown: true
 ]
 
 { #category : #'class initialization' }
@@ -50,7 +57,7 @@ TFWorkerManager class >> startUp: resuming [
 	self shutDown: true
 ]
 
-{ #category : #accessing }
+{ #category : #'instance creation' }
 TFWorkerManager class >> uniqueInstance [ 
 
 	^ uniqueInstance ifNil: [ uniqueInstance := super new ]

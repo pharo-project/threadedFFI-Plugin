@@ -51,7 +51,7 @@ PrimitiveWithDepth(primitiveWorkerCallbackReturn, 1) {
     handler = getHandler(receiver);
     checkFailed();
 
-    worker = (Worker *)readAddress(interpreterProxy->stackValue(1));
+    worker = (Worker *)readAddress(interpreterProxy->stackValue(0));
     checkFailed();
 
 	worker_callback_return(worker, handler);
@@ -315,23 +315,25 @@ Primitive(primitiveGetObjectFromAddress){
     primitiveEndReturn(oop);
 }
 
+/* primitiveUnregisterWorkerCallback
+ *  unregisters callback (taking a handle as parameter)
+ *  arguments:
+ *  - workerHandle      <ExternalAddress>
+ *  - callbackHandle    <ExternalAddress>
+ */
 PrimitiveWithDepth(primitiveUnregisterWorkerCallback, 1){
-    sqInt callbackHandle;
     Callback *callback;
     sqInt receiver;
 
-	receiver = getReceiver();
-	checkFailed();
-
-	callbackHandle = getAttributeOf(receiver, 1);
-	checkFailed();
-
-	callback = (Callback *)readAddress(callbackHandle);
-	checkFailed();
-
-	callback_release(callback);
+    // In fact, I do not need a worker now.
+    // I just keeping it for posible future usage
     
-    //primitiveEnd(); //No need to call it
+    callback = (Callback *)readAddress(interpreterProxy->stackValue(0));
+    checkFailed();
+    
+    callback_release(callback);
+    
+    primitiveEnd();
 }
 
 /**

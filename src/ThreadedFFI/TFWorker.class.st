@@ -57,6 +57,12 @@ TFWorker >> initializeHandle: aHandle name: aString. [
 ]
 
 { #category : #accessing }
+TFWorker >> lookupCallback: aCallback [
+	
+	^ callbackQueue lookupCallback: aCallback
+]
+
+{ #category : #accessing }
 TFWorker >> name [
 
 	^ name
