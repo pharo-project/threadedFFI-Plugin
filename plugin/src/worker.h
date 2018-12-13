@@ -18,7 +18,7 @@ typedef struct __WorkerPendingCallback {
 
 typedef struct {
     pthread_t threadId;
-    Semaphore semaphore;
+    PlatformSemaphore semaphore;
     int callbackSemaphoreIndex;
     pthread_mutex_t queueCriticalSection;
 } WorkerThread;
