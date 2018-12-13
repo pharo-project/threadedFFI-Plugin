@@ -164,6 +164,12 @@ TFCallback >> worker [
 	^ worker
 ]
 
+{ #category : #acccessing }
+TFCallback >> worker: aWorker [
+ 
+	worker := aWorker
+]
+
 { #category : #'private accessing' }
 TFCallback >> workerHandle [
 
