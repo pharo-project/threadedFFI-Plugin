@@ -4,7 +4,7 @@
 #include "PThreadedPlugin.h"
 #include "workerTask.h"
 #include "callbacks.h"
-#include "semaphore.h"
+#include "platformSemaphore.h"
 
 typedef struct __WorkerCall {
     WorkerTask *task;
@@ -18,7 +18,7 @@ typedef struct __WorkerPendingCallback {
 
 typedef struct {
     pthread_t threadId;
-    Semaphore semaphore;
+    PlatformSemaphore semaphore;
     int callbackSemaphoreIndex;
     pthread_mutex_t queueCriticalSection;
 } WorkerThread;

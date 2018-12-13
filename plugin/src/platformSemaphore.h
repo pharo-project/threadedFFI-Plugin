@@ -9,19 +9,19 @@
 #include <semaphore.h>
 #include <errno.h>
 
-typedef sem_t* Semaphore;
+typedef sem_t* PlatformSemaphore;
 #define isValidSemaphore(aSemaphore) (aSemaphore != NULL)
 #else
 // I am OSX
 #include <dispatch/dispatch.h>
 
-typedef dispatch_semaphore_t Semaphore;
+typedef dispatch_semaphore_t PlatformSemaphore;
 #define isValidSemaphore(aSemaphore) (1)
 #endif // ifndef __APPLE__
 
-Semaphore semaphore_new(long initialValue);
-int semaphore_wait(Semaphore sem);
-int semaphore_signal(Semaphore sem);
-int semaphore_release(Semaphore sem);
+PlatformSemaphore semaphore_new(long initialValue);
+int semaphore_wait(PlatformSemaphore sem);
+int semaphore_signal(PlatformSemaphore sem);
+int semaphore_release(PlatformSemaphore sem);
 
 #endif // ifndef __SEMAPHORE_WRAPPER__

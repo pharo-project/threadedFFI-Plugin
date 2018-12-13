@@ -19,7 +19,7 @@
 #include "workerTask.h"
 #include "worker.h"
 #include "callbacks.h"
-#include "semaphore.h"
+#include "platformSemaphore.h"
 #include "macros.h"
 #include "utils.h"
 
