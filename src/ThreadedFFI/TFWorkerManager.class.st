@@ -85,7 +85,7 @@ TFWorkerManager >> primRegisterWorker: aName [
 ]
 
 { #category : #private }
-TFWorkerManager >> primUnregisterWorker: aName [
+TFWorkerManager >> primUnregisterWorker: workerHandle [
 	<primitive: #primitiveUnregisterWorker module: #PThreadedPlugin>
 	
 	^ self primitiveFailed

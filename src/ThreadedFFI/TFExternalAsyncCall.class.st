@@ -58,10 +58,12 @@ TFExternalAsyncCall >> deregisterSemaphore [
 { #category : #operations }
 TFExternalAsyncCall >> execute [
 	"Performs a callout using the asynchronous threaded FFI plugin.
-	This method schedules the execution of a function in the threaded FFI plugin and then waits for its result in a semaphore.
-	When the semaphore is signaled, the result is available in an external value holder from where the value is read.
-	
-	This method contains some boilerplate code to allocate and release external value holders for the arguments and the return value."
+	 This method schedules the execution of a function in the threaded FFI plugin and 
+	 then waits for its result in a semaphore.
+	 When the semaphore is signaled, the result is available in an external value holder
+	 from where the value is read.
+	 This method contains some boilerplate code to allocate and release external 
+	 value holders for the arguments and the return value."
 	| index parameterArray returnHolder |
 
 	self validateFunction.
@@ -69,9 +71,7 @@ TFExternalAsyncCall >> execute [
 	
 	returnHolder := self allocateReturn.
 	parameterArray := self allocateParameters.
-	
 	index := self registerSemaphore.
-	
 	^ [
 		self 
 			scheduleFunctionExecution: function 
@@ -83,8 +83,7 @@ TFExternalAsyncCall >> execute [
 	] ensure: [ 
 		self deregisterSemaphore.
 		self freeReturn: returnHolder.
-		self freeArguments: parameterArray] .
-
+		self freeArguments: parameterArray].
 ]
 
 { #category : #'private - allocation' }

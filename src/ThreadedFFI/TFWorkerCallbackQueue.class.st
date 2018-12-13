@@ -11,8 +11,7 @@ Class {
 		'semaphoreIndex',
 		'callbacks',
 		'pendingQueue',
-		'callbackProcess',
-		'mutex'
+		'callbackProcess'
 	],
 	#classVars : [
 		'UniqueInstance'
@@ -40,11 +39,10 @@ TFWorkerCallbackQueue >> executePendingCallbacks [
 
 	[ pendingQueue isEmpty ] whileFalse: [
 		first := pendingQueue removeFirst.
-		first getHandle isNull 
-			ifFalse: [ 
-				[ first execute ] 
-				on: Error 
-				fork: [ :e | e pass ] ] ]
+		first getHandle isNull ifFalse: [ 
+			[ first execute ] 
+			on: Error 
+			fork: [ :e | e pass ] ] ]
 ]
 
 { #category : #operations }

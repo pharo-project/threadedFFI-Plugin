@@ -24,7 +24,6 @@ TFFunctionCallTest >> testCallbackAsFunction [
 		definition: definition
 		worker: self worker.
 	
-	
 	returnValue := fun newCall 
 		parameters: {1. 2.0};
 		execute.
@@ -119,8 +118,8 @@ TFFunctionCallTest >> testWithTwoInts [
 		worker: self worker.
 				
 	return := fun newCall
-					parameters:{3. 	2};
-					execute.
+		parameters:{3. 	2};
+		execute.
 	
 	self assert: return equals: 5
 ]

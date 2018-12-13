@@ -5,6 +5,12 @@ Class {
 }
 
 { #category : #accessing }
+TFTestCase class >> resources [ 
+
+	^ super resources copyWith: TFTestResource
+]
+
+{ #category : #accessing }
 TFTestCase >> libraryPath [
 
 	Smalltalk os isUnix ifTrue: [ ^ 'testLibrary.so' ].
@@ -32,5 +38,5 @@ TFTestCase >> shortCallout [
 { #category : #accessing }
 TFTestCase >> worker [
 
-	^ TFWorkerManager uniqueInstance defaultWorker
+	^ TFTestResource current worker
 ]
