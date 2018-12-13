@@ -18,7 +18,7 @@ TFCallback class >> finalizeResourceData: anArray [
 
 	self 
 		primUnregister: anArray third 
-		handle: anArray first
+		handle: anArray second
 ]
 
 { #category : #'instance creation' }
