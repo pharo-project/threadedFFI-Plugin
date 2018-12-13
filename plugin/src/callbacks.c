@@ -16,43 +16,43 @@ static void callbackFrontend(ffi_cif *cif, void *ret, void* args[], void* cbPtr)
 }
 
 Callback *callback_new(void *worker, ffi_type** parameters, sqInt count, ffi_type* returnType) {
-    Callback *data = malloc(sizeof(Callback));
+    Callback *callback = malloc(sizeof(Callback));
     int returnCode;
     
-    data->worker = worker;
-    data->parameterTypes = parameters;
+    callback->worker = worker;
+    callback->parameterTypes = parameters;
     
     // Allocate closure and bound_puts
-    data->closure = ffi_closure_alloc(sizeof(ffi_closure), &(data->functionAddress));
+    callback->closure = ffi_closure_alloc(sizeof(ffi_closure), &(callback->functionAddress));
     
-    if(data->closure == NULL){
+    if(callback->closure == NULL){
         interpreterProxy->primitiveFailFor(1);
-        free(data);
+        free(callback);
         free(parameters);
         return NULL;
     }
     
-    if((returnCode = ffi_prep_cif(&data->cif, FFI_DEFAULT_ABI, count, returnType, parameters)) != FFI_OK){
+    if((returnCode = ffi_prep_cif(&callback->cif, FFI_DEFAULT_ABI, count, returnType, parameters)) != FFI_OK){
         interpreterProxy->primitiveFailFor(1);
-        ffi_closure_free(data->closure);
-        free(data);
+        ffi_closure_free(callback->closure);
+        free(callback);
         free(parameters);
         return NULL;
     }
     
-    if((returnCode = ffi_prep_closure_loc(data->closure, &data->cif, callbackFrontend, data, data->functionAddress)) != FFI_OK){
+    if((returnCode = ffi_prep_closure_loc(callback->closure, &callback->cif, callbackFrontend, callback, callback->functionAddress)) != FFI_OK){
         interpreterProxy->primitiveFailFor(1);
-        ffi_closure_free(data->closure);
-        free(data);
+        ffi_closure_free(callback->closure);
+        free(callback);
         free(parameters);
         return NULL;
     }
     
-    return data;
+    return callback;
 }
 
-void callback_release(Callback *data){
-	ffi_closure_free(data->closure);
-	free(data->parameterTypes);	
-	free(data);	
+void callback_release(Callback *callback){
+	ffi_closure_free(callback->closure);
+	free(callback->parameterTypes);
+	free(callback);
 }

@@ -29,7 +29,7 @@ typedef struct __Worker {
     WorkerCall *call;
     WorkerPendingCallback *pendingCallback;
     struct __Worker *next;
-} Worker;
+} Worker;   
 
 /*
  * Worker

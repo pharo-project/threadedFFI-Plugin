@@ -51,7 +51,7 @@ PrimitiveWithDepth(primitiveWorkerCallbackReturn, 1) {
     handler = getHandler(receiver);
     checkFailed();
 
-    worker = (Worker *)readAddress(interpreterProxy->stackValue(1));
+    worker = (Worker *)readAddress(interpreterProxy->stackValue(0));
     checkFailed();
 
 	worker_callback_return(worker, handler);
@@ -326,14 +326,14 @@ PrimitiveWithDepth(primitiveUnregisterWorkerCallback, 1){
     sqInt receiver;
 
     // In fact, I do not need a worker now.
-    // I just keeping it for posible future usahe
+    // I just keeping it for posible future usage
     
     callback = (Callback *)readAddress(interpreterProxy->stackValue(0));
     checkFailed();
     
     callback_release(callback);
     
-    //primitiveEnd(); //No need to call it
+    primitiveEnd();
 }
 
 /**
