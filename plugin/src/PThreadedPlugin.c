@@ -122,7 +122,7 @@ PrimitiveWithDepth(primitiveFreeDefinition, 1){
 }
 
 PrimitiveWithDepth(primitiveInitializeWorkerCallbackQueue, 1) {
-    int index;
+	sqInt index;
     
     Worker *worker = (Worker *)readAddress(interpreterProxy->stackValue(1));
     checkFailed();

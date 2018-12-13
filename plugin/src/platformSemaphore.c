@@ -54,3 +54,25 @@ int semaphore_release(PlatformSemaphore sem){
 }
 
 #endif
+
+void wait_platform_semaphore(Semaphore *semaphore){
+	semaphore_wait((PlatformSemaphore)semaphore->handle);
+}
+
+void signal_platform_semaphore(Semaphore *semaphore){
+	semaphore_signal((PlatformSemaphore)semaphore->handle);
+}
+
+void free_platform_semaphore(Semaphore *semaphore){
+	semaphore_release((PlatformSemaphore)semaphore->handle);
+	free(semaphore);
+}
+
+Semaphore *make_platform_semaphore(int initialValue) {
+	Semaphore *semaphore = (Semaphore *) malloc(sizeof(Semaphore));
+	semaphore->handle = (void *) semaphore_new(initialValue);
+	semaphore->wait = wait_platform_semaphore;
+	semaphore->signal = signal_platform_semaphore;
+	semaphore->free = free_platform_semaphore;
+	return semaphore;
+}
