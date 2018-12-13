@@ -4,7 +4,7 @@
 #include "PThreadedPlugin.h"
 #include "workerTask.h"
 #include "callbacks.h"
-#include "semaphore.h"
+#include "platformSemaphore.h"
 
 typedef struct __WorkerCall {
     WorkerTask *task;

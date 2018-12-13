@@ -1,4 +1,4 @@
-#include "semaphore.h"
+#include "platformSemaphore.h"
 
 #ifndef __APPLE__
 
