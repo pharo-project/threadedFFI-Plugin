@@ -16,9 +16,9 @@ Class {
 { #category : #finalization }
 TFCallback class >> finalizeResourceData: anArray [
 
-	(self fromHandle: anArray first)
-		callbackData: anArray second;
-	 	unregister
+	self 
+		primUnregister: anArray third 
+		handle: anArray first
 ]
 
 { #category : #'instance creation' }
@@ -42,6 +42,13 @@ TFCallback class >> forCallback: aCallback parameters: parameterTypes returnType
 		autoRelease;
 		register;
 		yourself
+]
+
+{ #category : #'private primitives' }
+TFCallback class >> primUnregister: workerHandle handle: callbackHandle [
+	<primitive: 'primitiveUnregisterWorkerCallback' module: 'PThreadedPlugin'>
+
+	^ self primitiveFailed
 ]
 
 { #category : #accessing }
@@ -83,18 +90,11 @@ TFCallback >> parameterTypes: anObject [
 	parameterTypes := anObject
 ]
 
-{ #category : #'private operations' }
+{ #category : #'private primitives' }
 TFCallback >> primRegister: workerHandle [
 	<primitive: 'primitiveRegisterWorkerCallback' module: 'PThreadedPlugin'>
 
 	^ self primitiveFailed	
-]
-
-{ #category : #'private operations' }
-TFCallback >> primUnregister: workerHandle [
-	<primitive: 'primitiveUnregisterWorkerCallback' module: 'PThreadedPlugin'>
-
-	^ self primitiveFailed
 ]
 
 { #category : #registering }
@@ -141,7 +141,9 @@ TFCallback >> thunk [
 TFCallback >> unregister [
 	
 	handle isNull ifTrue: [ ^ self ].
-	self primUnregister: self workerHandle.
+	self class 
+		primUnregister: self workerHandle
+		handle: self handle.
 	
 	handle beNull.
 	callbackData beNull.
