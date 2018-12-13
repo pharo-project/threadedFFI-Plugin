@@ -56,7 +56,7 @@ TFWorker >> initializeHandle: aHandle name: aString. [
 
 ]
 
-{ #category : #accessing }
+{ #category : #'accessing callbacks' }
 TFWorker >> lookupCallback: aCallback [
 	
 	^ callbackQueue lookupCallback: aCallback
@@ -68,7 +68,7 @@ TFWorker >> name [
 	^ name
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'accessing callbacks' }
 TFWorker >> registerCallback: aCallback [
  
 	callbackQueue registerCallback: aCallback
