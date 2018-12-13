@@ -65,9 +65,8 @@ TFWorkerCallbackQueue >> forkCallbackProcess [
 	callbackProcess := [
 		[ true ] whileTrue: [
 			semaphore wait: 3 seconds.
-			mutex critical: [ 
-				self fillPendingQueue.
-				self executePendingCallbacks ] ] ] 
+			self fillPendingQueue.
+			self executePendingCallbacks ] ] 
 		forkAt: Processor highIOPriority
 		named: 'Callback queue for worker: ', self workerName
 ]
@@ -76,7 +75,6 @@ TFWorkerCallbackQueue >> forkCallbackProcess [
 TFWorkerCallbackQueue >> initialize [
 	super initialize.
 	
-	mutex := Mutex new.
 	semaphore := Semaphore new.
 	semaphoreIndex := Smalltalk registerExternalObject: semaphore.
 	callbacks := WeakSet new.
