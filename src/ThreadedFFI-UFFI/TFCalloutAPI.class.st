@@ -11,6 +11,7 @@ TFCalloutAPI class >> newCallbackBackendFor: aCallback [
 		forCallback: aCallback
 		parameters: (aCallback functionSpec arguments collect: #tfExternalTypeWithArity) asArray
 		returnType: aCallback functionSpec returnType tfExternalTypeWithArity
+		worker: aCallback worker
 ]
 
 { #category : #action }

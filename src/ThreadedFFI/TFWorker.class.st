@@ -62,6 +62,12 @@ TFWorker >> name [
 	^ name
 ]
 
+{ #category : #'as yet unclassified' }
+TFWorker >> registerCallback: aCallback [
+ 
+	callbackQueue registerCallback: aCallback
+]
+
 { #category : #'system startup' }
 TFWorker >> shutDown [ 
 

@@ -43,16 +43,17 @@ TFCallbackInvocation >> execute [
 	| callback returnValue |
 	
 	callback := self callback.
+	
 	returnValue := callback frontendCallback valueWithArguments: self arguments.
-
-	callback returnType isVoid ifFalse: [ self writeReturnValue: returnValue ].
+	callback returnType isVoid 
+		ifFalse: [ self writeReturnValue: returnValue ].
 
 	self returnExecution
 ]
 
 { #category : #private }
-TFCallbackInvocation >> primCallbackReturn [
-	<primitive: 'primitiveCallbackReturn' module: 'PThreadedPlugin'>
+TFCallbackInvocation >> primCallbackReturn: workerHandle [
+	<primitive: 'primitiveWorkerCallbackReturn' module: 'PThreadedPlugin'>
 
 	^ self primitiveFailed
 ]
@@ -60,7 +61,7 @@ TFCallbackInvocation >> primCallbackReturn [
 { #category : #operations }
 TFCallbackInvocation >> returnExecution [
 
-	self primCallbackReturn.
+	self primCallbackReturn: self worker handle.
 	handle beNull
 ]
 

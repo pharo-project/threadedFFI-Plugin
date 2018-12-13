@@ -7,12 +7,13 @@ Class {
 		'returnTypeHandler',
 		'parameterTypes',
 		'returnType',
-		'frontendCallback'
+		'frontendCallback',
+		'worker'
 	],
 	#category : #'ThreadedFFI-Callbacks'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #finalization }
 TFCallback class >> finalizeResourceData: anArray [
 
 	(self fromHandle: anArray first)
@@ -20,13 +21,24 @@ TFCallback class >> finalizeResourceData: anArray [
 	 	unregister
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'instance creation' }
 TFCallback class >> forCallback: aCallback parameters: parameterTypes returnType: returnType [
+
+	^ self 
+		forCallback: aCallback 
+		parameters: parameterTypes 
+		returnType: returnType 
+		worker: TFWorkerManager uniqueInstance defaultWorker
+]
+
+{ #category : #'instance creation' }
+TFCallback class >> forCallback: aCallback parameters: parameterTypes returnType: returnType worker: aWorker [
 
 	^ self new
 		frontendCallback: aCallback;
 		parameterTypes: parameterTypes;
 		returnType: returnType;
+		worker: aWorker;
 		autoRelease;
 		register;
 		yourself
@@ -55,6 +67,7 @@ TFCallback >> frontendCallback: anObject [
 
 { #category : #initialization }
 TFCallback >> initialize [
+
 	super initialize.
 	callbackData := ExternalAddress new.
 	parameterHandlers := #()
@@ -101,7 +114,12 @@ TFCallback >> registerCallback: aCallback [
 
 { #category : #accessing }
 TFCallback >> resourceData [
-	^ { self getHandle. self callbackData}
+
+	^ { 
+		self getHandle. 
+		self callbackData.
+		self workerHandle 
+	}
 ]
 
 { #category : #accessing }
@@ -143,7 +161,7 @@ TFCallback >> validateTypes [
 { #category : #'private accessing' }
 TFCallback >> worker [
 
-	^ self frontendCallback worker
+	^ worker
 ]
 
 { #category : #'private accessing' }

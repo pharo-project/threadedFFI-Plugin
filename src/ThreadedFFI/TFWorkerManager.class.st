@@ -56,6 +56,12 @@ TFWorkerManager class >> uniqueInstance [
 	^ uniqueInstance ifNil: [ uniqueInstance := super new ]
 ]
 
+{ #category : #accessing }
+TFWorkerManager >> defaultWorker [
+
+	^ self workerNamed: #default
+]
+
 { #category : #initialization }
 TFWorkerManager >> initialize [ 
 

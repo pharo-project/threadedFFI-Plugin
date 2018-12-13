@@ -34,12 +34,6 @@ Class {
 	#category : #'ThreadedFFI-Base'
 }
 
-{ #category : #private }
-TFExternalFunction class >> defaultCallType [
-
-	^ TFExternalFunctionCallType async
-]
-
 { #category : #'instance creation' }
 TFExternalFunction class >> fromAddress: anExternalAddress definition: aFunctionDefinition [
 
@@ -100,6 +94,7 @@ TFExternalFunction >> address: anObject [
 
 { #category : #accessing }
 TFExternalFunction >> callType [
+
 	^ callType
 ]
 
