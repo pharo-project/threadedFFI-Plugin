@@ -20,7 +20,7 @@ typedef struct {
     pthread_t threadId;
     PlatformSemaphore semaphore;
     int callbackSemaphoreIndex;
-    pthread_mutex_t queueCriticalSection;
+    pthread_mutex_t criticalSection;
 } WorkerThread;
 
 typedef struct __Worker {

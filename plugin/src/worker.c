@@ -11,8 +11,8 @@
 # include <dispatch/dispatch.h>
 #endif
 
-#define LOCK(w) pthread_mutex_lock(&(w->thread->queueCriticalSection))
-#define UNLOCK(w) pthread_mutex_unlock(&(w->thread->queueCriticalSection))
+#define LOCK(w) pthread_mutex_lock(&(w->thread->criticalSection))
+#define UNLOCK(w) pthread_mutex_unlock(&(w->thread->criticalSection))
 #define WAIT(w) semaphore_wait(w->thread->semaphore)
 #define SIGNAL(w) semaphore_signal(w->thread->semaphore)
 #define SIGNAL_IMAGE(w) interpreterProxy->signalSemaphoreWithIndex(w->thread->callbackSemaphoreIndex)
@@ -23,6 +23,7 @@ static Worker *last = NULL;
 static int runWorkerThread(Worker *worker);
 static void releaseCall(WorkerCall *call, bool deep);
 static void releaseAllCalls(WorkerCall *firstCall);
+static void releaseAllPendingCallbacks(WorkerPendingCallback *firstPendingCallback);
 static void appendWorkerToList(Worker *worker);
 static void executeBasicTask(Worker *worker, WorkerTask *task);
 static void executeTaskInQueue(Worker *worker, WorkerTask *task);
@@ -50,6 +51,9 @@ void worker_release(Worker *worker) {
     }
     if(worker->call) {
         releaseAllCalls(worker->call);
+    }
+    if(worker->pendingCallback) {
+        releaseAllPendingCallbacks(worker->pendingCallback);
     }
     free(worker->thread);
     free(worker);
@@ -98,7 +102,13 @@ void worker_unregister(Worker *worker) {
     
     prevWorker->next = worker->next;
 
-    //TODO: Destroy pthread
+    //Destroy pthread
+    /*
+    semaphore_release(worker->thread->semaphore);
+    pthread_mutex_destroy(&worker->thread->criticalSection);
+    void *retVal = NULL;
+    pthread_join(worker->thread->threadId, &retVal);
+    */
 }
 
 inline void worker_dispatch_callout(Worker *worker, WorkerTask *task) {
@@ -126,6 +136,7 @@ WorkerTask *worker_next_call(Worker *worker) {
     WorkerTask *task = NULL;
     
     LOCK(worker);
+
     if (!worker->call) {
         UNLOCK(worker);
         WAIT(worker);
@@ -150,7 +161,7 @@ WorkerTask *worker_next_call(Worker *worker) {
 void worker_add_pending_callback(Worker *worker, WorkerPendingCallback *pendingCallback) {
 
     LOCK(worker);
-    
+
     if (!worker->pendingCallback) {
         worker->pendingCallback = pendingCallback;
     } else {
@@ -162,6 +173,7 @@ void worker_add_pending_callback(Worker *worker, WorkerPendingCallback *pendingC
     }
     
     UNLOCK(worker);
+
     SIGNAL_IMAGE(worker);
 }
 
@@ -216,11 +228,11 @@ static int runWorkerThread(Worker *worker) {
         return 0;
     }
 
-    if (pthread_mutex_init(&(worker->thread->queueCriticalSection), NULL) != 0) {
-        perror("pthread_mutex_init(&worker->thread->queueCriticalSection) error");
+    if (pthread_mutex_init(&(worker->thread->criticalSection), NULL) != 0) {
+        perror("pthread_mutex_init(&worker->thread->criticalSection) error");
         return 0;
     }
-    
+
     // I will lock the mutex.
     // This mutex is used by the worker to detect when it is a element in the queue
     WAIT(worker);
@@ -278,6 +290,26 @@ static void releaseAllCalls(WorkerCall *firstCall) {
         WorkerCall *current = call;
         call = call->next;
         releaseCall(current, true);
+    }
+}
+
+static void releasePendingCallback(WorkerPendingCallback *pendingCallback, bool deep) {
+    
+    if(deep) {
+        free(pendingCallback->invocation);
+        pendingCallback->invocation = NULL;
+    }
+    worker_pending_callback_release(pendingCallback);
+}
+
+
+static void releaseAllPendingCallbacks(WorkerPendingCallback *firstPendingCallback) {
+    WorkerPendingCallback *pendingCallback = firstPendingCallback;
+    
+    while (pendingCallback) {
+        WorkerPendingCallback *current = pendingCallback;
+        pendingCallback = pendingCallback->next;
+        releasePendingCallback(current, true);
     }
 }
 

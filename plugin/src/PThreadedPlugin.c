@@ -35,6 +35,27 @@ PrimitiveWithDepth(primitiveRegisterWorker, 2) {
     primitiveEndReturn(workerHandle);
 }
 
+/* primitiveUnregisterWorker
+ *   removes a worker
+ *   arguments:
+ *   - workerHandle <ExternalAddress>
+ */
+/*
+PrimitiveWithDepth(primitiveUnregisterWorker, 2) {
+    sqInt workerHandle = interpreterProxy->stackValue(0);
+    Worker *worker = (Worker *)readAddress(workerHandle);
+    checkFailed();
+    
+    worker_unregister(worker);
+    worker_release(worker);
+    
+    writeAddress(workerHandle, 0);
+    checkFailed();
+    
+    primitiveEnd();
+}
+*/
+
 /* primitiveWorkerCallbackReturn
  *   returns from a callback
  *   arguments:
