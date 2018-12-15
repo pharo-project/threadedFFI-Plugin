@@ -113,7 +113,7 @@ void worker_unregister(Worker *worker) {
     //Destroy pthread
     semaphore_release(worker->thread->semaphore);
     pthread_mutex_destroy(&worker->thread->criticalSection);
-    if(pthread_cancel(worker->thread->threadId)) {
+    if(pthread_cancel(worker->thread->threadId) != 0) {
         interpreterProxy->primitiveFail();
     }
 }

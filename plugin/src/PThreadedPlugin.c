@@ -46,12 +46,13 @@ PrimitiveWithDepth(primitiveUnregisterWorker, 2) {
     checkFailed();
     
     if(worker) {
-        //Do not release twice
         worker_unregister(worker);
+        checkFailed();
         worker_release(worker);
-    
         writeAddress(workerHandle, 0);
         checkFailed();
+    } else {
+        interpreterProxy->primitiveFail();
     }
     
     primitiveEnd();
