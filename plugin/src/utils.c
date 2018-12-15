@@ -80,7 +80,7 @@ inline void primitiveEndReturn(sqInt ret) {
     interpreterProxy->push(ret);
 }
 
-inline void primitiveEndReturnInteger(int ret) {
+inline void primitiveEndReturnInteger(sqInt ret) {
     interpreterProxy->pop(interpreterProxy->methodArgumentCount() + 1);
     interpreterProxy->pushInteger(ret);
 }

@@ -49,8 +49,14 @@ int semaphore_signal(PlatformSemaphore sem){
 }
 
 int semaphore_release(PlatformSemaphore sem){
+    /* https://developer.apple.com/documentation/dispatch/1496328-dispatch_release
+      If your app is built with a deployment target of macOS 10.8 and later or iOS v6.0 and
+      later, dispatch queues are typically managed by ARC, so you do not need to retain or release
+      the dispatch queues.
+      TODO: No idea if this applies (need to check later), but this is crashing the system.
     dispatch_release(sem);
-    return 0; 
+     */
+    return 0;
 }
 
 #endif

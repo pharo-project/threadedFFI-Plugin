@@ -95,20 +95,27 @@ int worker_register(Worker *worker) {
 
 void worker_unregister(Worker *worker) {
     Worker *prevWorker = first;
-    
-    while(prevWorker->next != worker) {
-        prevWorker = prevWorker->next;
+
+    // Remove worker from list
+    if(worker == first) {
+        first = first->next;
+    } else {
+        while(prevWorker->next != worker) {
+            prevWorker = prevWorker->next;
+        }
+        prevWorker->next = worker->next;
     }
-    
-    prevWorker->next = worker->next;
+    // Update last if needed
+    if(worker == last) {
+        last = prevWorker;
+    }
 
     //Destroy pthread
-    /*
     semaphore_release(worker->thread->semaphore);
     pthread_mutex_destroy(&worker->thread->criticalSection);
-    void *retVal = NULL;
-    pthread_join(worker->thread->threadId, &retVal);
-    */
+    if(pthread_cancel(worker->thread->threadId)) {
+        interpreterProxy->primitiveFail();
+    }
 }
 
 inline void worker_dispatch_callout(Worker *worker, WorkerTask *task) {
@@ -128,6 +135,7 @@ void worker_add_call(Worker *worker, WorkerTask *task) {
         }
         last->next = call;
     }
+
     UNLOCK(worker);
     SIGNAL(worker);
 }

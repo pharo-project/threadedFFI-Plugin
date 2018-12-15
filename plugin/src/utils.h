@@ -17,7 +17,7 @@ void *getHandlerOf(sqInt receiver, int index);
 // clean ending for a primitive
 void primitiveEnd();
 void primitiveEndReturn(sqInt ret);
-void primitiveEndReturnInteger(int ret);
+void primitiveEndReturnInteger(sqInt ret);
 // others
 sqInt newExternalAddress();
 

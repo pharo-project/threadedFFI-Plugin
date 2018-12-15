@@ -40,21 +40,22 @@ PrimitiveWithDepth(primitiveRegisterWorker, 2) {
  *   arguments:
  *   - workerHandle <ExternalAddress>
  */
-/*
 PrimitiveWithDepth(primitiveUnregisterWorker, 2) {
     sqInt workerHandle = interpreterProxy->stackValue(0);
     Worker *worker = (Worker *)readAddress(workerHandle);
     checkFailed();
     
-    worker_unregister(worker);
-    worker_release(worker);
+    if(worker) {
+        //Do not release twice
+        worker_unregister(worker);
+        worker_release(worker);
     
-    writeAddress(workerHandle, 0);
-    checkFailed();
+        writeAddress(workerHandle, 0);
+        checkFailed();
+    }
     
     primitiveEnd();
 }
-*/
 
 /* primitiveWorkerCallbackReturn
  *   returns from a callback
