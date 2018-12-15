@@ -9,7 +9,8 @@ FFILibrary >> options [
 { #category : #'*ThreadedFFI' }
 FFILibrary >> worker [
 
-	^ self workerManager workerNamed: self workerName
+	^ self workerManager ensureWorkerNamed: self workerName
+		
 ]
 
 { #category : #'*ThreadedFFI' }

@@ -69,6 +69,14 @@ TFWorkerManager >> defaultWorker [
 	^ self workerNamed: #default
 ]
 
+{ #category : #registering }
+TFWorkerManager >> ensureWorkerNamed: aName [
+
+	^ self 
+		workerNamed: aName 
+		ifAbsent: [ self registerWorkerName: aName ]
+]
+
 { #category : #initialization }
 TFWorkerManager >> initialize [ 
 
