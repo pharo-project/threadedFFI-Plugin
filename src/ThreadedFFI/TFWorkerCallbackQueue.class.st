@@ -40,9 +40,9 @@ TFWorkerCallbackQueue >> executePendingCallbacks [
 	[ pendingQueue isEmpty ] whileFalse: [
 		first := pendingQueue removeFirst.
 		first getHandle isNull ifFalse: [ 
-			[ first execute ] 
+			[[ first execute ] 
 			on: Error 
-			fork: [ :e | e pass ] ] ]
+			fork: [ :e | e pass ] ] fork ] ]
 ]
 
 { #category : #operations }
@@ -77,7 +77,6 @@ TFWorkerCallbackQueue >> initialize [
 	semaphoreIndex := Smalltalk registerExternalObject: semaphore.
 	callbacks := WeakSet new.
 	pendingQueue := OrderedCollection new.	
-		
 	self 
 		primInitializeWorker: self worker handle 
 		queue: semaphoreIndex.
@@ -128,6 +127,15 @@ TFWorkerCallbackQueue >> primNextPendingWorkerCallback: aWorkerHandle [
 TFWorkerCallbackQueue >> registerCallback: aCallback [
 
 	callbacks add: aCallback
+]
+
+{ #category : #'system startup' }
+TFWorkerCallbackQueue >> shutDown [
+
+	self terminateProcess.
+	callbacks removeAll.
+	pendingQueue removeAll.
+	
 ]
 
 { #category : #initialization }

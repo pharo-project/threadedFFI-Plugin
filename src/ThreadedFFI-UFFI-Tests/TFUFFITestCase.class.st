@@ -11,6 +11,12 @@ TFUFFITestCase class >> isAbstract [
 ]
 
 { #category : #accessing }
+TFUFFITestCase class >> resources [ 
+
+	^ super resources copyWith: TFTestResource
+]
+
+{ #category : #accessing }
 TFUFFITestCase >> calloutAPIClass [
 
 	^ TFCalloutAPI
@@ -19,9 +25,24 @@ TFUFFITestCase >> calloutAPIClass [
 { #category : #accessing }
 TFUFFITestCase >> ffiLibraryName [
 
-	Smalltalk os isUnix ifTrue: [ ^ 'testLibrary.so' ].
-	Smalltalk os isMacOS ifTrue: [ ^ 'testLibrary.dylib' ].
-	Smalltalk os isWindows ifTrue: [ ^ 'testLibrary.dll' ].
+	^ TFTestLibrary
+]
 
-	self error: 'Unsupported Platform'
+{ #category : #running }
+TFUFFITestCase >> newExecutionEnvironment [
+	
+	^ TFExecutionEnvironment new
+]
+
+{ #category : #running }
+TFUFFITestCase >> runCase [
+
+	CurrentExecutionEnvironment value: self newExecutionEnvironment. 
+	super runCase
+]
+
+{ #category : #accessing }
+TFUFFITestCase >> worker [ 
+	
+	^ TFTestResource current worker
 ]

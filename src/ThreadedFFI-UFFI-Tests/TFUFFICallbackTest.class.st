@@ -42,8 +42,8 @@ TFUFFICallbackTest >> sumInt:a andInt: b [
 
 { #category : #tests }
 TFUFFICallbackTest >> testCallbackAsFunction [
-
 	| callback fun definition |
+	
 	callback := self
 		newCallbackWithSignature: #(float (int a, float b))
 		block: [ :a :b | a + b ].
@@ -78,7 +78,9 @@ TFUFFICallbackTest >> testCallbackInLoopUsingSubclassOfFFICallback [
 
 	| callback |
 
-	callback := TFUFFIIncrementCallback new.
+	callback := TFUFFIIncrementCallback new
+		ffiLibraryName: TFTestLibrary;
+		yourself.
 
 	self assert: (self callbackInALoop: callback) equals: 42
 

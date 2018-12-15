@@ -77,5 +77,5 @@ TFWorker >> registerCallback: aCallback [
 { #category : #'system startup' }
 TFWorker >> shutDown [ 
 
-	callbackQueue terminateProcess
+	callbackQueue shutDown
 ]

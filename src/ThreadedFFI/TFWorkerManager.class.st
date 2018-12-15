@@ -112,8 +112,9 @@ TFWorkerManager >> shutDown [
 { #category : #registering }
 TFWorkerManager >> unregisterWorker: aWorker [
 
+	aWorker shutDown.
 	self primUnregisterWorker: aWorker handle.
-	workers remove: aWorker
+	workers removeKey: aWorker name asSymbol
 ]
 
 { #category : #accessing }

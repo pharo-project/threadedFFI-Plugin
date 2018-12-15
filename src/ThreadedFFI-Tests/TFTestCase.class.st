@@ -20,6 +20,12 @@ TFTestCase >> libraryPath [
 	self error: 'Unsupported Platform'
 ]
 
+{ #category : #running }
+TFTestCase >> runCaseManaged [
+
+	super runCase
+]
+
 { #category : #tests }
 TFTestCase >> shortCallout [
 	| fun |

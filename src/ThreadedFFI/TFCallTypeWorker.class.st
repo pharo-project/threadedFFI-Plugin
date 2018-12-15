@@ -1,9 +1,6 @@
 Class {
 	#name : #TFCallTypeWorker,
 	#superclass : #TFExternalFunctionCallType,
-	#instVars : [
-		'worker'
-	],
 	#category : #'ThreadedFFI-Base'
 }
 

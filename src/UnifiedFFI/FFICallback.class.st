@@ -15,7 +15,8 @@ Class {
 		'backendCallback',
 		'functionSpec',
 		'block',
-		'calloutAPIClass'
+		'calloutAPIClass',
+		'library'
 	],
 	#category : #'UnifiedFFI-Callbacks'
 }
@@ -99,6 +100,18 @@ FFICallback >> ffiInstVarArgument: argName generator: generator [
 	^ FFIInstVarArgument new 
 		argName: argName;
 		yourself
+]
+
+{ #category : #accessing }
+FFICallback >> ffiLibraryName [
+
+	^ (library ifNil: [ 'default' ]) asFFILibrary
+]
+
+{ #category : #accessing }
+FFICallback >> ffiLibraryName: aFFILibrary [
+
+	library := aFFILibrary asFFILibrary
 ]
 
 { #category : #accessing }

@@ -7,18 +7,24 @@ Class {
 	#category : #'ThreadedFFI-Tests'
 }
 
-{ #category : #running }
-TFTestResource >> setUp [
+{ #category : #private }
+TFTestResource >> registerWorker [
 
-	worker := TFWorkerManager uniqueInstance 
+	^ TFWorkerManager uniqueInstance 
 		workerNamed: #test
 		ifAbsent: [ TFWorkerManager uniqueInstance registerWorkerName: #test ] 
 ]
 
 { #category : #running }
+TFTestResource >> setUp [ 
+
+	worker := self registerWorker 
+]
+
+{ #category : #running }
 TFTestResource >> tearDown [
 
-	"TFWorkerManager uniqueInstance unregisterWorker: worker"
+	TFWorkerManager uniqueInstance unregisterWorker: worker
 ]
 
 { #category : #accessing }
