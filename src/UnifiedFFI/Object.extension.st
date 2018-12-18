@@ -6,6 +6,7 @@ Object >> ffiCall: fnSpec [
 	
 	^ (self ffiCalloutIn: thisContext sender)
 		convention: self ffiCallingConvention;
+		options: self ffiLibrary options;
 		function: fnSpec module: self ffiLibraryName
 ]
 
@@ -15,6 +16,7 @@ Object >> ffiCall: fnSpec module: aModuleName [
 	
 	^ (self ffiCalloutIn: thisContext sender)
 		convention: self ffiCallingConvention;
+		options: self ffiLibrary options;
 		function: fnSpec module: aModuleName
 ]
 
@@ -24,7 +26,7 @@ Object >> ffiCall: fnSpec module: aModuleName options: callOptions [
 	
 	^ (self ffiCalloutIn: thisContext sender)
 		convention: self ffiCallingConvention;
-		options: callOptions;
+		options: (self ffiLibrary options), callOptions;
 		function: fnSpec module: aModuleName
 ]
 
@@ -34,7 +36,7 @@ Object >> ffiCall: fnSpec options: callOptions [
 	
 	^ (self ffiCalloutIn: thisContext sender)
 		convention: self ffiCallingConvention;
-		options: callOptions;
+		options: (self ffiLibrary options), callOptions;
 		function: fnSpec module: self ffiLibraryName
 ]
 
@@ -51,6 +53,12 @@ Object >> ffiCallout [
 { #category : #'*UnifiedFFI' }
 Object >> ffiCalloutIn: aContext [
 	^ self calloutAPIClass inContext: aContext
+]
+
+{ #category : #'*UnifiedFFI' }
+Object >> ffiLibrary [
+		
+	^ self ffiLibraryName asFFILibrary
 ]
 
 { #category : #'*UnifiedFFI' }

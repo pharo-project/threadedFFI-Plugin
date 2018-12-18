@@ -30,7 +30,8 @@ Class {
 		'functionName',
 		'moduleName',
 		'worker',
-		'callType'
+		'callType',
+		'queue'
 	],
 	#category : #'ThreadedFFI-Base'
 }
@@ -160,6 +161,18 @@ TFExternalFunction >> moduleName: anObject [
 TFExternalFunction >> newCall [
 
 	^ self callType newCallFor: self
+]
+
+{ #category : #accessing }
+TFExternalFunction >> queue [
+	
+	^ queue
+]
+
+{ #category : #accessing }
+TFExternalFunction >> queue: aFunctionQueue [
+
+	queue := aFunctionQueue
 ]
 
 { #category : #operations }

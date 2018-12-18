@@ -13,7 +13,5 @@ TFCallTypeWorker class >> worker: aWorker [
 { #category : #'instance creation' }
 TFCallTypeWorker >> newCallFor: aFunction [
 
-	^ (TFExternalWorkerCall forFunction: aFunction)
-		workerHandle: aFunction worker handle;
-		yourself
+	^ TFExternalWorkerCall forFunction: aFunction
 ]

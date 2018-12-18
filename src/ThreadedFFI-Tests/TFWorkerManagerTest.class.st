@@ -15,8 +15,14 @@ TFWorkerManagerTest >> testUnregisterWorker [
 	| worker |
 
 	worker := TFWorkerManager uniqueInstance registerWorkerName: #workerTest.
-	self assert: (TFWorkerManager uniqueInstance workerNamed: #workerTest ifAbsent: [ nil ]) notNil.
+	self assert: (TFWorkerManager uniqueInstance 
+		workerNamed: #workerTest 
+		ifAbsent: [ nil ]) notNil.
 	
 	TFWorkerManager uniqueInstance unregisterWorker: worker.
-	self assert: (TFWorkerManager uniqueInstance workerNamed: #workerTest ifAbsent: [ nil ]) isNil
+	self assert: (TFWorkerManager uniqueInstance 
+		workerNamed: #workerTest 
+		ifAbsent: [ nil ]) isNil.
+	
+	"How to verify the thread is killed?"
 ]
