@@ -28,5 +28,7 @@ typedef struct {
 WorkerTask *worker_task_new(void *externalFunction, ffi_cif *cif, void *parameters, void *returnHolder, int semaphoreIndex);
 WorkerTask *worker_task_new_callback();
 void worker_task_release(WorkerTask *task);
+void worker_task_set_main_queue(WorkerTask *task);
+void worker_task_set_queue(WorkerTask *task, void *queueHandle);
 
 #endif

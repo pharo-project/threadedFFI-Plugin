@@ -26,10 +26,7 @@ PrimitiveWithDepth(primitiveRegisterWorker, 2) {
     Worker *worker = worker_new(name);
     worker_register(worker);
     
-    sqInt workerHandle = newExternalAddress();
-    checkFailed();
-    
-    writeAddress(workerHandle, worker);
+    sqInt workerHandle = newExternalAddress(worker);
     checkFailed();
     
     primitiveEndReturn(workerHandle);
@@ -157,53 +154,65 @@ PrimitiveWithDepth(primitiveInitializeWorkerCallbackQueue, 1) {
     primitiveEnd();
 }
 
-/* prepareWorkerTaskFromPrimitiveParameters
- *  recognises a call with parameters (externalFunction, parametersAddress, returnHolderAddress, semaphoreIndex)
- *  and creates a WorkerTask with it.
+/* primitivePerformWorkerCall
+ *  arguments:
+ *  5 - externalFunction        <ExternalAddress>
+ *  4 - arguments               <ExternalAddress>
+ *  3 - returnHolder            <ExternalAddress>
+ *  2 - semaphoreIndex          <Integer>
+ *  1 - workerHandle            <ExternalAddress>
+ *  0 - extra                   <Array> (or nil)
  */
-static WorkerTask *prepareWorkerTaskFromPrimitiveParameters() {
+// This is just because arguments are placed in order in stack, then they are inverse. And is confusing ;)
+#define PARAM_EXTERNAL_FUNCTION     5
+#define PARAM_ARGUMENTS             4
+#define PARAM_RETURN_HOLDER         3
+#define PARAM_SEMAPHORE_INDEX       2
+#define PARAM_WORKER_HANDLE         1
+#define PARAM_QUEUE                 0
+PrimitiveWithDepth(primitivePerformWorkerCall, 2) {
     void *cif;
     void *externalFunction;
     void *parameters;
     void *returnHolder;
     sqInt semaphoreIndex;
+    WorkerTask *task;
+    Worker *worker;
+    sqInt queue;
     
-    semaphoreIndex = interpreterProxy->integerValueOf(interpreterProxy->stackValue(0));
-    checkFailedReturn(NULL);
+    semaphoreIndex = interpreterProxy->integerValueOf(interpreterProxy->stackValue(PARAM_SEMAPHORE_INDEX));
+    checkFailed();
     
-    returnHolder = readAddress(interpreterProxy->stackValue(1));
-    checkFailedReturn(NULL);
-
-    parameters = readAddress(interpreterProxy->stackValue(2));
-    checkFailedReturn(NULL);
-
-    externalFunction = getHandler(interpreterProxy->stackValue(3));
-    checkFailedReturn(NULL);
-
-    cif = getHandler(interpreterProxy->fetchPointerofObject(1, interpreterProxy->stackValue(3)));
-    checkFailedReturn(NULL);
-
-    return worker_task_new(externalFunction, cif, parameters, returnHolder, semaphoreIndex);
-}
-
-/* primitivePerformWorkerCall
- *  arguments:
- *  - externalFunction        <ExternalAddress>
- *  - arguments               <ExternalAddress>
- *  - returnHolder            <ExternalAddress>
- *  - semaphoreIndex          <Integer>
- */
-PrimitiveWithDepth(primitivePerformWorkerCall, 2) {
-
-    sqInt receiver = getReceiver();
+    returnHolder = readAddress(interpreterProxy->stackValue(PARAM_RETURN_HOLDER));
     checkFailed();
 
-    // handler is in third position. This is kind of bad so maybe pass it by parameter
-    Worker *worker = (Worker *)readAddress(getAttributeOf(receiver, 3));
+    parameters = readAddress(interpreterProxy->stackValue(PARAM_ARGUMENTS));
     checkFailed();
 
-    WorkerTask *task = prepareWorkerTaskFromPrimitiveParameters();
+    externalFunction = getHandler(interpreterProxy->stackValue(PARAM_EXTERNAL_FUNCTION));
     checkFailed();
+
+    cif = getHandler(interpreterProxy->fetchPointerofObject(1, interpreterProxy->stackValue(PARAM_EXTERNAL_FUNCTION)));
+    checkFailed();
+
+    worker = (Worker *)readAddress(interpreterProxy->stackValue(PARAM_WORKER_HANDLE));
+    checkFailed();
+    
+    task = worker_task_new(externalFunction, cif, parameters, returnHolder, semaphoreIndex);
+    checkFailed();
+
+    queue = interpreterProxy->stackValue(PARAM_QUEUE);
+    if(!(queue == interpreterProxy->nilObject())) {
+        checkIsArray(queue);
+        check(arrayObjectSize(queue) == 2);
+      
+        if(arrayObjectAt(queue, 0) == interpreterProxy->trueObject()) {
+            worker_task_set_main_queue(task);
+        } else {
+            worker_task_set_queue(task, readAddress(arrayObjectAt(queue, 1)));
+            checkFailed();
+        }
+    }
 
     worker_dispatch_callout(worker, task);
     checkFailed();

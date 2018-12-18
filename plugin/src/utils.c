@@ -85,6 +85,24 @@ inline void primitiveEndReturnInteger(sqInt ret) {
     interpreterProxy->pushInteger(ret);
 }
 
-inline sqInt newExternalAddress() {
-    return interpreterProxy->instantiateClassindexableSize(interpreterProxy->classExternalAddress(), sizeof(void*));
+// Extras
+
+inline sqInt newExternalAddress(void *address) {
+    sqInt externalAddress = interpreterProxy->instantiateClassindexableSize(interpreterProxy->classExternalAddress(), sizeof(void*));
+    writeAddress(externalAddress, address);
+    return externalAddress;
+}
+
+// Array
+
+inline sqInt arrayObjectAt(sqInt array, sqInt index) {
+    return interpreterProxy->stObjectat(array, index + 1);
+}
+
+inline sqInt arrayObjectAtPut(sqInt array, sqInt index, sqInt object) {
+    return interpreterProxy->stObjectatput(array, index + 1, object);
+}
+
+inline sqInt arrayObjectSize(sqInt array) {
+    return interpreterProxy->stSizeOf(array);
 }

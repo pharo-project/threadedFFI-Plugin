@@ -57,11 +57,14 @@
 		return;\
 	} \
 
-
 #define checkIsPointerSize(anObject, size)	if(!(interpreterProxy->isPointers(anObject) && interpreterProxy->slotSizeOf(anObject) >= size)) {\
 		interpreterProxy->primitiveFail();\
 		return;\
 	}
 
+#define check(cond) if(!(cond)) { \
+        interpreterProxy->primitiveFail();\
+        return; \
+    }
 
 #endif /* _MACROS_H_ */
