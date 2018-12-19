@@ -16,7 +16,7 @@ Object >> ffiCall: fnSpec module: aModuleName [
 	
 	^ (self ffiCalloutIn: thisContext sender)
 		convention: self ffiCallingConvention;
-		options: self ffiLibrary options;
+		options: aModuleName asFFILibrary options;
 		function: fnSpec module: aModuleName
 ]
 
