@@ -41,6 +41,12 @@ TFUFFITestCase >> runCase [
 	super runCase
 ]
 
+{ #category : #running }
+TFUFFITestCase >> runCaseManaged [
+
+	super runCase
+]
+
 { #category : #accessing }
 TFUFFITestCase >> worker [ 
 	
