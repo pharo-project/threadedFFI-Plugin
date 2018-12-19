@@ -1,21 +1,20 @@
 #include "threadSafeQueue.h"
-#include <pthread.h>
 
-#define WAIT(w) semaphore_wait(w->thread->semaphore)
-#define SIGNAL(w) semaphore_signal(w->thread->semaphore)
-#define SIGNAL_IMAGE(w) interpreterProxy->signalSemaphoreWithIndex(w->thread->callbackSemaphoreIndex)
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 /**
  *  A queue implemented as a linked list with a link to the first and last nodes
  *  A mutex serves to mark a critical region and synchronize changes to the queue
  *  A semaphore serves to indicate if there are elements to take from the queue and block if there are none
  **/
-typedef struct __TSQueue {
+struct __TSQueue {
 	struct __TSQueueNode *first;
 	struct __TSQueueNode *last;
 	pthread_mutex_t mutex;
 	Semaphore *semaphore;
-} TSQueue;
+};
 
 /**
  *  A node in the queue
@@ -29,7 +28,7 @@ typedef struct __TSQueueNode {
  *  Create a new queue in heap
  *  Returns a pointer to the newly created queue
  **/
-TSQueue *make_threasafe_queue(Semaphore *semaphore) {
+TSQueue *make_threadsafe_queue(Semaphore *semaphore) {
 	pthread_mutex_t mutex;
 	if (pthread_mutex_init(&(mutex), NULL) != 0) {
 		perror("pthread_mutex_init error in make_queue");

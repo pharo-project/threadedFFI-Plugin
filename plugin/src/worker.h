@@ -3,6 +3,7 @@
 
 #include "PThreadedPlugin.h"
 #include "workerTask.h"
+#include "threadSafeQueue.h"
 #include "callbacks.h"
 #include "platformSemaphore.h"
 
@@ -27,6 +28,7 @@ typedef struct __Worker {
     char *name;
     WorkerThread *thread;
     WorkerCall *call;
+    TSQueue *taskQueue;
     WorkerPendingCallback *pendingCallback;
     struct __Worker *next;
 } Worker;   

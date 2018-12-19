@@ -1,9 +1,6 @@
-#ifndef __WORKER__
-#define __WORKER__
+#ifndef __TSQUEUE__
+#define __TSQUEUE__
 
-#include "PThreadedPlugin.h"
-#include "workerTask.h"
-#include "callbacks.h"
 #include "semaphore.h"
 
 typedef struct __TSQueue TSQueue;

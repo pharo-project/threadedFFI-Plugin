@@ -1,5 +1,5 @@
-#ifndef __SEMAPHORE
-#define __SEMAPHORE
+#ifndef __SEMAPHORE__
+#define __SEMAPHORE__
 
 typedef struct __Semaphore {
 	void *handle;
@@ -8,4 +8,4 @@ typedef struct __Semaphore {
 	void (*free)(struct __Semaphore *semaphore);
 } Semaphore;
 
-#endif // ifndef __SEMAPHORE
+#endif // ifndef __SEMAPHORE__

@@ -1,5 +1,6 @@
 #include "worker.h"
 
+#include "threadSafeQueue.h"
 #include <stdio.h>
 #include <ffi.h>
 #include <pthread.h>
@@ -37,6 +38,7 @@ Worker *worker_new(char *name) {
     worker->name = strdup(name);
     worker->next = NULL;
     worker->call = NULL;
+    worker->taskQueue = make_threadsafe_queue(make_platform_semaphore(0));
     worker->pendingCallback = NULL;
     worker->thread = (WorkerThread *)malloc(sizeof(WorkerThread));
     worker->thread->callbackSemaphoreIndex = 0;
