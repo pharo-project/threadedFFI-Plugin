@@ -31,6 +31,8 @@ wget -O - $PHARO_URL | bash
 cp "${__root}/results/PharoThreadedFFI-linux$ARCH.zip" "pharo-vm/lib/pharo/5.0-201806281256/"
 unzip pharo-vm/lib/pharo/5.0-201806281256/PharoThreadedFFI-linux$ARCH.zip -d pharo-vm/lib/pharo/5.0-201806281256/
 
+export LD_DEBUG=libs
+
 ./pharo Pharo.image eval "
 
 [Metacello new

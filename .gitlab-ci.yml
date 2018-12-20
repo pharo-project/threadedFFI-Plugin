@@ -4,4 +4,4 @@ test:
     - apt-get update -y
     - apt-get -y install libx11-6:i386 libgl1-mesa-glx:i386 libfontconfig1:i386 
     - apt-get -y install gcc-multilib texinfo zip unzip
-    - export LD_DEBUG=all && ./scripts/test.sh
+    - ./scripts/test.sh
