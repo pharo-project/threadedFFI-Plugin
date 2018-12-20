@@ -36,9 +36,9 @@ ldd pharo-vm/lib/pharo/5.0-201806281256/libffi.so.7
 
 ldd pharo-vm/lib/pharo/5.0-201806281256/libPThreadedPlugin.so
 
-file libPThreadedPlugin.so
+file pharo-vm/lib/pharo/5.0-201806281256/libPThreadedPlugin.so
 
-objdump -t libPThreadedPlugin.so 
+objdump -t pharo-vm/lib/pharo/5.0-201806281256/libPThreadedPlugin.so 
 
 export LD_DEBUG=libs
 
