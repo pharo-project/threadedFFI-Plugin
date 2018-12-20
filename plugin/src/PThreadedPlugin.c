@@ -20,12 +20,14 @@ sqInt initialiseModule(void){
  *   - name <String>
  */
 PrimitiveWithDepth(primitiveRegisterWorker, 2) {
-    char *name = readString(interpreterProxy->stackValue(0));
+    int semaphoreIndex = interpreterProxy->integerValueOf(interpreterProxy->stackValue(0));
+    checkFailed();
+    char *name = readString(interpreterProxy->stackValue(1));
     checkFailed();
     
-    Worker *worker = worker_new(name);
+    Worker *worker = worker_new(name, semaphoreIndex);
     worker_register(worker);
-    
+
     sqInt workerHandle = newExternalAddress(worker);
     checkFailed();
     

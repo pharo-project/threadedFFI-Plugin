@@ -9,7 +9,7 @@ static void callbackFrontend(ffi_cif *cif, void *ret, void* args[], void* cbPtr)
 	invocation.callback = callback;
 	invocation.arguments = args;
 	invocation.returnHolder = ret;
-	worker_add_pending_callback(callback->worker, worker_pending_callback_new(&invocation));
+	worker_add_pending_callback(callback->worker, &invocation);
 	
 	// Manage callouts while waiting this callback to return
 	worker_run(callback->worker);

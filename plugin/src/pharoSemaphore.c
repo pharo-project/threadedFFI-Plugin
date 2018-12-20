@@ -12,8 +12,9 @@ extern struct VirtualMachine* interpreterProxy;
  * Waiting a pharo semaphore should only be called from the pharo process
  */
 int pharo_semaphore_wait(Semaphore *semaphore){
-	perror("No callbacks in the queue");
-	return -1;
+	//Do nothing, pharo does not wait for a semaphore in here
+	//Scheduling happens in the VM
+	return 0;
 }
 
 int pharo_semaphore_signal(Semaphore *semaphore){

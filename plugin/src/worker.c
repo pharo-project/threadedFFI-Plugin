@@ -50,15 +50,15 @@ static inline void executeTask(Worker *worker, WorkerTask *task);
 
 // Init/Free
 
-Worker *worker_new(char *name) {
+Worker *worker_new(char *name, int pharo_semaphore_index) {
     Worker *worker = (Worker *)malloc(sizeof(Worker));
     
     worker->name = strdup(name);
     worker->next = NULL;
     worker->taskQueue = threadsafe_queue_new(platform_semaphore_new(0));
-    worker->callbackQueue = NULL; //Will be initialized afterwards, when the image semaphore is set
     worker->thread = (WorkerThread *)malloc(sizeof(WorkerThread));
     worker->thread->callbackSemaphoreIndex = 0;
+    worker_set_callback_semaphore_index(worker, pharo_semaphore_index);
     
     return worker;
 }
@@ -148,8 +148,8 @@ WorkerTask *worker_next_call(Worker *worker) {
     return call->task;
 }
 
-void worker_add_pending_callback(Worker *worker, WorkerPendingCallback *pendingCallback) {
-	threadsafe_queue_put(worker->callbackQueue, pendingCallback);
+void worker_add_pending_callback(Worker *worker, CallbackInvocation *callback) {
+	threadsafe_queue_put(worker->callbackQueue, callback);
 }
 
 CallbackInvocation *worker_next_pending_callback(Worker *worker) {
