@@ -27,7 +27,6 @@ typedef struct {
 typedef struct __Worker {
     char *name;
     WorkerThread *thread;
-    WorkerCall *call;
     TSQueue *taskQueue;
     WorkerPendingCallback *pendingCallback;
     struct __Worker *next;

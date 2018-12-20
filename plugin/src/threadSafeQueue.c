@@ -70,6 +70,7 @@ void free_threadsafe_queue(TSQueue *queue) {
 void put_threadsafe_queue(TSQueue *queue, void *element) {
 	TSQueueNode *node = (TSQueueNode *) malloc(sizeof(TSQueueNode));
 	node->element = element;
+	node->next = NULL;
 
 	pthread_mutex_lock(&(queue->mutex));
 	if (!queue->first) {
@@ -79,9 +80,9 @@ void put_threadsafe_queue(TSQueue *queue, void *element) {
 		queue->last->next = node;
 		queue->last = node;
 	}
+	pthread_mutex_unlock(&(queue->mutex));
 
 	queue->semaphore->signal(queue->semaphore);
-	pthread_mutex_unlock(&(queue->mutex));
 }
 
 /**

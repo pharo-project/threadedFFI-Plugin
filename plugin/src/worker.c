@@ -37,7 +37,6 @@ Worker *worker_new(char *name) {
     
     worker->name = strdup(name);
     worker->next = NULL;
-    worker->call = NULL;
     worker->taskQueue = make_threadsafe_queue(make_platform_semaphore(0));
     worker->pendingCallback = NULL;
     worker->thread = (WorkerThread *)malloc(sizeof(WorkerThread));
@@ -51,9 +50,7 @@ void worker_release(Worker *worker) {
     if(worker->name) {
         free(worker->name);
     }
-    if(worker->call) {
-        releaseAllCalls(worker->call);
-    }
+    free_threadsafe_queue(worker->taskQueue);
     if(worker->pendingCallback) {
         releaseAllPendingCallbacks(worker->pendingCallback);
     }
@@ -126,46 +123,12 @@ inline void worker_dispatch_callout(Worker *worker, WorkerTask *task) {
 
 void worker_add_call(Worker *worker, WorkerTask *task) {
     WorkerCall *call = worker_call_new(task);
-    
-    LOCK(worker);
-    if (!worker->call) {
-        worker->call = call;
-    } else {
-        WorkerCall *last = worker->call;
-        while (last->next) {
-            last = last->next;
-        }
-        last->next = call;
-    }
-
-    UNLOCK(worker);
-    SIGNAL(worker);
+    put_threadsafe_queue(worker->taskQueue, call);
 }
 
 WorkerTask *worker_next_call(Worker *worker) {
-    WorkerTask *task = NULL;
-    
-    LOCK(worker);
-
-    if (!worker->call) {
-        UNLOCK(worker);
-        WAIT(worker);
-        LOCK(worker);
-    }
-    
-    WorkerCall *current = worker->call;
-    if(!current) {
-        UNLOCK(worker);
-        return NULL;
-    }
-    
-    task = current->task;
-    worker->call = current->next;
-    releaseCall(current, false);
-    
-    UNLOCK(worker);
-
-    return task;
+	WorkerCall *call = (WorkerCall *)take_threadsafe_queue(worker->taskQueue);
+    return call->task;
 }
 
 void worker_add_pending_callback(Worker *worker, WorkerPendingCallback *pendingCallback) {
@@ -231,7 +194,7 @@ void *worker_run(void *worker) {
 
 static int runWorkerThread(Worker *worker) {
 
-    worker->thread->semaphore = semaphore_new(1);
+    worker->thread->semaphore = semaphore_new(0);
     if (!worker->thread->semaphore) {
         interpreterProxy->primitiveFailFor(1);
         perror("semaphore_new");
@@ -245,7 +208,7 @@ static int runWorkerThread(Worker *worker) {
 
     // I will lock the mutex.
     // This mutex is used by the worker to detect when it is a element in the queue
-    WAIT(worker);
+    //WAIT(worker);
     
     if (pthread_create(&(worker->thread->threadId), NULL, worker_run, (void *)worker) != 0) {
         perror("pthread_create() error");
