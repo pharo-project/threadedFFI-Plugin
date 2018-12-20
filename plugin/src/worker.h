@@ -6,16 +6,6 @@
 #include "threadSafeQueue.h"
 #include "callbacks.h"
 
-typedef struct __WorkerCall {
-    WorkerTask *task;
-    struct __WorkerCall *next;
-} WorkerCall;
-
-typedef struct __WorkerPendingCallback {
-    CallbackInvocation *invocation;
-    struct __WorkerPendingCallback *next;
-} WorkerPendingCallback;
-
 typedef struct __Worker Worker;
 
 /*
@@ -34,16 +24,5 @@ WorkerTask *worker_next_call(Worker *worker);
 void worker_add_pending_callback(Worker *worker, CallbackInvocation *pendingCallback);
 CallbackInvocation *worker_next_pending_callback(Worker *worker);
 void worker_release(Worker *worker);
-
-/*
- * WorkerCall
- */
-WorkerCall *worker_call_new(WorkerTask *task);
-void worker_call_release(WorkerCall *);
-/*
- * WorkerPendingCallback
- */
-WorkerPendingCallback *worker_pending_callback_new(CallbackInvocation *invocation);
-void worker_pending_callback_release(WorkerPendingCallback *pendingCallback);
 
 #endif

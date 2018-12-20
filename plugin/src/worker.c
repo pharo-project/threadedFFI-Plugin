@@ -14,35 +14,20 @@
 # include <dispatch/dispatch.h>
 #endif
 
-typedef struct {
-    pthread_t threadId;
-    PlatformSemaphore semaphore;
-    int callbackSemaphoreIndex;
-    pthread_mutex_t criticalSection;
-} WorkerThread;
-
 struct __Worker {
     char *name;
-    WorkerThread *thread;
+    pthread_t threadId;
     TSQueue *taskQueue;
     TSQueue *callbackQueue;
-    WorkerPendingCallback *pendingCallback;
     struct __Worker *next;
 };
 
-#define LOCK(w) pthread_mutex_lock(&(w->thread->criticalSection))
-#define UNLOCK(w) pthread_mutex_unlock(&(w->thread->criticalSection))
-#define WAIT(w) semaphore_wait(w->thread->semaphore)
-#define SIGNAL(w) semaphore_signal(w->thread->semaphore)
 #define SIGNAL_IMAGE(w) interpreterProxy->signalSemaphoreWithIndex(w->thread->callbackSemaphoreIndex)
 
 static Worker *first = NULL;
 static Worker *last = NULL;
 
 static int runWorkerThread(Worker *worker);
-static void releaseCall(WorkerCall *call, bool deep);
-static void releaseAllCalls(WorkerCall *firstCall);
-static void releaseAllPendingCallbacks(WorkerPendingCallback *firstPendingCallback);
 static void appendWorkerToList(Worker *worker);
 static void executeBasicTask(Worker *worker, WorkerTask *task);
 static void executeTaskInQueue(Worker *worker, WorkerTask *task);
@@ -56,8 +41,7 @@ Worker *worker_new(char *name, int pharo_semaphore_index) {
     worker->name = strdup(name);
     worker->next = NULL;
     worker->taskQueue = threadsafe_queue_new(platform_semaphore_new(0));
-    worker->thread = (WorkerThread *)malloc(sizeof(WorkerThread));
-    worker->thread->callbackSemaphoreIndex = 0;
+    worker->threadId = 0;
     worker_set_callback_semaphore_index(worker, pharo_semaphore_index);
     
     return worker;
@@ -70,13 +54,11 @@ void worker_release(Worker *worker) {
     }
     threadsafe_queue_free(worker->taskQueue);
     threadsafe_queue_free(worker->callbackQueue);
-    free(worker->thread);
     free(worker);
 }
 
 void worker_set_callback_semaphore_index(Worker *worker, int index) {
 	worker->callbackQueue = threadsafe_queue_new(pharo_semaphore_new(index));
-    worker->thread->callbackSemaphoreIndex = index;
 }
 
 Worker *worker_find(char *name) {
@@ -126,10 +108,7 @@ void worker_unregister(Worker *worker) {
         last = prevWorker;
     }
 
-    //Destroy pthread
-    semaphore_release(worker->thread->semaphore);
-    pthread_mutex_destroy(&worker->thread->criticalSection);
-    if(pthread_cancel(worker->thread->threadId) != 0) {
+    if(pthread_cancel(worker->threadId) != 0) {
         interpreterProxy->primitiveFail();
     }
 }
@@ -139,13 +118,11 @@ inline void worker_dispatch_callout(Worker *worker, WorkerTask *task) {
 }
 
 void worker_add_call(Worker *worker, WorkerTask *task) {
-    WorkerCall *call = worker_call_new(task);
-    threadsafe_queue_put(worker->taskQueue, call);
+    threadsafe_queue_put(worker->taskQueue, task);
 }
 
 WorkerTask *worker_next_call(Worker *worker) {
-	WorkerCall *call = (WorkerCall *)threadsafe_queue_take(worker->taskQueue);
-    return call->task;
+	return (WorkerTask *)threadsafe_queue_take(worker->taskQueue);
 }
 
 void worker_add_pending_callback(Worker *worker, CallbackInvocation *callback) {
@@ -181,97 +158,14 @@ void *worker_run(void *worker) {
 }
 
 static int runWorkerThread(Worker *worker) {
-
-    worker->thread->semaphore = semaphore_new(0);
-    if (!worker->thread->semaphore) {
-        interpreterProxy->primitiveFailFor(1);
-        perror("semaphore_new");
-        return 0;
-    }
-
-    if (pthread_mutex_init(&(worker->thread->criticalSection), NULL) != 0) {
-        perror("pthread_mutex_init(&worker->thread->criticalSection) error");
-        return 0;
-    }
-
-    // I will lock the mutex.
-    // This mutex is used by the worker to detect when it is a element in the queue
-    //WAIT(worker);
-    
-    if (pthread_create(&(worker->thread->threadId), NULL, worker_run, (void *)worker) != 0) {
+    if (pthread_create(&(worker->threadId), NULL, worker_run, (void *)worker) != 0) {
         perror("pthread_create() error");
         return 0;
     }
     
-    pthread_detach(worker->thread->threadId);
+    pthread_detach(worker->threadId);
 
     return 1;
-}
-
-WorkerPendingCallback *worker_pending_callback_new(CallbackInvocation *invocation) {
-    WorkerPendingCallback *pendingCallback = (WorkerPendingCallback *)malloc(sizeof(WorkerPendingCallback));
-    
-    pendingCallback->invocation = invocation;
-    pendingCallback->next = NULL;
-
-    return pendingCallback;
-}
-
-void worker_pending_callback_release(WorkerPendingCallback *pendingCallback) {
-    free(pendingCallback);
-}
-
-WorkerCall *worker_call_new(WorkerTask *task) {
-    WorkerCall *call = (WorkerCall *)malloc(sizeof(WorkerCall));
-
-    call->task = task;
-    call->next = NULL;
-    
-    return call;
-}
-void worker_call_release(WorkerCall *call) {
-    free(call);
-}
-
-// statics
-
-static void releaseCall(WorkerCall *call, bool deep) {
-    
-    if(deep) {
-        worker_task_release(call->task);
-        call->task = NULL;
-    }
-    worker_call_release(call);
-}
-
-static void releaseAllCalls(WorkerCall *firstCall) {
-    WorkerCall *call = firstCall;
-    
-    while (call) {
-        WorkerCall *current = call;
-        call = call->next;
-        releaseCall(current, true);
-    }
-}
-
-static void releasePendingCallback(WorkerPendingCallback *pendingCallback, bool deep) {
-    
-    if(deep) {
-        free(pendingCallback->invocation);
-        pendingCallback->invocation = NULL;
-    }
-    worker_pending_callback_release(pendingCallback);
-}
-
-
-static void releaseAllPendingCallbacks(WorkerPendingCallback *firstPendingCallback) {
-    WorkerPendingCallback *pendingCallback = firstPendingCallback;
-    
-    while (pendingCallback) {
-        WorkerPendingCallback *current = pendingCallback;
-        pendingCallback = pendingCallback->next;
-        releasePendingCallback(current, true);
-    }
 }
 
 static void appendWorkerToList(Worker *worker) {
