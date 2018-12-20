@@ -489,6 +489,9 @@ sqInt setInterpreter(struct VirtualMachine* anInterpreter)
 {
     sqInt ok;
 
+    printf("Major: %d %d \n",interpreterProxy->majorVersion(), VM_PROXY_MAJOR );
+    printf("Minor: %d %d \n",interpreterProxy->minorVersion(), VM_PROXY_MINOR );
+
 	interpreterProxy = anInterpreter;
 	ok = ((interpreterProxy->majorVersion()) == (VM_PROXY_MAJOR))
 	 && ((interpreterProxy->minorVersion()) >= (VM_PROXY_MINOR));
