@@ -101,12 +101,10 @@ TFWorkerManager >> primUnregisterWorker: workerHandle [
 
 { #category : #registering }
 TFWorkerManager >> registerWorkerName: aName [
-	| worker handle |
+	| worker |
 
-	handle := self primRegisterWorker: aName asString.
-	worker := TFWorker 
-		newHandle: handle
-		name: aName.
+	worker := TFWorker named: aName.
+	worker register.
 	workers at: aName asSymbol put: worker.
 	^ worker
 ]

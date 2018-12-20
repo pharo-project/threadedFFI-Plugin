@@ -34,6 +34,15 @@ TFWorkerCallbackQueue class >> on: aWorker [
 ]
 
 { #category : #operations }
+TFWorkerCallbackQueue >> executeCallback: aCallback [
+	
+	aCallback getHandle isNull ifFalse: [ 
+		[ [ aCallback execute ] 
+			on: Error 
+			fork: [ :e | e pass ] ] fork ]
+]
+
+{ #category : #operations }
 TFWorkerCallbackQueue >> executePendingCallbacks [
 	| first |
 
@@ -62,9 +71,8 @@ TFWorkerCallbackQueue >> forkCallbackProcess [
 	callbackProcess ifNotNil: [ ^ self ].
 	callbackProcess := [
 		[ true ] whileTrue: [
-			semaphore wait: 3 seconds.
-			self fillPendingQueue.
-			self executePendingCallbacks ] ] 
+			semaphore wait.
+			self executeCallback: self nextPendingCallback ] ] 
 		forkAt: Processor highIOPriority
 		named: 'Callback queue for worker: ', self workerName
 ]
@@ -77,9 +85,6 @@ TFWorkerCallbackQueue >> initialize [
 	semaphoreIndex := Smalltalk registerExternalObject: semaphore.
 	callbacks := WeakSet new.
 	pendingQueue := OrderedCollection new.	
-	self 
-		primInitializeWorker: self worker handle 
-		queue: semaphoreIndex.
 	self forkCallbackProcess
 ]
 
@@ -127,6 +132,12 @@ TFWorkerCallbackQueue >> primNextPendingWorkerCallback: aWorkerHandle [
 TFWorkerCallbackQueue >> registerCallback: aCallback [
 
 	callbacks add: aCallback
+]
+
+{ #category : #accessing }
+TFWorkerCallbackQueue >> semaphoreIndex [
+
+	^ semaphoreIndex
 ]
 
 { #category : #'system startup' }

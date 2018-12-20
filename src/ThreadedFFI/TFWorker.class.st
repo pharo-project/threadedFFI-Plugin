@@ -20,18 +20,19 @@ Class {
 	#category : #'ThreadedFFI-Worker'
 }
 
+{ #category : #private }
+TFWorker class >> named: aName [
+
+	^ self basicNew 
+		name: aName;
+		initialize;
+		yourself
+]
+
 { #category : #'instance creation' }
 TFWorker class >> new [
 
 	self error: 'Workers are created by the worker manager'
-]
-
-{ #category : #private }
-TFWorker class >> newHandle: aHandle name: aName [ 
-
-	^ self basicNew 
-		initializeHandle: aHandle name: aName;
-		yourself
 ]
 
 { #category : #accessing }
@@ -44,16 +45,7 @@ TFWorker >> handle [
 TFWorker >> initialize [
 	
 	super initialize.
-	callbackQueue := TFWorkerCallbackQueue on: self
-]
-
-{ #category : #initialization }
-TFWorker >> initializeHandle: aHandle name: aString. [
-
-	handle := aHandle.
-	name := aString.
-	self initialize.
-
+	callbackQueue := TFWorkerCallbackQueue on: self.
 ]
 
 { #category : #'accessing callbacks' }
@@ -68,10 +60,29 @@ TFWorker >> name [
 	^ name
 ]
 
+{ #category : #accessing }
+TFWorker >> name: aName [
+
+	name := aName
+]
+
+{ #category : #initialization }
+TFWorker >> register [
+
+	handle := self registerWorker: name asString queueIndex: callbackQueue semaphoreIndex.
+]
+
 { #category : #'accessing callbacks' }
 TFWorker >> registerCallback: aCallback [
  
 	callbackQueue registerCallback: aCallback
+]
+
+{ #category : #initialization }
+TFWorker >> registerWorker: aName queueIndex: index [
+	<primitive: #primitiveRegisterWorker module: #PThreadedPlugin>
+	
+	^ self primitiveFailed
 ]
 
 { #category : #'system startup' }
