@@ -96,6 +96,8 @@ PrimitiveWithDepth(primitiveFreeDefinition, 1){
 Primitive(primitiveInitializeCallbacksQueue){
     int index;
 
+    printf("Initializing Queue\n");
+
 	index = interpreterProxy->integerValueOf(interpreterProxy->stackValue(0));
 	initCallbackQueue(index);
 	checkFailed();
