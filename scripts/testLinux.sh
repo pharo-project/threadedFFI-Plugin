@@ -31,11 +31,16 @@ wget -O - $PHARO_URL | bash
 cp "${__root}/results/PharoThreadedFFI-linux$ARCH.zip" "pharo-vm/lib/pharo/5.0-201806281256/"
 unzip pharo-vm/lib/pharo/5.0-201806281256/PharoThreadedFFI-linux$ARCH.zip -d pharo-vm/lib/pharo/5.0-201806281256/
 
-export LD_DEBUG=libs
 
 ldd pharo-vm/lib/pharo/5.0-201806281256/libffi.so.7
 
 ldd pharo-vm/lib/pharo/5.0-201806281256/libPThreadedPlugin.so
+
+file libPThreadedPlugin.so
+
+objdump -t libPThreadedPlugin.so 
+
+export LD_DEBUG=libs
 
 ./pharo Pharo.image eval "
 
