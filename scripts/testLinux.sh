@@ -33,6 +33,10 @@ unzip pharo-vm/lib/pharo/5.0-201806281256/PharoThreadedFFI-linux$ARCH.zip -d pha
 
 export LD_DEBUG=libs
 
+ldd pharo-vm/lib/pharo/5.0-201806281256/libffi.so.7
+
+ldd pharo-vm/lib/pharo/5.0-201806281256/libPThreadedPlugin.so
+
 ./pharo Pharo.image eval "
 
 [Metacello new
