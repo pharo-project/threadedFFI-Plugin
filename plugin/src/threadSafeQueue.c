@@ -28,7 +28,7 @@ typedef struct __TSQueueNode {
  *  Create a new queue in heap
  *  Returns a pointer to the newly created queue
  **/
-TSQueue *make_threadsafe_queue(Semaphore *semaphore) {
+TSQueue *threadsafe_queue_new(Semaphore *semaphore) {
 	pthread_mutex_t mutex;
 	if (pthread_mutex_init(&(mutex), NULL) != 0) {
 		perror("pthread_mutex_init error in make_queue");
@@ -48,7 +48,7 @@ TSQueue *make_threadsafe_queue(Semaphore *semaphore) {
  *  Does not free the elements pointed by the nodes, as they are owned by the user
  *  Fails if pointer is invalid
  **/
-void free_threadsafe_queue(TSQueue *queue) {
+void threadsafe_queue_free(TSQueue *queue) {
 	pthread_mutex_t mutex = queue->mutex;
 	pthread_mutex_lock(&mutex);
 	TSQueueNode *node = queue->first;
@@ -67,7 +67,7 @@ void free_threadsafe_queue(TSQueue *queue) {
  *  Only one process may modify the queue at a single point in time
  *  Allocates a new node and puts the element into it
  **/
-void put_threadsafe_queue(TSQueue *queue, void *element) {
+void threadsafe_queue_put(TSQueue *queue, void *element) {
 	TSQueueNode *node = (TSQueueNode *) malloc(sizeof(TSQueueNode));
 	node->element = element;
 	node->next = NULL;
@@ -92,9 +92,12 @@ void put_threadsafe_queue(TSQueue *queue, void *element) {
  *  Only one process may modify the queue at a single point in time
  *  Frees the node and returns the element stored in it
  **/
-void *take_threadsafe_queue(TSQueue *queue) {
+void *threadsafe_queue_take(TSQueue *queue) {
 	//Block until the queue has elements
-	queue->semaphore->wait(queue->semaphore);
+	if (queue->semaphore->wait(queue->semaphore) != 0){
+		perror("Failed semaphore wait on thread safe queue");
+		return NULL;
+	}
 
 	TSQueueNode *node = queue->first;
 	void *element = node->element;

@@ -4,6 +4,6 @@
 #include "semaphore.h"
 #include "sqMemoryAccess.h"
 
-Semaphore *make_pharo_semaphore(sqInt semaphore_index);
+Semaphore *pharo_semaphore_new(sqInt semaphore_index);
 
 #endif // ifndef __PHARO_SEMAPHORE

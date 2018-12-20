@@ -25,6 +25,6 @@ int semaphore_wait(PlatformSemaphore sem);
 int semaphore_signal(PlatformSemaphore sem);
 int semaphore_release(PlatformSemaphore sem);
 
-Semaphore *make_platform_semaphore(int initialValue);
+Semaphore *platform_semaphore_new(int initialValue);
 
 #endif // ifndef __SEMAPHORE_WRAPPER__

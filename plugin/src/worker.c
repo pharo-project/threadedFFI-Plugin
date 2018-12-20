@@ -1,6 +1,8 @@
 #include "worker.h"
 
 #include "threadSafeQueue.h"
+#include "pharoSemaphore.h"
+#include "platformSemaphore.h"
 #include <stdio.h>
 #include <ffi.h>
 #include <pthread.h>
@@ -11,6 +13,22 @@
 #ifdef __APPLE__
 # include <dispatch/dispatch.h>
 #endif
+
+typedef struct {
+    pthread_t threadId;
+    PlatformSemaphore semaphore;
+    int callbackSemaphoreIndex;
+    pthread_mutex_t criticalSection;
+} WorkerThread;
+
+struct __Worker {
+    char *name;
+    WorkerThread *thread;
+    TSQueue *taskQueue;
+    TSQueue *callbackQueue;
+    WorkerPendingCallback *pendingCallback;
+    struct __Worker *next;
+};
 
 #define LOCK(w) pthread_mutex_lock(&(w->thread->criticalSection))
 #define UNLOCK(w) pthread_mutex_unlock(&(w->thread->criticalSection))
@@ -37,8 +55,8 @@ Worker *worker_new(char *name) {
     
     worker->name = strdup(name);
     worker->next = NULL;
-    worker->taskQueue = make_threadsafe_queue(make_platform_semaphore(0));
-    worker->pendingCallback = NULL;
+    worker->taskQueue = threadsafe_queue_new(platform_semaphore_new(0));
+    worker->callbackQueue = NULL; //Will be initialized afterwards, when the image semaphore is set
     worker->thread = (WorkerThread *)malloc(sizeof(WorkerThread));
     worker->thread->callbackSemaphoreIndex = 0;
     
@@ -50,15 +68,14 @@ void worker_release(Worker *worker) {
     if(worker->name) {
         free(worker->name);
     }
-    free_threadsafe_queue(worker->taskQueue);
-    if(worker->pendingCallback) {
-        releaseAllPendingCallbacks(worker->pendingCallback);
-    }
+    threadsafe_queue_free(worker->taskQueue);
+    threadsafe_queue_free(worker->callbackQueue);
     free(worker->thread);
     free(worker);
 }
 
 void worker_set_callback_semaphore_index(Worker *worker, int index) {
+	worker->callbackQueue = threadsafe_queue_new(pharo_semaphore_new(index));
     worker->thread->callbackSemaphoreIndex = index;
 }
 
@@ -123,49 +140,20 @@ inline void worker_dispatch_callout(Worker *worker, WorkerTask *task) {
 
 void worker_add_call(Worker *worker, WorkerTask *task) {
     WorkerCall *call = worker_call_new(task);
-    put_threadsafe_queue(worker->taskQueue, call);
+    threadsafe_queue_put(worker->taskQueue, call);
 }
 
 WorkerTask *worker_next_call(Worker *worker) {
-	WorkerCall *call = (WorkerCall *)take_threadsafe_queue(worker->taskQueue);
+	WorkerCall *call = (WorkerCall *)threadsafe_queue_take(worker->taskQueue);
     return call->task;
 }
 
 void worker_add_pending_callback(Worker *worker, WorkerPendingCallback *pendingCallback) {
-
-    LOCK(worker);
-
-    if (!worker->pendingCallback) {
-        worker->pendingCallback = pendingCallback;
-    } else {
-        WorkerPendingCallback *last = worker->pendingCallback;
-        while (last->next) {
-            last = last->next;
-        }
-        last->next = pendingCallback;
-    }
-    
-    UNLOCK(worker);
-
-    SIGNAL_IMAGE(worker);
+	threadsafe_queue_put(worker->callbackQueue, pendingCallback);
 }
 
 CallbackInvocation *worker_next_pending_callback(Worker *worker) {
-    CallbackInvocation *invocation = NULL;
-    
-    LOCK(worker);
-    
-    if (worker->pendingCallback) {
-        WorkerPendingCallback *current = worker->pendingCallback;
-        
-        invocation = current->invocation;
-        worker->pendingCallback = current->next;
-        
-        worker_pending_callback_release(current);
-    }
-    
-    UNLOCK(worker);
-    
+    CallbackInvocation *invocation = (CallbackInvocation *) threadsafe_queue_take(worker->callbackQueue);
     return invocation;
 }
 

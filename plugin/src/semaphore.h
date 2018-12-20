@@ -3,8 +3,8 @@
 
 typedef struct __Semaphore {
 	void *handle;
-	void (*wait)(struct __Semaphore *semaphore);
-	void (*signal)(struct __Semaphore *semaphore);
+	int (*wait)(struct __Semaphore *semaphore);
+	int (*signal)(struct __Semaphore *semaphore);
 	void (*free)(struct __Semaphore *semaphore);
 } Semaphore;
 

@@ -5,9 +5,9 @@
 
 typedef struct __TSQueue TSQueue;
 
-TSQueue *make_threadsafe_queue(Semaphore *semaphore);
-void put_threadsafe_queue(TSQueue *queue, void *element);
-void *take_threadsafe_queue(TSQueue *queue);
-void free_threadsafe_queue(TSQueue *queue);
+TSQueue *threadsafe_queue_new(Semaphore *semaphore);
+void threadsafe_queue_put(TSQueue *queue, void *element);
+void *threadsafe_queue_take(TSQueue *queue);
+void threadsafe_queue_free(TSQueue *queue);
 
 #endif

@@ -5,7 +5,6 @@
 #include "workerTask.h"
 #include "threadSafeQueue.h"
 #include "callbacks.h"
-#include "platformSemaphore.h"
 
 typedef struct __WorkerCall {
     WorkerTask *task;
@@ -17,20 +16,7 @@ typedef struct __WorkerPendingCallback {
     struct __WorkerPendingCallback *next;
 } WorkerPendingCallback;
 
-typedef struct {
-    pthread_t threadId;
-    PlatformSemaphore semaphore;
-    int callbackSemaphoreIndex;
-    pthread_mutex_t criticalSection;
-} WorkerThread;
-
-typedef struct __Worker {
-    char *name;
-    WorkerThread *thread;
-    TSQueue *taskQueue;
-    WorkerPendingCallback *pendingCallback;
-    struct __Worker *next;
-} Worker;   
+typedef struct __Worker Worker;
 
 /*
  * Worker
