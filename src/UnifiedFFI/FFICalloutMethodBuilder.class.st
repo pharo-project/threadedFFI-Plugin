@@ -86,13 +86,11 @@ FFICalloutMethodBuilder >> generate [
 { #category : #private }
 FFICalloutMethodBuilder >> generateFFICallout: builder spec: functionSpec [
 	| properties |
-
 	"Copy the properties of the old method"
-	sender methodProperties ifNotNil: [ 
-		properties := sender methodProperties copy.
-		properties method: nil.
-		builder properties: properties ].
-	
+	sender methodProperties
+		ifNotNil: [ properties := sender methodProperties copy.
+			properties method: nil.
+			builder properties: properties ].
 	builder
 		numArgs: self method argumentNames size;
 		addTemps: (self method argumentNames copyWith: #result).
@@ -158,16 +156,11 @@ FFICalloutMethodBuilder >> moduleName [
 	^ self module asFFILibrary moduleName
 ]
 
-{ #category : #'private - parsing' }
-FFICalloutMethodBuilder >> newParser [
+{ #category : #private }
+FFICalloutMethodBuilder >> parseSignature: aSignature [
 	^ FFIFunctionParser new  
 		requestor: self requestor;
-		yourself
-]
-
-{ #category : #'private - parsing' }
-FFICalloutMethodBuilder >> parseSignature: aSignature [
-	^ self newParser parseNamedFunction: aSignature
+		parseNamedFunction: aSignature
 ]
 
 { #category : #accessing }
