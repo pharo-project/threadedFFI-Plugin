@@ -57,6 +57,16 @@ Class {
 	#category : #'UnifiedFFI-Callbacks'
 }
 
+{ #category : #'instance creation' }
+FFICallbackArgumentReader class >> forCallback: aCallback inContext: aCallbackContext [
+
+	^ self basicNew
+		callbackContext: aCallbackContext;
+		callback: aCallback;
+		initialize;
+		yourself.
+]
+
 { #category : #accessing }
 FFICallbackArgumentReader >> arguments [
 	
