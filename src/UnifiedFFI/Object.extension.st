@@ -1,6 +1,12 @@
 Extension { #name : #Object }
 
 { #category : #'*UnifiedFFI' }
+Object >> calloutAPIClass [
+
+	^ FFICalloutAPI calloutAPIClass 
+]
+
+{ #category : #'*UnifiedFFI' }
 Object >> ffiCall: fnSpec [
 	<ffiCalloutTranslator>
 	
