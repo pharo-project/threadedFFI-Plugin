@@ -1,10 +1,17 @@
+SHELL:=/bin/bash
+
 all: $(BUILD_DIR)/$(PLUGIN_NAME) ../results/$(PACKAGE_NAME)
 
 #	
 # VM Sources - Needed for the BUILD
 #
 $(VMSOURCES):
-	git clone --depth=1 https://github.com/OpenSmalltalk/opensmalltalk-vm.git $(VMSOURCES)
+	mkdir -p $(VMSOURCES)	
+	cd $(VMSOURCES) && git init
+	cd $(VMSOURCES) && git remote add origin https://github.com/OpenSmalltalk/opensmalltalk-vm.git
+	#This version has the same API Major/Minor version than VM used in Pharo
+	cd $(VMSOURCES) && git fetch origin
+	cd $(VMSOURCES) && git checkout e179f0172df055838fb31e653067215105b30039
 
 #
 # Build of libFFI

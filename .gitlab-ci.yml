@@ -1,0 +1,7 @@
+test:
+  script: 
+    - dpkg --add-architecture i386 
+    - apt-get update -y
+    - apt-get -y install libx11-6:i386 libgl1-mesa-glx:i386 libfontconfig1:i386 
+    - apt-get -y install gcc-multilib texinfo zip unzip
+    - ./scripts/test.sh
