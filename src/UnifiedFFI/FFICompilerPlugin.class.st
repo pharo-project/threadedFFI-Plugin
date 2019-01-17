@@ -40,27 +40,6 @@ Class {
 	#category : #'UnifiedFFI-Base'
 }
 
-{ #category : #adding }
-FFICompilerPlugin class >> addAFfiCalloutSelectorEvent: aPragmaAdded [
-	self addAFfiCalloutSelectorFromPragma: aPragmaAdded pragma
-]
-
-{ #category : #adding }
-FFICompilerPlugin class >> addAFfiCalloutSelectorFromPragma: aPragma [
-	self addFfiCalloutSelector: aPragma methodSelector.
-	self recompileSendersOf: aPragma method
-]
-
-{ #category : #adding }
-FFICompilerPlugin class >> addFfiCalloutSelector: aString [ 
-	FFICalloutSelectors add: aString
-]
-
-{ #category : #accessing }
-FFICompilerPlugin class >> defaultFfiCalloutSelectors [
-	^ #(ffiCall: #ffiCall:module: #ffiCall:options: #ffiCall:module:options: nbCall: #nbCall:module: #nbCall:options: #nbCall:module:options:)
-]
-
 { #category : #'class initialization' }
 FFICompilerPlugin class >> initialize [
 	FFICalloutSelectors := IdentitySet
@@ -99,17 +78,6 @@ FFICompilerPlugin class >> recompileSenders [
 { #category : #private }
 FFICompilerPlugin class >> recompileSendersOf: aCompiledMethod [
 	aCompiledMethod senders do: [ :sender | sender recompile ]
-]
-
-{ #category : #removing }
-FFICompilerPlugin class >> removeAFfiCalloutSelectorEvent: aPragmaRemoved [
-	self removeFfiCalloutSelector: aPragmaRemoved pragma methodSelector.
-	self recompileSendersOf: aPragmaRemoved pragma method
-]
-
-{ #category : #removing }
-FFICompilerPlugin class >> removeFfiCalloutSelector: aString [
-	FFICalloutSelectors remove: aString ifAbsent: [  ]
 ]
 
 { #category : #installation }
