@@ -2,8 +2,7 @@ Extension { #name : #Object }
 
 { #category : #'*UnifiedFFI' }
 Object >> calloutAPIClass [
-
-	^ FFICalloutAPI calloutAPIClass 
+	^ FFICalloutAPI calloutAPIClass
 ]
 
 { #category : #'*UnifiedFFI' }
@@ -76,6 +75,28 @@ Object >> ffiLibraryName [
 { #category : #'*UnifiedFFI' }
 Object >> isExternalType [
 	^ false
+]
+
+{ #category : #'*UnifiedFFI' }
+Object >> newCallbackWithSignature: signature block: aBlock [
+	self flag: #TODO. "Do we really need this method?"
+	
+	^ (self ffiCalloutIn: thisContext sender)
+		convention: self ffiCallingConvention;
+		newCallbackWithSignature: signature
+			block: aBlock
+			library: self ffiLibraryName
+]
+
+{ #category : #'*UnifiedFFI' }
+Object >> newCallbackWithSignature: signature block: aBlock library: aFFILibrary [
+	self flag: #TODO. "Do we really need this method?"
+	
+	^ (self ffiCalloutIn: thisContext sender)
+		convention: self ffiCallingConvention;
+		newCallbackWithSignature: signature
+			block: aBlock
+			library: aFFILibrary
 ]
 
 { #category : #'*UnifiedFFI' }
