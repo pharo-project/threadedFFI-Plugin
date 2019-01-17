@@ -40,20 +40,75 @@ Class {
 	#category : #'UnifiedFFI-Base'
 }
 
-{ #category : #'class initialization' }
-FFICompilerPlugin class >> initialize [
-	FFICalloutSelectors := IdentitySet
-		withAll: self defaultFfiCalloutSelectors.
-	self initializeFfiCalloutSelectorsListUpdate.
-	self install
+{ #category : #adding }
+FFICompilerPlugin class >> addFFICalloutSelector: aString [ 
+	FFICalloutSelectors add: aString
 ]
 
-{ #category : #initialization }
-FFICompilerPlugin class >> initializeFfiCalloutSelectorsListUpdate [
+{ #category : #adding }
+FFICompilerPlugin class >> addFFICalloutSelectorEvent: aPragmaAdded [
+	self addFFICalloutSelectorFromPragma: aPragmaAdded pragma
+]
+
+{ #category : #adding }
+FFICompilerPlugin class >> addFFICalloutSelectorFromPragma: aPragma [
+	self addFFICalloutSelector: aPragma methodSelector.
+	self recompileSendersOf: aPragma method
+]
+
+{ #category : #'private - defaults' }
+FFICompilerPlugin class >> defaultFFICalloutSelectors [
+	"FFI uses UFFI and NB for the time being"
+	
+	^ self defaultUFFICalloutSelectors, self defaultNativeBoostCalloutSelectors 
+]
+
+{ #category : #'private - defaults' }
+FFICompilerPlugin class >> defaultNativeBoostCalloutSelectors [
+	"Return the default callout selectors used by old NativeBoost"
+
+	^ #(nbCall: #nbCall:module: #nbCall:options: #nbCall:module:options:)
+]
+
+{ #category : #'private - defaults' }
+FFICompilerPlugin class >> defaultUFFICalloutSelectors [
+	"Return the default callout selectors used by UFFI"
+	
+	^ #(ffiCall: 
+		 ffiCall:module: 
+		 ffiCall:options: 
+		 ffiCall:module:options:)
+]
+
+{ #category : #accessing }
+FFICompilerPlugin class >> ffiCalloutSelectors [
+	<script: 'self ffiCalloutSelectors inspect'>
+	
+	^FFICalloutSelectors ifNil: [ self initializeFFICalloutSelectors ]
+]
+
+{ #category : #'class initialization' }
+FFICompilerPlugin class >> initialize [
+
+	self 
+		initializeFFICalloutSelectors;
+		initializeFFICalloutSelectorsListUpdate;
+		install
+]
+
+{ #category : #'private - initialization' }
+FFICompilerPlugin class >> initializeFFICalloutSelectors [
+
+	FFICalloutSelectors := IdentitySet withAll: self defaultFFICalloutSelectors
+]
+
+{ #category : #'private - initialization' }
+FFICompilerPlugin class >> initializeFFICalloutSelectorsListUpdate [
+
 	collector := PragmaCollector filter: [ :pragma | pragma keyword = #ffiCalloutTranslator ].
-	collector reset do: [ :pragma | self addAFfiCalloutSelectorFromPragma: pragma ].
-	collector when: PragmaAdded send: #addAFfiCalloutSelectorEvent: to: self.
-	collector when: PragmaRemoved send: #removeAFfiCalloutSelectorEvent: to: self
+	collector reset do: [ :pragma | self addFFICalloutSelectorFromPragma: pragma ].
+	collector when: PragmaAdded send: #addFFICalloutSelectorEvent: to: self.
+	collector when: PragmaRemoved send: #removeFFICalloutSelectorEvent: to: self
 ]
 
 { #category : #installation }
@@ -70,7 +125,7 @@ FFICompilerPlugin class >> priority [
 	^ 2
 ]
 
-{ #category : #installation }
+{ #category : #private }
 FFICompilerPlugin class >> recompileSenders [
 	collector reset do: [ :pragma | self recompileSendersOf: pragma method ]
 ]
@@ -80,6 +135,17 @@ FFICompilerPlugin class >> recompileSendersOf: aCompiledMethod [
 	aCompiledMethod senders do: [ :sender | sender recompile ]
 ]
 
+{ #category : #removing }
+FFICompilerPlugin class >> removeFFICalloutSelector: aString [
+	FFICalloutSelectors remove: aString ifAbsent: [  ]
+]
+
+{ #category : #removing }
+FFICompilerPlugin class >> removeFFICalloutSelectorEvent: aPragmaRemoved [
+	self removeFFICalloutSelector: aPragmaRemoved pragma methodSelector.
+	self recompileSendersOf: aPragmaRemoved pragma method
+]
+
 { #category : #installation }
 FFICompilerPlugin class >> uninstall [
 	<script>
@@ -87,11 +153,10 @@ FFICompilerPlugin class >> uninstall [
 	self recompileSenders
 ]
 
-{ #category : #accessing }
+{ #category : #'private - accessing' }
 FFICompilerPlugin >> ffiCalloutSelectors [
-	^FFICalloutSelectors ifNil: [ FFICalloutSelectors := IdentitySet withAll: #( 
-        ffiCall: ffiCall:module: ffiCall:options: ffiCall:module:options: 
-        nbCall: nbCall:module: nbCall:options: nbCall:module:options:)]
+
+	^self class ffiCalloutSelectors
 ]
 
 { #category : #api }
