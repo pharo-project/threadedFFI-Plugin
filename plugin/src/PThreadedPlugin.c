@@ -4,7 +4,7 @@
 /*** Variables ***/
 
 struct VirtualMachine* interpreterProxy;
-static const char *moduleName = "PThreadedPlugin * ThreadedFFI-Plugin-PGE.1 (e)";
+static const char *moduleName = "PThreadedPlugin * ThreadedFFI-Plugin-PGE.1 (:P)";
 
 const char * getModuleName(void){
 	return moduleName;
@@ -210,6 +210,7 @@ PrimitiveWithDepth(primitivePerformWorkerCall, 2) {
       
         if(arrayObjectAt(queue, 0) == interpreterProxy->trueObject()) {
             worker_task_set_main_queue(task);
+            checkFailed();
         } else {
             worker_task_set_queue(task, readAddress(arrayObjectAt(queue, 1)));
             checkFailed();

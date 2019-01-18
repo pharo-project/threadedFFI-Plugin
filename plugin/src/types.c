@@ -3,7 +3,7 @@
 void fillBasicType(sqInt aOop){
 	void* address;
 	int typeCode;
-	
+
 	typeCode = interpreterProxy->fetchIntegerofObject(2, aOop);
 	
 	/* 

@@ -157,7 +157,7 @@ void *worker_run(void *worker) {
     return NULL;
 }
 
-static int runWorkerThread(Worker *worker) {
+int runWorkerThread(Worker *worker) {
     if (pthread_create(&(worker->threadId), NULL, worker_run, (void *)worker) != 0) {
         perror("pthread_create() error");
         return 0;
@@ -168,7 +168,7 @@ static int runWorkerThread(Worker *worker) {
     return 1;
 }
 
-static void appendWorkerToList(Worker *worker) {
+void appendWorkerToList(Worker *worker) {
     
     if (!first) {
         first = last = worker;
@@ -177,8 +177,7 @@ static void appendWorkerToList(Worker *worker) {
         last = worker;
     }
 }
-
-static void executeBasicTask(Worker *worker, WorkerTask *task) {
+void executeBasicTask(Worker *worker, WorkerTask *task) {
     
     ffi_call(
              task->cif,
@@ -191,17 +190,16 @@ static void executeBasicTask(Worker *worker, WorkerTask *task) {
     worker_task_release(task);
 }
 
-static void executeTaskInQueue(Worker *worker, WorkerTask *task) {
+void executeTaskInQueue(Worker *worker, WorkerTask *task) {
 #ifdef __APPLE__
-    dispatch_sync(
-                  task->queueType == QUEUE_MAIN ? dispatch_get_main_queue() : task->queueHandle,
+    dispatch_sync(task->queueType == QUEUE_MAIN ? dispatch_get_main_queue() : task->queueHandle,
                   ^{ executeBasicTask(worker, task); });
 #else
-# error Execute FFI callout in queue not yet implemented
+    return;
 #endif
 }
 
-static inline void executeTask(Worker *worker, WorkerTask *task) {
+void executeTask(Worker *worker, WorkerTask *task) {
     
     if (task->queueType == QUEUE_NONE) {
         executeBasicTask(worker, task);
