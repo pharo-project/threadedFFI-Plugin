@@ -29,19 +29,6 @@ TFUFFITestCase >> ffiLibraryName [
 ]
 
 { #category : #running }
-TFUFFITestCase >> newExecutionEnvironment [
-	
-	^ TFExecutionEnvironment new
-]
-
-{ #category : #running }
-TFUFFITestCase >> runCase [
-
-	CurrentExecutionEnvironment value: self newExecutionEnvironment. 
-	super runCase
-]
-
-{ #category : #running }
 TFUFFITestCase >> runCaseManaged [
 
 	super runCase
@@ -51,7 +38,7 @@ TFUFFITestCase >> runCaseManaged [
 TFUFFITestCase >> tearDown [
 
 	"I have to reset the FFI callout methods to be recompiled using the test runner"
-	FFIMethodRegistry uniqueInstance resetSingleClass: self class.
+	self class withAllSuperclassesDo: [:each | FFIMethodRegistry uniqueInstance resetSingleClass: each].
 
 	^ super tearDown
 ]

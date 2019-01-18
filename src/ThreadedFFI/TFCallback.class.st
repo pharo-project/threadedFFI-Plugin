@@ -127,19 +127,6 @@ TFCallback >> thunk [
 	^ self getHandle 
 ]
 
-{ #category : #registering }
-TFCallback >> unregister [
-	
-	handle isNull ifTrue: [ ^ self ].
-	self class 
-		primUnregister: self workerHandle
-		handle: self handle.
-	
-	handle beNull.
-	callbackData beNull.
-
-]
-
 { #category : #'private operations' }
 TFCallback >> validateTypes [
 
