@@ -3,7 +3,7 @@
 #ifndef __APPLE__
 
 PlatformSemaphore semaphore_new(long initialValue){
-    ptsemaphore wrapper = malloc(sizeof(sem_t));
+	PlatformSemaphore wrapper = malloc(sizeof(sem_t));
     int returnCode;
     
     returnCode = sem_init(wrapper, 0, initialValue);
