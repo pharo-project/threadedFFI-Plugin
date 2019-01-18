@@ -209,8 +209,12 @@ PrimitiveWithDepth(primitivePerformWorkerCall, 2) {
         check(arrayObjectSize(queue) == 2);
       
         if(arrayObjectAt(queue, 0) == interpreterProxy->trueObject()) {
-            worker_task_set_main_queue(task);
-            checkFailed();
+			#ifdef __APPLE__
+				worker_task_set_main_queue(task);
+			#else
+				interpreterProxy->primitiveFail()
+				return;
+			#endif
         } else {
             worker_task_set_queue(task, readAddress(arrayObjectAt(queue, 1)));
             checkFailed();

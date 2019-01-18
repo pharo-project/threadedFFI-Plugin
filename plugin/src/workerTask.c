@@ -38,11 +38,7 @@ void worker_task_release(WorkerTask *task) {
 }
 
 void worker_task_set_main_queue(WorkerTask *task) {
-	#ifdef __APPLE__
-		task->queueType = QUEUE_MAIN;
-	#else
-		interpreterProxy->failure();
-	#endif
+	task->queueType = QUEUE_MAIN;
 }
 
 void worker_task_set_queue(WorkerTask *task, void *queueHandle) {
