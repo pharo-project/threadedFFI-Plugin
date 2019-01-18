@@ -27,11 +27,6 @@
 #define FFI_OK 0
 #endif
 
-int getTypeByteSize(void* aType);
-void fillBasicType(sqInt aOop);
-
-void *defineFunctionWithAnd(ffi_type* parameters[], sqInt count, void* returnType);
-
 // Accessing the VM Functions
 extern struct VirtualMachine* interpreterProxy;
 
