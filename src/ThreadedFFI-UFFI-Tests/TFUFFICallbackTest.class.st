@@ -101,7 +101,10 @@ TFUFFICallbackTest >> testCallbackInSingleFunctionUsingSubclassOfFFICallback [
 
 	| callback |
 
-	callback := TFUFFIIncrementCallback new.
+	callback := TFUFFIIncrementCallback new
+		ffiLibraryName: TFTestLibrary;
+		yourself.
+
 	self assert: (self singleCallToCallback: callback value: 3) equals: 5
 
 ]
@@ -110,7 +113,9 @@ TFUFFICallbackTest >> testCallbackInSingleFunctionUsingSubclassOfFFICallback [
 TFUFFICallbackTest >> testCallbackWithErrorHanlded [
 
 	| callback fun definition |
-	callback := TFUFFIFailingCallbackWithDefault new.
+	callback := TFUFFIFailingCallbackWithDefault new
+			ffiLibraryName: TFTestLibrary;
+			yourself.
 
 	definition := TFFunctionDefinition
 		parameterTypes: {TFBasicType sint.}

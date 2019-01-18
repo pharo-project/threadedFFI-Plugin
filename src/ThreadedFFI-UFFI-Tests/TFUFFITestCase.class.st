@@ -47,6 +47,15 @@ TFUFFITestCase >> runCaseManaged [
 	super runCase
 ]
 
+{ #category : #running }
+TFUFFITestCase >> tearDown [
+
+	"I have to reset the FFI callout methods to be recompiled using the test runner"
+	FFIMethodRegistry uniqueInstance resetSingleClass: self class.
+
+	^ super tearDown
+]
+
 { #category : #accessing }
 TFUFFITestCase >> worker [ 
 	
