@@ -15,10 +15,10 @@ LOCAL_DIR=`pwd`
 
 if [ $1 -eq "32" ]; then
 	ARCH=32
-	PHARO_URL=get.pharo.org/70+vm
+	PHARO_URL=get.pharo.org/70+vmLatest
 else
 	ARCH=64
-	PHARO_URL=get.pharo.org/64/70+vm
+	PHARO_URL=get.pharo.org/64/70+vmLatest
 fi
 
 

@@ -587,8 +587,8 @@ sqInt setInterpreter(struct VirtualMachine* anInterpreter)
 
 	if(!ok){
 		printf("Incompatible Plugin version:\n");
-	    printf("Major: VM:%d Plugin:%d \n",interpreterProxy->majorVersion(), VM_PROXY_MAJOR );
-	    printf("Minor: VM:%d Plugin:%d \n",interpreterProxy->minorVersion(), VM_PROXY_MINOR );
+	    printf("Major: VM:%d Plugin:%ld \n",interpreterProxy->majorVersion(), VM_PROXY_MAJOR );
+	    printf("Minor: VM:%d Plugin:%ld \n",interpreterProxy->minorVersion(), VM_PROXY_MINOR );
 	}
 
 	return ok;
