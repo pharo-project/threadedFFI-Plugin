@@ -212,7 +212,7 @@ PrimitiveWithDepth(primitivePerformWorkerCall, 2) {
 			#ifdef __APPLE__
 				worker_task_set_main_queue(task);
 			#else
-				interpreterProxy->primitiveFail()
+				interpreterProxy->primitiveFail();
 				return;
 			#endif
         } else {
