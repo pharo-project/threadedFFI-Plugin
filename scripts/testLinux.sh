@@ -28,8 +28,10 @@ cd "${__root}/results/tests/linux$ARCH"
 
 wget -O - $PHARO_URL | bash
 
-cp "${__root}/results/PharoThreadedFFI-linux$ARCH.zip" "pharo-vm/lib/pharo/5.0-201806281256/"
-unzip pharo-vm/lib/pharo/5.0-201806281256/PharoThreadedFFI-linux$ARCH.zip -d pharo-vm/lib/pharo/5.0-201806281256/
+PHARO_PLUGIN_DIR=`find . -type d | grep "/pharo-vm/lib/pharo/"`
+
+cp "${__root}/results/PharoThreadedFFI-linux$ARCH.zip" "$PHARO_PLUGIN_DIR"
+unzip $PHARO_PLUGIN_DIR/PharoThreadedFFI-linux$ARCH.zip -d $PHARO_PLUGIN_DIR
 
 ./pharo Pharo.image eval "
 
