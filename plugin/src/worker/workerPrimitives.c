@@ -1,4 +1,3 @@
-#include "PThreadedPlugin.h"
 #include "worker.h"
 
 /* primitiveRegisterWorker

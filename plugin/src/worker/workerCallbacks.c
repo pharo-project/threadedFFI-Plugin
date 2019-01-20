@@ -1,5 +1,3 @@
-#include "PThreadedPlugin.h"
-#include "callbacks.h"
 #include "worker.h"
 
 static void callbackFrontend(ffi_cif *cif, void *ret, void* args[], void* cbPtr) {

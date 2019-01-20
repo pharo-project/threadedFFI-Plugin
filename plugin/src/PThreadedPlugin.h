@@ -16,10 +16,8 @@
 #include "config.h"
 #include "sqVirtualMachine.h"
 
-#include "workerTask.h"
-#include "worker.h"
 #include "callbacks.h"
-#include "platformSemaphore.h"
+#include "semaphores/platformSemaphore.h"
 #include "macros.h"
 #include "utils.h"
 

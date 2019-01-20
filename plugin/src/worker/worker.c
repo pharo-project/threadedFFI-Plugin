@@ -1,8 +1,8 @@
 #include "worker.h"
 
-#include "threadSafeQueue.h"
-#include "pharoSemaphore.h"
-#include "platformSemaphore.h"
+#include "../queue/threadSafeQueue.h"
+#include "../semaphores/pharoSemaphore.h"
+#include "../semaphores/platformSemaphore.h"
 #include <stdio.h>
 #include <ffi.h>
 #include <pthread.h>

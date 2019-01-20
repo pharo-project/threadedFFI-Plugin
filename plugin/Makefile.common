@@ -27,6 +27,7 @@ $(BUILD_DIR)/$(PLUGIN_NAME): $(BUILD_DIR) $(VMSOURCES) $(libFFI) $(OBJS)
 	$(LD) $(OBJS) -o $(BUILD_DIR)/$(PLUGIN_NAME) $(LDFLAGS)
 	
 $(OBJS): $(BUILD_DIR)/%.o:$(SRCS)/%.c $(HEADERS) $(ADDITIONAL_DEPS)
+	mkdir -p $(dir $@)
 	$(CC) -c $(CFLAGS) -o $@ $<
 
 #

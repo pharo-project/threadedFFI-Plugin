@@ -1,10 +1,10 @@
 #ifndef __WORKER__
 #define __WORKER__
 
-#include "PThreadedPlugin.h"
+#include "../PThreadedPlugin.h"
 #include "workerTask.h"
-#include "threadSafeQueue.h"
-#include "callbacks.h"
+#include "../queue/threadSafeQueue.h"
+#include "../callbacks.h"
 
 typedef struct __Worker Worker;
 

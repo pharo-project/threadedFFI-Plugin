@@ -16,9 +16,9 @@ SRCS=./src
 VMSOURCES=../results/vm/src
 PLUGIN_NAME=libPThreadedPlugin.dylib
 
-SOURCES=$(notdir $(shell find $(SRCS) -iname *.c))
+SOURCES=$(shell find $(SRCS) -iname *.c)
 HEADERS=$(shell find $(SRCS) -iname *.h)
-OBJS=$(addprefix $(BUILD_DIR)/,$(addsuffix .o,$(basename $(SOURCES))))
+OBJS=$(addprefix $(BUILD_DIR)/,$(addsuffix .o,$(basename $(subst $(SRCS),.,$(SOURCES)))))
 
 libFFI=../results/libffi/$(libFFI_TARGET)/.libs/libffi.7.dylib
 libFFI_SOURCES=../results/libffi
