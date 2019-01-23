@@ -3,7 +3,7 @@ I'm a callback queue associated to a worker.
 I handle all callbacks defined in the context of a worker.
 "
 Class {
-	#name : #TFWorkerCallbackQueue,
+	#name : #TFCallbackQueue,
 	#superclass : #Object,
 	#instVars : [
 		'worker',
@@ -16,17 +16,17 @@ Class {
 	#classVars : [
 		'UniqueInstance'
 	],
-	#category : #'ThreadedFFI-Worker'
+	#category : #'ThreadedFFI-Callbacks'
 }
 
 { #category : #'instance creation' }
-TFWorkerCallbackQueue class >> new [
+TFCallbackQueue class >> new [
 
 	self error: 'Use #on:'
 ]
 
 { #category : #'instance creation' }
-TFWorkerCallbackQueue class >> on: aWorker [
+TFCallbackQueue class >> on: aWorker [
 	
 	^ self basicNew 
 		initializeWorker: aWorker;
@@ -34,7 +34,7 @@ TFWorkerCallbackQueue class >> on: aWorker [
 ]
 
 { #category : #operations }
-TFWorkerCallbackQueue >> executeCallback: aCallback [
+TFCallbackQueue >> executeCallback: aCallback [
 	
 	aCallback getHandle isNull ifFalse: [ 
 		[ [ aCallback execute ] 
@@ -42,31 +42,8 @@ TFWorkerCallbackQueue >> executeCallback: aCallback [
 			fork: [ :e | e pass ] ] fork ]
 ]
 
-{ #category : #operations }
-TFWorkerCallbackQueue >> executePendingCallbacks [
-	| first |
-
-	[ pendingQueue isEmpty ] whileFalse: [
-		first := pendingQueue removeFirst.
-		first getHandle isNull ifFalse: [ 
-			[[ first execute ] 
-			on: Error 
-			fork: [ :e | e pass ] ] fork ] ]
-]
-
-{ #category : #operations }
-TFWorkerCallbackQueue >> fillPendingQueue [
-	| callbackInvocation |
-
-	[ 
-		callbackInvocation := self nextPendingCallback.
-		callbackInvocation isNil ] 
-	whileFalse: [ 
-		pendingQueue addLast: callbackInvocation ].
-]
-
 { #category : #initialization }
-TFWorkerCallbackQueue >> forkCallbackProcess [
+TFCallbackQueue >> forkCallbackProcess [
 	
 	callbackProcess ifNotNil: [ ^ self ].
 	callbackProcess := [
@@ -78,7 +55,7 @@ TFWorkerCallbackQueue >> forkCallbackProcess [
 ]
 
 { #category : #initialization }
-TFWorkerCallbackQueue >> initialize [
+TFCallbackQueue >> initialize [
 	super initialize.
 	
 	semaphore := Semaphore new.
@@ -89,21 +66,21 @@ TFWorkerCallbackQueue >> initialize [
 ]
 
 { #category : #initialization }
-TFWorkerCallbackQueue >> initializeWorker: aWorker [
+TFCallbackQueue >> initializeWorker: aWorker [
 
 	worker := aWorker.
 	self initialize
 ]
 
 { #category : #private }
-TFWorkerCallbackQueue >> lookupCallback: anExternalAddress [
+TFCallbackQueue >> lookupCallback: anExternalAddress [
 
 	^ callbacks detect: [ :each | 
 		each callbackData = anExternalAddress ]
 ]
 
 { #category : #private }
-TFWorkerCallbackQueue >> nextPendingCallback [
+TFCallbackQueue >> nextPendingCallback [
 	| externalAddress |
 	
 	externalAddress := self primNextPendingWorkerCallback: self worker handle.
@@ -115,33 +92,26 @@ TFWorkerCallbackQueue >> nextPendingCallback [
 ]
 
 { #category : #'private primitives' }
-TFWorkerCallbackQueue >> primInitializeWorker: workerHandle queue: index [
-	<primitive: 'primitiveInitializeWorkerCallbackQueue' module: 'PThreadedPlugin'>
-
-	^ self primitiveFailed
-]
-
-{ #category : #'private primitives' }
-TFWorkerCallbackQueue >> primNextPendingWorkerCallback: aWorkerHandle [
+TFCallbackQueue >> primNextPendingWorkerCallback: aWorkerHandle [
 	<primitive: 'primitiveReadNextWorkerCallback' module: 'PThreadedPlugin'>
 
 	^ self primitiveFailed
 ]
 
 { #category : #operations }
-TFWorkerCallbackQueue >> registerCallback: aCallback [
+TFCallbackQueue >> registerCallback: aCallback [
 
 	callbacks add: aCallback
 ]
 
 { #category : #accessing }
-TFWorkerCallbackQueue >> semaphoreIndex [
+TFCallbackQueue >> semaphoreIndex [
 
 	^ semaphoreIndex
 ]
 
 { #category : #'system startup' }
-TFWorkerCallbackQueue >> shutDown [
+TFCallbackQueue >> shutDown [
 
 	self terminateProcess.
 	callbacks removeAll.
@@ -150,7 +120,7 @@ TFWorkerCallbackQueue >> shutDown [
 ]
 
 { #category : #initialization }
-TFWorkerCallbackQueue >> terminateProcess [
+TFCallbackQueue >> terminateProcess [
 	
 	callbackProcess ifNil: [ ^ self ].
 	callbackProcess terminate. 
@@ -158,13 +128,13 @@ TFWorkerCallbackQueue >> terminateProcess [
 ]
 
 { #category : #accessing }
-TFWorkerCallbackQueue >> worker [
+TFCallbackQueue >> worker [
 
 	^ worker
 ]
 
 { #category : #accessing }
-TFWorkerCallbackQueue >> workerName [
+TFCallbackQueue >> workerName [
 
 	^ self worker name
 ]

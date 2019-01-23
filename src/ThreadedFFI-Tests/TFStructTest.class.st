@@ -54,10 +54,9 @@ TFStructTest >> testReturnsAnStruct [
 	fun := TFExternalFunction
 		name: 'newPoint' moduleName: self libraryPath
 		parameterTypes:	{TFBasicType sint. TFBasicType sint}
-		returnType: pointType
-		worker: self worker.
+		returnType: pointType.
 		
-	aPoint := fun invokeWithArguments:#(1 5).
+	aPoint := runner invokeFunction: fun withArguments: #(1 5).
 
 	self assert: aPoint x equals: 1.
 	self assert: aPoint y equals: 5.	

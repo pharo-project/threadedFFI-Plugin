@@ -11,12 +11,6 @@ TFUFFITestCase class >> isAbstract [
 ]
 
 { #category : #accessing }
-TFUFFITestCase class >> resources [ 
-
-	^ super resources copyWith: TFTestResource
-]
-
-{ #category : #accessing }
 TFUFFITestCase >> calloutAPIClass [
 
 	^ TFCalloutAPI
@@ -41,10 +35,4 @@ TFUFFITestCase >> tearDown [
 	self class withAllSuperclassesDo: [:each | FFIMethodRegistry uniqueInstance resetSingleClass: each].
 
 	^ super tearDown
-]
-
-{ #category : #accessing }
-TFUFFITestCase >> worker [ 
-	
-	^ TFTestResource current worker
 ]

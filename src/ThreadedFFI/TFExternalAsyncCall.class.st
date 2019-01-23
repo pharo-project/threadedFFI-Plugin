@@ -56,7 +56,7 @@ TFExternalAsyncCall >> deregisterSemaphore [
 ]
 
 { #category : #operations }
-TFExternalAsyncCall >> execute [
+TFExternalAsyncCall >> executeOn: aRunner [
 	"Performs a callout using the asynchronous threaded FFI plugin.
 	 This method schedules the execution of a function in the threaded FFI plugin and 
 	 then waits for its result in a semaphore.
@@ -72,12 +72,15 @@ TFExternalAsyncCall >> execute [
 	returnHolder := self allocateReturn.
 	parameterArray := self allocateParameters.
 	index := self registerSemaphore.
+
 	^ [
-		self 
-			scheduleFunctionExecution: function 
+
+		aRunner 
+			executeFunction: function 
 			withArguments: parameterArray 
 			withReturnHolder: returnHolder 
 			usingSemaphore: index.
+
 		semaphore wait. 
 		self readReturnValue: returnHolder
 	] ensure: [ 
@@ -144,14 +147,6 @@ TFExternalAsyncCall >> readReturnValue: aValueHolder [
 TFExternalAsyncCall >> registerSemaphore [
 	
 	^ Smalltalk registerExternalObject: semaphore
-]
-
-{ #category : #'private - primitive' }
-TFExternalAsyncCall >> scheduleFunctionExecution: aExternalFunction withArguments: argumentsAddress withReturnHolder: returnHolderAddress usingSemaphore: semaphoreIndex [ 
-	
-	<primitive: 'primitivePerformCall' module: 'PThreadedPlugin'>
-
-	self primitiveFailed
 ]
 
 { #category : #accessing }

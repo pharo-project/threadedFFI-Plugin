@@ -85,26 +85,11 @@ TFWorkerManager >> initialize [
 	self registerWorkerName: #default
 ]
 
-{ #category : #private }
-TFWorkerManager >> primRegisterWorker: aName [
-	<primitive: #primitiveRegisterWorker module: #PThreadedPlugin>
-	
-	^ self primitiveFailed
-]
-
-{ #category : #private }
-TFWorkerManager >> primUnregisterWorker: workerHandle [
-	<primitive: #primitiveUnregisterWorker module: #PThreadedPlugin>
-	
-	^ self primitiveFailed
-]
-
 { #category : #registering }
 TFWorkerManager >> registerWorkerName: aName [
 	| worker |
 
 	worker := TFWorker named: aName.
-	worker register.
 	workers at: aName asSymbol put: worker.
 	^ worker
 ]
@@ -112,14 +97,13 @@ TFWorkerManager >> registerWorkerName: aName [
 { #category : #'system startup' }
 TFWorkerManager >> shutDown [
 	
-	workers valuesDo: #shutDown
+	workers valuesDo: #release
 ]
 
 { #category : #registering }
 TFWorkerManager >> unregisterWorker: aWorker [
 
 	aWorker shutDown.
-	self primUnregisterWorker: aWorker handle.
 	workers removeKey: aWorker name asSymbol
 ]
 

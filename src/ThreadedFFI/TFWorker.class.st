@@ -11,47 +11,58 @@ VM side, it creates a thread and installs a worker there, responsible to collect
 "
 Class {
 	#name : #TFWorker,
-	#superclass : #Object,
+	#superclass : #FFIExternalObject,
 	#instVars : [
-		'handle',
-		'name',
-		'callbackQueue'
+		'name'
 	],
 	#category : #'ThreadedFFI-Worker'
 }
 
 { #category : #private }
+TFWorker class >> finalizeResourceData: handle [
+
+	handle isNull ifTrue: [ ^ self ].
+	
+	(self fromHandle: handle)
+		release.
+		
+	handle beNull.
+]
+
+{ #category : #private }
 TFWorker class >> named: aName [
 
-	^ self basicNew 
+	^ self new 
 		name: aName;
-		initialize;
+		autoRelease;
 		yourself
 ]
 
-{ #category : #'instance creation' }
-TFWorker class >> new [
-
-	self error: 'Workers are created by the worker manager'
-]
-
 { #category : #accessing }
-TFWorker >> handle [
-
-	^ handle
+TFWorker >> ensureInitialized [
+	
+	self isNull ifTrue: [ self primitiveCreateWorker ]
 ]
 
-{ #category : #initialization }
-TFWorker >> initialize [
+{ #category : #executing }
+TFWorker >> executeFunction: aTFExternalFunction withArguments: argumentHolder withReturnHolder: aReturnHolder usingSemaphore: anInteger [ 
 	
-	super initialize.
-	callbackQueue := TFWorkerCallbackQueue on: self.
+	self ensureInitialized.
+	^ self primitivePerformWorkerCall: aTFExternalFunction withArguments: argumentHolder withReturnHolder: aReturnHolder usingSemaphore: anInteger 
 ]
 
-{ #category : #'accessing callbacks' }
-TFWorker >> lookupCallback: aCallback [
+{ #category : #execution }
+TFWorker >> invokeFunction: aTFExternalFunction [ 
 	
-	^ callbackQueue lookupCallback: aCallback
+	^ self invokeFunction: aTFExternalFunction withArguments: #()
+]
+
+{ #category : #executing }
+TFWorker >> invokeFunction: aTFExternalFunction withArguments: aCollection [ 
+
+	^ aTFExternalFunction newCall
+		parameters: aCollection;
+		executeOn: self
 ]
 
 { #category : #accessing }
@@ -66,27 +77,32 @@ TFWorker >> name: aName [
 	name := aName
 ]
 
-{ #category : #initialization }
-TFWorker >> register [
+{ #category : #accessing }
+TFWorker >> primitiveCreateWorker [
 
-	handle := self registerWorker: name asString queueIndex: callbackQueue semaphoreIndex.
+	<primitive: 'primitiveCreateWorker' module: 'PThreadedPlugin'>
+
+	^ self primitiveFailed 
 ]
 
-{ #category : #'accessing callbacks' }
-TFWorker >> registerCallback: aCallback [
- 
-	callbackQueue registerCallback: aCallback
-]
-
-{ #category : #initialization }
-TFWorker >> registerWorker: aName queueIndex: index [
-	<primitive: #primitiveRegisterWorker module: #PThreadedPlugin>
+{ #category : #executing }
+TFWorker >> primitivePerformWorkerCall: aTFExternalFunction withArguments: argumentHolder withReturnHolder: aReturnHolder usingSemaphore: anInteger [ 
 	
-	^ self primitiveFailed
+	<primitive: 'primitivePerformWorkerCall' module: 'PThreadedPlugin'>
+
+	^ self primitiveFailed 
 ]
 
-{ #category : #'system startup' }
-TFWorker >> shutDown [ 
+{ #category : #accessing }
+TFWorker >> primitiveReleaseWorker [
 
-	callbackQueue shutDown
+	<primitive: 'primitiveReleaseWorker' module: 'PThreadedPlugin'>
+
+	^ self primitiveFailed 
+]
+
+{ #category : #accessing }
+TFWorker >> release [ 
+	
+	self isNull ifFalse: [ self primitiveReleaseWorker ]
 ]

@@ -42,16 +42,15 @@ TFReentreantCallbacksTest >> testSingleCalloutDuringCallback [
 		forCallback: [ :a | self shortCallout ] 
 		parameters: { TFBasicType sint. } 
 		returnType: TFBasicType sint
-		worker: self worker.
+		worker: runner.
 
 	fun := TFExternalFunction
 		name: 'singleCallToCallback'
 		moduleName: self libraryPath
 		definition: (TFFunctionDefinition
 			parameterTypes: {TFBasicType pointer. TFBasicType sint}
-			returnType: TFBasicType sint)
-		worker: self worker.
+			returnType: TFBasicType sint).
 
-	returnValue := fun invokeWithArguments: {callback getHandle. 3}.
+	returnValue := runner invokeFunction: fun withArguments: {callback getHandle. 3}.
 	self assert: returnValue equals: 42
 ]

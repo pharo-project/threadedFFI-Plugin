@@ -13,7 +13,7 @@ TFFunctionCallTest >> testCallbackAsFunction [
 		forCallback: [ :a :b | a + b ] 
 		parameters: { TFBasicType sint. TFBasicType float } 
 		returnType: TFBasicType float
-		worker: self worker.
+		worker: runner.
 
 	definition := TFFunctionDefinition
 		parameterTypes: {TFBasicType sint. TFBasicType float.}
@@ -21,13 +21,10 @@ TFFunctionCallTest >> testCallbackAsFunction [
 
 	fun := TFExternalFunction 
 		fromAddress: callback getHandle 
-		definition: definition
-		worker: self worker.
+		definition: definition.
 	
-	returnValue := fun newCall 
-		parameters: {1. 2.0};
-		execute.
-		
+	returnValue := runner invokeFunction: fun withArguments: {1. 2.0}.
+			
 	self assert: returnValue equals: 3.0
 ]
 
@@ -40,19 +37,16 @@ TFFunctionCallTest >> testCallbackInLoop [
 		forCallback: [ :a | a + 1 ] 
 		parameters: { TFBasicType sint. } 
 		returnType: TFBasicType sint
-		worker: self worker.
+		worker: runner.
 
 	fun := TFExternalFunction
 		name: 'callbackInALoop'
 		moduleName: self libraryPath
 		definition: (TFFunctionDefinition
 			parameterTypes: {TFBasicType pointer}
-			returnType: TFBasicType sint)
-		worker: self worker.
+			returnType: TFBasicType sint).
 
-	returnValue := fun newCall 
-		parameters: {callback getHandle};
-		execute.
+	returnValue := runner invokeFunction: fun withArguments: {callback getHandle}.
 
 	self assert: returnValue equals: 42
 
@@ -67,19 +61,16 @@ TFFunctionCallTest >> testCallbackInSingleFunction [
 		forCallback: [ :a | a + 1 ] 
 		parameters: { TFBasicType sint. } 
 		returnType: TFBasicType sint
-		worker: self worker.
+		worker: runner.
 
 	fun := TFExternalFunction
 		name: 'singleCallToCallback'
 		moduleName: self libraryPath
 		definition: (TFFunctionDefinition
 			parameterTypes: {TFBasicType pointer. TFBasicType sint}
-			returnType: TFBasicType sint)
-		worker: self worker.
-
-	returnValue := fun newCall
-		parameters: {callback getHandle. 3};
-		execute.
+			returnType: TFBasicType sint).
+			
+	returnValue := runner invokeFunction: fun withArguments: {callback getHandle. 3}.
 
 	self assert: returnValue equals: 5
 
@@ -94,12 +85,9 @@ TFFunctionCallTest >> testWithFloatAndDouble [
 		moduleName: self libraryPath
 		definition: (TFFunctionDefinition
 			parameterTypes: { TFBasicType float. TFBasicType double }
-			returnType: TFBasicType float)
-		worker: self worker.
-
-	return := fun newCall
-		parameters: #(1.0 2.5);
-		execute.
+			returnType: TFBasicType float).
+			
+	return := runner invokeFunction: fun withArguments: #(1.0 2.5).
 		
 	self assert: return equals: 3.5
 ]
@@ -114,12 +102,9 @@ TFFunctionCallTest >> testWithTwoInts [
 		moduleName: self libraryPath
 		definition: (TFFunctionDefinition
 			parameterTypes: { TFBasicType sint. TFBasicType sint }
-			returnType: TFBasicType sint)
-		worker: self worker.
+			returnType: TFBasicType sint).
 				
-	return := fun newCall
-		parameters:{3. 	2};
-		execute.
+	return := runner invokeFunction: fun withArguments: {3. 2}.
 	
 	self assert: return equals: 5
 ]

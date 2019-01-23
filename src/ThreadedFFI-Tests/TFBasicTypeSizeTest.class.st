@@ -9,7 +9,7 @@ TFBasicTypeSizeTest >> assertType: typename equals: aSize [
 
 	| function |
 	function := self externalFunction: 'sizeof_', typename.
-	self assert: function invoke equals: aSize
+	self assert: (runner invokeFunction: function) equals: aSize
 ]
 
 { #category : #accessing }
@@ -21,7 +21,7 @@ TFBasicTypeSizeTest >> externalFunction: name [
 		definition: (TFFunctionDefinition
 			parameterTypes: {}
 			returnType: TFBasicType uint)
-		worker: self worker
+
 ]
 
 { #category : #tests }

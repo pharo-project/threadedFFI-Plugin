@@ -1,14 +1,11 @@
 Class {
 	#name : #TFTestCase,
 	#superclass : #TestCase,
+	#instVars : [
+		'runner'
+	],
 	#category : #'ThreadedFFI-Tests'
 }
-
-{ #category : #accessing }
-TFTestCase class >> resources [ 
-
-	^ super resources copyWith: TFTestResource
-]
 
 { #category : #accessing }
 TFTestCase >> libraryPath [
@@ -26,23 +23,24 @@ TFTestCase >> runCaseManaged [
 	super runCase
 ]
 
+{ #category : #accessing }
+TFTestCase >> setUp [ 
+
+	super setUp.
+	
+	runner := TFWorker named: 'testRunner'.
+]
+
 { #category : #tests }
 TFTestCase >> shortCallout [
 	| fun |
-
 	fun := TFExternalFunction
 		name: 'shortCallout'
 		moduleName: self libraryPath
-		definition: (TFFunctionDefinition 
-			parameterTypes: {} 
-			returnType: TFBasicType sint32)
-		worker: self worker.
+		definition:
+			(TFFunctionDefinition
+				parameterTypes: {}
+				returnType: TFBasicType sint32).
 
-	^ fun invoke
-]
-
-{ #category : #accessing }
-TFTestCase >> worker [
-
-	^ TFTestResource current worker
+	^ runner invokeFunction: fun 
 ]
