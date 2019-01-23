@@ -54,3 +54,14 @@ void callback_release(Callback *callback){
 	free(callback->parameterTypes);
 	free(callback);
 }
+
+
+void worker_add_pending_callback(Worker *worker, CallbackInvocation *callback) {
+//	threadsafe_queue_put(worker->callbackQueue, callback);
+}
+//
+CallbackInvocation *worker_next_pending_callback(Worker *worker) {
+//    CallbackInvocation *invocation = (CallbackInvocation *) threadsafe_queue_take(worker->callbackQueue);
+//    return invocation;
+	return NULL;
+}

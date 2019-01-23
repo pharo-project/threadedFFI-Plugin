@@ -19,7 +19,6 @@ WorkerTask *worker_task_new(void *externalFunction, ffi_cif *cif, void *paramete
     task->parametersAddress = parameters;
     task->returnHolderAddress = returnHolder;
     task->semaphoreIndex = semaphoreIndex;
-    task->queueType = QUEUE_NONE;
     task->queueHandle = NULL;
     
     return task;
@@ -33,15 +32,6 @@ WorkerTask *worker_task_new_callback() {
 }
 
 void worker_task_release(WorkerTask *task) {
-    //TODO: Free inner structure
     free(task);
 }
 
-void worker_task_set_main_queue(WorkerTask *task) {
-	task->queueType = QUEUE_MAIN;
-}
-
-void worker_task_set_queue(WorkerTask *task, void *queueHandle) {
-    task->queueType = QUEUE_REGISTERED;
-    task->queueHandle = queueHandle;
-}

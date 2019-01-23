@@ -8,12 +8,6 @@ typedef enum {
     CALLBACK_RETURN
 } WorkerTaskType;
 
-typedef enum {
-    QUEUE_NONE,
-    QUEUE_MAIN,
-    QUEUE_REGISTERED
-} QueueType;
-
 typedef struct {
     WorkerTaskType type;
     void *anExternalFunction;
@@ -21,7 +15,6 @@ typedef struct {
     void *parametersAddress;
     void *returnHolderAddress;
     int semaphoreIndex;
-    QueueType queueType;
     void *queueHandle; //NULL unless useQueue == QUEUE_REGISTERED
 } WorkerTask;
 
