@@ -15,8 +15,17 @@ Class {
 	#instVars : [
 		'name'
 	],
+	#classVars : [
+		'Default'
+	],
 	#category : #'ThreadedFFI-Worker'
 }
+
+{ #category : #accessing }
+TFWorker class >> default [
+
+	^ Default ifNil: [ Default := self named: 'default' ]
+]
 
 { #category : #private }
 TFWorker class >> finalizeResourceData: handle [

@@ -45,6 +45,7 @@ FFIAlienCallback >> frontendCallback: anObject [
 
 { #category : #registering }
 FFIAlienCallback >> register [
+	self halt.
 	"declare the real callback"
 	callback := Callback forCallbackEvaluator: self.
 	"keeping the thunk here to easy the FFI method compilation"

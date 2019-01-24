@@ -1,6 +1,9 @@
 Class {
 	#name : #TFUFFICallbackTest,
 	#superclass : #TFUFFITestCase,
+	#instVars : [
+		'runner'
+	],
 	#category : #'ThreadedFFI-UFFI-Tests'
 }
 
@@ -14,6 +17,13 @@ TFUFFICallbackTest >> callbackInALoop: callback [
 TFUFFICallbackTest >> returnAnswer [
 
 	^ self ffiCall: #(int32 returnAnswer())
+]
+
+{ #category : #running }
+TFUFFICallbackTest >> setUp [ 
+	
+	super setUp.
+	runner := TFWorker default.
 ]
 
 { #category : #tests }
@@ -54,10 +64,9 @@ TFUFFICallbackTest >> testCallbackAsFunction [
 
 	fun := TFExternalFunction 
 		fromAddress: callback getHandle 
-		definition: definition
-		worker: self worker.
+		definition: definition.
 
-	self assert: (fun invokeWithArguments: {1. 2.0}) equals: 3.0
+	self assert: (runner invokeFunction: fun withArguments: {1. 2.0}) equals: 3.0
 ]
 
 { #category : #tests }
@@ -123,9 +132,8 @@ TFUFFICallbackTest >> testCallbackWithErrorHanlded [
 
 	fun := TFExternalFunction 
 		fromAddress: callback getHandle 
-		definition: definition
-		worker: self worker.
+		definition: definition.
 
-	UIManager nonInteractiveDuring: [self assert: (fun invokeWithArguments: {1}) equals: -1]
+	UIManager nonInteractiveDuring: [self assert: (runner invokeFunction: fun withArguments: {1}) equals: -1]
 
 ]

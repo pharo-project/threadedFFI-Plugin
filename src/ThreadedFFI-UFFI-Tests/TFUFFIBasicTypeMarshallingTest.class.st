@@ -28,8 +28,8 @@ TFUFFIBasicTypeMarshallingTest >> externalFunction: name ofType: type [
 		moduleName: self libraryPath
 		definition: (TFFunctionDefinition
 			parameterTypes: {type. type}
-			returnType: type)
-		worker: self worker
+			returnType: type).
+
 ]
 
 { #category : #'ffi-calls' }

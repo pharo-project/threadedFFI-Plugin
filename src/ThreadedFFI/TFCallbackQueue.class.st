@@ -152,9 +152,3 @@ TFCallbackQueue >> terminateProcess [
 	callbackProcess terminate. 
 	callbackProcess := nil
 ]
-
-{ #category : #accessing }
-TFCallbackQueue >> workerName [
-
-	^ self worker name
-]
