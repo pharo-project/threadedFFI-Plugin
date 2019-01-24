@@ -148,7 +148,7 @@ PrimitiveWithDepth(primitiveCallbackReturn, 1) {
     checkFailed();
 
 
-    callbackInvocation->callback->runner->callbackExitFunction(callbackInvocation->callback->runner, callbackInvocation);
+    callbackInvocation->callback->runner->callbackExitFunction(callbackInvocation->callback->runner, callbackInvocation	);
 
     primitiveEnd();
 }
