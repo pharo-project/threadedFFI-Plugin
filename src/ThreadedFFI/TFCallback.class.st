@@ -5,38 +5,36 @@ Class {
 		'callbackData',
 		'parameterHandlers',
 		'returnTypeHandler',
+		'runner',
 		'parameterTypes',
 		'returnType',
-		'frontendCallback',
-		'worker'
+		'frontendCallback'
 	],
 	#category : #'ThreadedFFI-Callbacks'
 }
 
 { #category : #finalization }
-TFCallback class >> finalizeResourceData: anArray [
+TFCallback class >> finalizeResourceData: aCallbackDataHandler [
 
-	self 
-		primUnregister: anArray third 
-		handle: anArray second
+	self primUnregister: aCallbackDataHandler
 ]
 
 { #category : #'instance creation' }
-TFCallback class >> forCallback: aCallback parameters: parameterTypes returnType: returnType worker: aWorker [
+TFCallback class >> forCallback: aCallback parameters: parameterTypes returnType: returnType runner: aRunner [
 
 	^ self new
 		frontendCallback: aCallback;
 		parameterTypes: parameterTypes;
 		returnType: returnType;
-		worker: aWorker;
+		runner: aRunner;
 		autoRelease;
 		register;
 		yourself
 ]
 
 { #category : #'private primitives' }
-TFCallback class >> primUnregister: workerHandle handle: callbackHandle [
-	<primitive: 'primitiveUnregisterWorkerCallback' module: 'PThreadedPlugin'>
+TFCallback class >> primUnregister: callbackHandle [
+	<primitive: 'primitiveUnregisterCallback' module: 'PThreadedPlugin'>
 
 	^ self primitiveFailed
 ]
@@ -80,36 +78,29 @@ TFCallback >> parameterTypes: anObject [
 	parameterTypes := anObject
 ]
 
-{ #category : #'private primitives' }
-TFCallback >> primRegister: workerHandle [
-	<primitive: 'primitiveRegisterWorkerCallback' module: 'PThreadedPlugin'>
-
-	^ self primitiveFailed	
-]
-
 { #category : #registering }
 TFCallback >> register [
 	
 	handle isNull ifFalse: [ ^ self error: 'Callback already registered' ].
+	
 	self validateTypes.
-	self primRegister: self workerHandle.
-	self registerCallback: self.
+	self runner ensureInitialized.
+	self registerCallback.
+	TFCallbackQueue uniqueInstance registerCallback: self.
 ]
 
 { #category : #registering }
-TFCallback >> registerCallback: aCallback [
+TFCallback >> registerCallback [
 
-	^ self worker registerCallback: aCallback
+	<primitive: 'primitiveRegisterCallback' module: 'PThreadedPlugin'>
+	^ self primitiveFailed 
 ]
 
 { #category : #accessing }
 TFCallback >> resourceData [
 
-	^ { 
-		self getHandle. 
-		self callbackData.
-		self workerHandle 
-	}
+	^ self callbackData.
+
 ]
 
 { #category : #accessing }
@@ -120,6 +111,16 @@ TFCallback >> returnType [
 { #category : #accessing }
 TFCallback >> returnType: anObject [
 	returnType := anObject
+]
+
+{ #category : #accessing }
+TFCallback >> runner [
+	^ runner
+]
+
+{ #category : #accessing }
+TFCallback >> runner: anObject [
+	runner := anObject
 ]
 
 { #category : #accessing }
@@ -135,22 +136,4 @@ TFCallback >> validateTypes [
 
 	parameterHandlers := parameterTypes collect: [ :e | e basicType ] as: Array.
 	returnTypeHandler := returnType basicType.
-]
-
-{ #category : #'private accessing' }
-TFCallback >> worker [
-
-	^ worker
-]
-
-{ #category : #acccessing }
-TFCallback >> worker: aWorker [
- 
-	worker := aWorker
-]
-
-{ #category : #'private accessing' }
-TFCallback >> workerHandle [
-
-	^ self worker handle
 ]

@@ -6,9 +6,7 @@ Class {
 	#name : #TFCallbackQueue,
 	#superclass : #Object,
 	#instVars : [
-		'worker',
 		'semaphore',
-		'semaphoreIndex',
 		'callbacks',
 		'pendingQueue',
 		'callbackProcess'
@@ -20,26 +18,46 @@ Class {
 }
 
 { #category : #'instance creation' }
-TFCallbackQueue class >> new [
+TFCallbackQueue class >> initialize [
 
-	self error: 'Use #on:'
+	SessionManager default
+		registerSystemClassNamed: self name
+		atPriority: 70.	
 ]
 
 { #category : #'instance creation' }
-TFCallbackQueue class >> on: aWorker [
+TFCallbackQueue class >> shutDown: inANewImageSession [
+
+	inANewImageSession ifTrue:[
+		self uniqueInstance shutDown.
+	]
+]
+
+{ #category : #'instance creation' }
+TFCallbackQueue class >> startUp: inANewImageSession [
+
+	inANewImageSession ifTrue:[
+		self uniqueInstance startUp.	
+	]
+]
+
+{ #category : #'instance creation' }
+TFCallbackQueue class >> uniqueInstance [ 
 	
-	^ self basicNew 
-		initializeWorker: aWorker;
-		yourself
+	^ UniqueInstance ifNil: [ UniqueInstance := self new ]
 ]
 
 { #category : #operations }
-TFCallbackQueue >> executeCallback: aCallback [
+TFCallbackQueue >> executeCallback: aCallbackInvocation [
 	
-	aCallback getHandle isNull ifFalse: [ 
-		[ [ aCallback execute ] 
+	aCallbackInvocation ifNil: [ ^self ].
+	aCallbackInvocation getHandle isNull ifTrue: [ ^self ].
+	
+	aCallbackInvocation callback: (self lookupCallback: aCallbackInvocation callbackData).
+	
+	[[ aCallbackInvocation execute ] 
 			on: Error 
-			fork: [ :e | e pass ] ] fork ]
+			fork: [ :e | e pass ]] fork
 ]
 
 { #category : #initialization }
@@ -51,7 +69,7 @@ TFCallbackQueue >> forkCallbackProcess [
 			semaphore wait.
 			self executeCallback: self nextPendingCallback ] ] 
 		forkAt: Processor highIOPriority
-		named: 'Callback queue for worker: ', self workerName
+		named: 'Callback queue'
 ]
 
 { #category : #initialization }
@@ -59,17 +77,18 @@ TFCallbackQueue >> initialize [
 	super initialize.
 	
 	semaphore := Semaphore new.
-	semaphoreIndex := Smalltalk registerExternalObject: semaphore.
 	callbacks := WeakSet new.
-	pendingQueue := OrderedCollection new.	
+	pendingQueue := OrderedCollection new.
 	self forkCallbackProcess
 ]
 
-{ #category : #initialization }
-TFCallbackQueue >> initializeWorker: aWorker [
-
-	worker := aWorker.
-	self initialize
+{ #category : #initializing }
+TFCallbackQueue >> initializeQueue [
+	
+	| semaphoreIndex |
+	
+	semaphoreIndex := Smalltalk registerExternalObject: semaphore.
+	self primitiveInitializeQueueWith: semaphoreIndex
 ]
 
 { #category : #private }
@@ -83,31 +102,31 @@ TFCallbackQueue >> lookupCallback: anExternalAddress [
 TFCallbackQueue >> nextPendingCallback [
 	| externalAddress |
 	
-	externalAddress := self primNextPendingWorkerCallback: self worker handle.
+	externalAddress := self primNextPendingCallback.
 	externalAddress ifNil: [ ^ nil ].
 	
-	^ (TFCallbackInvocation fromHandle: externalAddress)
-		worker: self worker;
-		yourself
+	^ TFCallbackInvocation fromHandle: externalAddress
 ]
 
 { #category : #'private primitives' }
-TFCallbackQueue >> primNextPendingWorkerCallback: aWorkerHandle [
-	<primitive: 'primitiveReadNextWorkerCallback' module: 'PThreadedPlugin'>
+TFCallbackQueue >> primNextPendingCallback [
+	<primitive: 'primitiveReadNextCallback' module: 'PThreadedPlugin'>
 
 	^ self primitiveFailed
+]
+
+{ #category : #primitives }
+TFCallbackQueue >> primitiveInitializeQueueWith: anInteger [ 
+
+	<primitive: 'primitiveInitilizeCallbacks' module: 'PThreadedPlugin'>
+
+	^ self primitiveFailed 
 ]
 
 { #category : #operations }
 TFCallbackQueue >> registerCallback: aCallback [
 
 	callbacks add: aCallback
-]
-
-{ #category : #accessing }
-TFCallbackQueue >> semaphoreIndex [
-
-	^ semaphoreIndex
 ]
 
 { #category : #'system startup' }
@@ -119,18 +138,19 @@ TFCallbackQueue >> shutDown [
 	
 ]
 
+{ #category : #'system startup' }
+TFCallbackQueue >> startUp [
+
+	self initializeQueue.
+	self forkCallbackProcess
+]
+
 { #category : #initialization }
 TFCallbackQueue >> terminateProcess [
 	
 	callbackProcess ifNil: [ ^ self ].
 	callbackProcess terminate. 
 	callbackProcess := nil
-]
-
-{ #category : #accessing }
-TFCallbackQueue >> worker [
-
-	^ worker
 ]
 
 { #category : #accessing }

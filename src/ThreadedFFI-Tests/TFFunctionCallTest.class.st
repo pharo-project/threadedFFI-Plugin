@@ -13,7 +13,7 @@ TFFunctionCallTest >> testCallbackAsFunction [
 		forCallback: [ :a :b | a + b ] 
 		parameters: { TFBasicType sint. TFBasicType float } 
 		returnType: TFBasicType float
-		worker: runner.
+		runner: runner.
 
 	definition := TFFunctionDefinition
 		parameterTypes: {TFBasicType sint. TFBasicType float.}
@@ -37,7 +37,7 @@ TFFunctionCallTest >> testCallbackInLoop [
 		forCallback: [ :a | a + 1 ] 
 		parameters: { TFBasicType sint. } 
 		returnType: TFBasicType sint
-		worker: runner.
+		runner: runner.
 
 	fun := TFExternalFunction
 		name: 'callbackInALoop'
@@ -61,7 +61,7 @@ TFFunctionCallTest >> testCallbackInSingleFunction [
 		forCallback: [ :a | a + 1 ] 
 		parameters: { TFBasicType sint. } 
 		returnType: TFBasicType sint
-		worker: runner.
+		runner: runner.
 
 	fun := TFExternalFunction
 		name: 'singleCallToCallback'

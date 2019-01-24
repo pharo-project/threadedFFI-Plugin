@@ -2,7 +2,7 @@ Class {
 	#name : #TFCallbackInvocation,
 	#superclass : #FFIExternalObject,
 	#instVars : [
-		'worker'
+		'callback'
 	],
 	#category : #'ThreadedFFI-Callbacks'
 }
@@ -29,7 +29,12 @@ TFCallbackInvocation >> argumentsAddress [
 { #category : #accessing }
 TFCallbackInvocation >> callback [ 
 	
-	^ self worker lookupCallback: (self callbackData)
+	^ callback
+]
+
+{ #category : #accessing }
+TFCallbackInvocation >> callback: aTFCallback [ 
+	callback := aTFCallback
 ]
 
 { #category : #accessing }
@@ -52,8 +57,8 @@ TFCallbackInvocation >> execute [
 ]
 
 { #category : #private }
-TFCallbackInvocation >> primCallbackReturn: workerHandle [
-	<primitive: 'primitiveWorkerCallbackReturn' module: 'PThreadedPlugin'>
+TFCallbackInvocation >> primCallbackReturn [
+	<primitive: 'primitiveCallbackReturn' module: 'PThreadedPlugin'>
 
 	^ self primitiveFailed
 ]
@@ -61,7 +66,7 @@ TFCallbackInvocation >> primCallbackReturn: workerHandle [
 { #category : #operations }
 TFCallbackInvocation >> returnExecution [
 
-	self primCallbackReturn: self worker handle.
+	self primCallbackReturn.
 	handle beNull
 ]
 
@@ -69,18 +74,6 @@ TFCallbackInvocation >> returnExecution [
 TFCallbackInvocation >> returnHolder [
 
 	^ TFBasicType pointer readValue: handle offset: 1 + TFBasicType pointer byteSize
-]
-
-{ #category : #accessing }
-TFCallbackInvocation >> worker [ 
-
-	^ worker
-]
-
-{ #category : #accessing }
-TFCallbackInvocation >> worker: aWorker [
-
-	worker := aWorker
 ]
 
 { #category : #operations }

@@ -11,7 +11,7 @@ VM side, it creates a thread and installs a worker there, responsible to collect
 "
 Class {
 	#name : #TFWorker,
-	#superclass : #FFIExternalObject,
+	#superclass : #FFIExternalReference,
 	#instVars : [
 		'name'
 	],
