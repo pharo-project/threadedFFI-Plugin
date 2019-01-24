@@ -16,7 +16,7 @@
 #include "config.h"
 #include "sqVirtualMachine.h"
 
-#include "callbacks.h"
+#include "callbacks/callbacks.h"
 #include "semaphores/platformSemaphore.h"
 #include "macros.h"
 #include "utils.h"

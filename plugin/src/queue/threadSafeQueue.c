@@ -100,6 +100,10 @@ void *threadsafe_queue_take(TSQueue *queue) {
 	}
 
 	TSQueueNode *node = queue->first;
+
+	if(node == NULL)
+		return NULL;
+
 	void *element = node->element;
 
 	pthread_mutex_lock(&(queue->mutex));

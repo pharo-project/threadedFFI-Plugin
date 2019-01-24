@@ -15,18 +15,25 @@
 #endif
 
 struct __Worker {
+	Runner runner;
+
     pthread_t threadId;
     TSQueue *taskQueue;
     struct __Worker *next;
 };
 
-//    worker->callbackQueue = threadsafe_queue_new(pharo_semaphore_new(pharo_semaphore_index));
-//    threadsafe_queue_free(worker->callbackQueue);
+void worker_enter_callback(Runner* runner, CallbackInvocation* invocation){
+	worker_run((Worker*)runner);
+}
 
+void worker_callback_return(Runner* worker, CallbackInvocation *invocation){
+    WorkerTask *task = worker_task_new_callback();
+    worker_add_call((Worker*)worker, task);
+}
 
-#define SIGNAL_IMAGE(w) interpreterProxy->signalSemaphoreWithIndex(w->thread->callbackSemaphoreIndex)
 
 static void executeWorkerTask(Worker *worker, WorkerTask *task);
+
 
 Worker *worker_new() {
     Worker *worker = (Worker *)malloc(sizeof(Worker));
@@ -34,6 +41,8 @@ Worker *worker_new() {
     worker->next = NULL;
     worker->threadId = 0;
     worker->taskQueue = threadsafe_queue_new(platform_semaphore_new(0));
+    worker->runner.callbackEnterFunction = worker_enter_callback;
+    worker->runner.callbackExitFunction = worker_callback_return;
 
     if (pthread_create(&(worker->threadId), NULL, worker_run, (void *)worker) != 0) {
         perror("pthread_create() error");
@@ -48,11 +57,6 @@ Worker *worker_new() {
 void worker_release(Worker *worker) {
     threadsafe_queue_free(worker->taskQueue);
     free(worker);
-}
-
-void worker_callback_return(Worker *worker, CallbackInvocation *invocation){
-    WorkerTask *task = worker_task_new_callback();
-    worker_add_call(worker, task);
 }
 
 inline void worker_dispatch_callout(Worker *worker, WorkerTask *task) {

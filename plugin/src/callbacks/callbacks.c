@@ -1,4 +1,15 @@
-#include "worker.h"
+#include "../worker/worker.h"
+#include "callbacks.h"
+
+TSQueue* callbackQueue = NULL;
+
+void queue_add_pending_callback(CallbackInvocation *callback) {
+	threadsafe_queue_put(callbackQueue, callback);
+}
+
+void initilizeCallbacks(int pharo_semaphore_index){
+    callbackQueue = threadsafe_queue_new(pharo_semaphore_new(pharo_semaphore_index));
+}
 
 static void callbackFrontend(ffi_cif *cif, void *ret, void* args[], void* cbPtr) {
 	CallbackInvocation invocation;
@@ -7,17 +18,17 @@ static void callbackFrontend(ffi_cif *cif, void *ret, void* args[], void* cbPtr)
 	invocation.callback = callback;
 	invocation.arguments = args;
 	invocation.returnHolder = ret;
-	worker_add_pending_callback(callback->worker, &invocation);
+	queue_add_pending_callback(&invocation);
 	
 	// Manage callouts while waiting this callback to return
-	worker_run(callback->worker);
+	callback->runner->callbackEnterFunction(callback->runner, &invocation);
 }
 
-Callback *callback_new(void *worker, ffi_type** parameters, sqInt count, ffi_type* returnType) {
+Callback *callback_new(Runner* runner, ffi_type** parameters, sqInt count, ffi_type* returnType) {
     Callback *callback = malloc(sizeof(Callback));
     int returnCode;
     
-    callback->worker = worker;
+    callback->runner = runner;
     callback->parameterTypes = parameters;
     
     // Allocate closure and bound_puts
@@ -56,12 +67,10 @@ void callback_release(Callback *callback){
 }
 
 
-void worker_add_pending_callback(Worker *worker, CallbackInvocation *callback) {
-//	threadsafe_queue_put(worker->callbackQueue, callback);
-}
-//
-CallbackInvocation *worker_next_pending_callback(Worker *worker) {
-//    CallbackInvocation *invocation = (CallbackInvocation *) threadsafe_queue_take(worker->callbackQueue);
-//    return invocation;
-	return NULL;
+CallbackInvocation *queue_next_pending_callback() {
+	if(callbackQueue == NULL)
+		return NULL;
+
+    CallbackInvocation *invocation = (CallbackInvocation *) threadsafe_queue_take(callbackQueue);
+    return invocation;
 }
