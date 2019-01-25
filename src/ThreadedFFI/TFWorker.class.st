@@ -11,7 +11,7 @@ VM side, it creates a thread and installs a worker there, responsible to collect
 "
 Class {
 	#name : #TFWorker,
-	#superclass : #FFIExternalReference,
+	#superclass : #TFRunner,
 	#instVars : [
 		'name'
 	],
@@ -53,25 +53,18 @@ TFWorker >> ensureInitialized [
 	self isNull ifTrue: [ self primitiveCreateWorker ]
 ]
 
-{ #category : #executing }
-TFWorker >> executeFunction: aTFExternalFunction withArguments: argumentHolder withReturnHolder: aReturnHolder usingSemaphore: anInteger [ 
-	
+{ #category : #'as yet unclassified' }
+TFWorker >> executeFunction: aTFExternalFunction withArguments: argumentHolder withReturnHolder: aReturnHolder usingSemaphore: anInteger [
+
 	self ensureInitialized.
-	^ self primitivePerformWorkerCall: aTFExternalFunction withArguments: argumentHolder withReturnHolder: aReturnHolder usingSemaphore: anInteger 
-]
 
-{ #category : #execution }
-TFWorker >> invokeFunction: aTFExternalFunction [ 
-	
-	^ self invokeFunction: aTFExternalFunction withArguments: #()
-]
+	self
+		primitivePerformWorkerCall: aTFExternalFunction
+		withArguments: argumentHolder
+		withReturnHolder: aReturnHolder
+		usingSemaphore: anInteger.
+		
 
-{ #category : #executing }
-TFWorker >> invokeFunction: aTFExternalFunction withArguments: aCollection [ 
-
-	^ aTFExternalFunction newCall
-		parameters: aCollection;
-		executeOn: self
 ]
 
 { #category : #accessing }

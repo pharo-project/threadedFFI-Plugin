@@ -21,11 +21,11 @@ FFITestNestingStructureWithArray class >> fieldsDesc [
 { #category : #'accessing structure variables' }
 FFITestNestingStructureWithArray >> nested [
 	"This method was automatically generated"
-	^ FFITestArrayStructure fromHandle: (handle referenceStructAt: OFFSET_NESTED length: FFITestArrayStructure byteSize)
+	^FFITestArrayStructure fromHandle: (handle referenceStructAt: OFFSET_NESTED length: 15)
 ]
 
 { #category : #'accessing structure variables' }
 FFITestNestingStructureWithArray >> nested: anObject [
 	"This method was automatically generated"
-	handle structAt: OFFSET_NESTED put: anObject getHandle length: FFITestArrayStructure byteSize
+	handle structAt: OFFSET_NESTED put: anObject getHandle length: 15.
 ]

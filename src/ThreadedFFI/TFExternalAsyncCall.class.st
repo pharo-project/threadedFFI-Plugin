@@ -81,7 +81,8 @@ TFExternalAsyncCall >> executeOn: aRunner [
 			withReturnHolder: returnHolder 
 			usingSemaphore: index.
 
-		semaphore wait. 
+		semaphore wait.
+
 		self readReturnValue: returnHolder
 	] ensure: [ 
 		self deregisterSemaphore.

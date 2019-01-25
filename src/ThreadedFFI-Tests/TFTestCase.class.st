@@ -1,11 +1,18 @@
 Class {
 	#name : #TFTestCase,
-	#superclass : #TestCase,
+	#superclass : #ParametrizedTestCase,
 	#instVars : [
 		'runner'
 	],
 	#category : #'ThreadedFFI-Tests'
 }
+
+{ #category : #'building suites' }
+TFTestCase class >> testParameters [ 
+
+	^ ParametrizedTestMatrix new
+		forSelector: #runner addOptions: { [TFWorker default]. [ TFSameThreadRunner new ] }
+]
 
 { #category : #accessing }
 TFTestCase >> libraryPath [
@@ -24,11 +31,13 @@ TFTestCase >> runCaseManaged [
 ]
 
 { #category : #accessing }
-TFTestCase >> setUp [ 
+TFTestCase >> runner [
+	^ runner
+]
 
-	super setUp.
-	
-	runner := TFWorker named: 'testRunner'.
+{ #category : #accessing }
+TFTestCase >> runner: anObject [
+	runner := anObject
 ]
 
 { #category : #tests }
