@@ -29,12 +29,12 @@ static Runner sameThreadRunner = {
 #define PARAM_SEMAPHORE_INDEX       0
 
 PrimitiveWithDepth(primitiveSameThreadCallout, 2) {
-    volatile void *cif;
-    volatile void *externalFunction;
-    volatile void *parameters;
-    volatile void *returnHolder;
-    volatile sqInt receiver;
-    volatile sqInt semaphoreIndex;
+    void *cif;
+    void *externalFunction;
+    void *parameters;
+    void *returnHolder;
+    sqInt receiver;
+    sqInt semaphoreIndex;
 
     returnHolder = readAddress(interpreterProxy->stackValue(PARAM_RETURN_HOLDER));
     checkFailed();
@@ -64,8 +64,6 @@ PrimitiveWithDepth(primitiveSameThreadCallout, 2) {
             returnHolder,
 			parameters);
 
-    printf("Volvi!\n");
-
     interpreterProxy->signalSemaphoreWithIndex(semaphoreIndex);
     checkFailed();
 
@@ -82,6 +80,8 @@ Primitive(primitiveGetSameThreadRunnerAddress) {
 
     writeAddress(externalAddress, &sameThreadRunner);
     checkFailed();
+
+    interpreterProxy->ptDisableCogIt(primitiveSameThreadCallout);
 
     primitiveEndReturn(externalAddress);
 }
