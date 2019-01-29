@@ -30,6 +30,7 @@ TFCallbackQueue class >> shutDown: inANewImageSession [
 
 	inANewImageSession ifTrue:[
 		self uniqueInstance shutDown.
+		UniqueInstance := nil.
 	]
 ]
 

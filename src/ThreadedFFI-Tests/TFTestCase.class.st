@@ -11,7 +11,7 @@ Class {
 TFTestCase class >> testParameters [ 
 
 	^ ParametrizedTestMatrix new
-		forSelector: #runner addOptions: { [TFWorker default]. [ TFSameThreadRunner new ] }
+		forSelector: #runner addOptions: { "[TFWorker default]. "[ TFSameThreadRunner new ] }
 ]
 
 { #category : #accessing }
