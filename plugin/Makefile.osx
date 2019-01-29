@@ -13,7 +13,7 @@ BUILD_DIR=../results/plugin/osx$(ARCHITECTURE)
 PACKAGE_NAME=PharoThreadedFFI-osx$(ARCHITECTURE).zip
 
 SRCS=./src
-VMSOURCES=../results/vm/src
+VMSOURCES=/Users/admin/dev/Pharo/git-repos/opensmalltalk-vm/
 PLUGIN_NAME=libPThreadedPlugin.dylib
 
 SOURCES=$(shell find $(SRCS) -iname *.c)

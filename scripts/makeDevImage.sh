@@ -24,10 +24,10 @@ fi
 if [ $arch eq 32 ]
 then
 	arch=32
-	getPharoURL=get.pharo.org/70+vmLatest
+	getPharoURL=get.pharo.org/80+vmLatest
 else
 	arch=64
-	getPharoURL=get.pharo.org/64/70+vmLatest
+	getPharoURL=get.pharo.org/64/80+vmLatest
 fi
 
 os=$(${__root}/scripts/getOS.sh)

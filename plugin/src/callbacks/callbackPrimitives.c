@@ -137,7 +137,7 @@ PrimitiveWithDepth(primitiveRegisterCallback, 3){
  *   returns from a callback
  *   receiver <TFCallbackInvocation>
  */
-PrimitiveWithDepth(primitiveCallbackReturn, 1) {
+PrimitiveWithDepth(primitiveCallbackReturn, 2) {
     CallbackInvocation *callbackInvocation;
     sqInt receiver;
 

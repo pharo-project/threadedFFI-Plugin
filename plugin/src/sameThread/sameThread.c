@@ -29,12 +29,12 @@ static Runner sameThreadRunner = {
 #define PARAM_SEMAPHORE_INDEX       0
 
 PrimitiveWithDepth(primitiveSameThreadCallout, 2) {
-    void *cif;
-    void *externalFunction;
-    void *parameters;
-    void *returnHolder;
-    sqInt receiver;
-    sqInt semaphoreIndex;
+    volatile void *cif;
+    volatile void *externalFunction;
+    volatile void *parameters;
+    volatile void *returnHolder;
+    volatile sqInt receiver;
+    volatile sqInt semaphoreIndex;
 
     returnHolder = readAddress(interpreterProxy->stackValue(PARAM_RETURN_HOLDER));
     checkFailed();
@@ -64,7 +64,10 @@ PrimitiveWithDepth(primitiveSameThreadCallout, 2) {
             returnHolder,
 			parameters);
 
+    printf("Volvi!\n");
+
     interpreterProxy->signalSemaphoreWithIndex(semaphoreIndex);
+    checkFailed();
 
     primitiveEnd();
 }
@@ -85,30 +88,39 @@ Primitive(primitiveGetSameThreadRunnerAddress) {
 
 void sameThreadCallbackEnter(struct _Runner* runner, struct _CallbackInvocation* callback){
 
-	VMCallbackContext vmcc;
-	VMCallbackContext *previousCallbackContext;
+	VMCallbackContext *vmcc;
 	sqInt flags;
 
-	if ((flags = interpreterProxy->ownVM(0)) < 0) {
-		fprintf(stderr,"Warning; callback failed to own the VM\n");
-		return;
-	}
+//	if ((flags = interpreterProxy->ownVM(0)) < 0) {
+//		fprintf(stderr,"Warning; callback failed to own the VM\n");
+//		return;
+//	}
 
-	if (!(setjmp(vmcc.trampoline))) {
+	vmcc = malloc(sizeof(VMCallbackContext));
+
+	callback->payload = vmcc;
+
+	if ((!sigsetjmp(vmcc->trampoline, 0))) {
 		//Used to mark that is a fake callback!
-		vmcc.thunkp = NULL;
-		vmcc.stackp = NULL;
-		vmcc.intregargsp = NULL;
-		vmcc.floatregargsp = NULL;
-		interpreterProxy->sendInvokeCallbackContext(&vmcc);
+		vmcc->thunkp = NULL;
+		vmcc->stackp = NULL;
+		vmcc->intregargsp = NULL;
+		vmcc->floatregargsp = NULL;
+		interpreterProxy->ptEnterInterpreterFromCallback(vmcc);
 		fprintf(stderr,"Warning; callback failed to invoke\n");
-		interpreterProxy->disownVM(flags);
+//		interpreterProxy->disownVM(flags);
 		return;
 	}
 
-	interpreterProxy->disownVM(flags);
+	free(vmcc);
+
+//	interpreterProxy->disownVM(flags);
 }
 
 void sameThreadCallbackExit(struct _Runner* runner, struct _CallbackInvocation* callback){
 
+	VMCallbackContext *vmcc;
+	vmcc = (VMCallbackContext*)callback->payload;
+
+	interpreterProxy->ptExitInterpreterToCallback(vmcc);
 }

@@ -31,6 +31,8 @@ typedef struct _CallbackInvocation {
     Callback *callback;
     void *returnHolder;
     void **arguments;
+    //Optional payload used by the runners
+    void *payload;
 } CallbackInvocation;
 
 Callback *callback_new(Runner * runner, ffi_type** parameters, sqInt count, ffi_type* returnType);
