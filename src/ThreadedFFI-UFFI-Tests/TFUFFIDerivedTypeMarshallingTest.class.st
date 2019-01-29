@@ -46,6 +46,7 @@ TFUFFIDerivedTypeMarshallingTest >> returnSameByteArray: aByteArray [
 { #category : #running }
 TFUFFIDerivedTypeMarshallingTest >> setUp [
 	"Hooks that subclasses may override to define the fixture of test."
+	super setUp.
 	gchar := 'char'
 ]
 

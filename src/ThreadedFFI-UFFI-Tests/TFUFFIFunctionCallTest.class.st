@@ -49,6 +49,11 @@ TFUFFIFunctionCallTest >> testLongCalloutDoesNotBlockImage [
 	To do that, we do a 1 second long callout in a separate Pharo process.
 	When that process starts executing (signals the calloutEnter semaphore), we wait for half a second to let the callback really start executing and then do something before the callback returns."
 	| calloutEnter calloutExit orderOfFinishing |
+
+	"If we are running in the same thread execution, it will block the interpreter. So the test is skipped."
+	(self ffiLibraryName = TFTestLibraryUsingSameThreadRunner)
+		ifTrue: [ ^ self skip ]. 
+	
 	calloutEnter := Semaphore new.
 	calloutExit := Semaphore new.
 	orderOfFinishing := OrderedCollection new.	

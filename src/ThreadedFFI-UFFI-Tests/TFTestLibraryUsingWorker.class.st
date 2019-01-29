@@ -1,29 +1,29 @@
 Class {
-	#name : #TFTestLibrary,
+	#name : #TFTestLibraryUsingWorker,
 	#superclass : #FFILibrary,
 	#category : #'ThreadedFFI-UFFI-Tests'
 }
 
 { #category : #'accessing platform' }
-TFTestLibrary >> macModuleName [ 
+TFTestLibraryUsingWorker >> macModuleName [ 
 
 	^ 'testLibrary.dylib'
 ]
 
+{ #category : #accessing }
+TFTestLibraryUsingWorker >> runner [ 
+	
+	^ TFWorker default
+]
+
 { #category : #'accessing platform' }
-TFTestLibrary >> unixModuleName [
+TFTestLibraryUsingWorker >> unixModuleName [
 
 	^ 'testLibrary.so'
 ]
 
 { #category : #'accessing platform' }
-TFTestLibrary >> win32ModuleName [
+TFTestLibraryUsingWorker >> win32ModuleName [
  
 	^ 'testLibrary.dll'
-]
-
-{ #category : #accessing }
-TFTestLibrary >> workerName [ 
-
-	^ #test
 ]

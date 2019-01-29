@@ -1,6 +1,9 @@
 Class {
 	#name : #TFUFFITestCase,
-	#superclass : #TestCase,
+	#superclass : #ParametrizedTestCase,
+	#instVars : [
+		'ffiLibrary'
+	],
 	#category : #'ThreadedFFI-UFFI-Tests'
 }
 
@@ -10,6 +13,13 @@ TFUFFITestCase class >> isAbstract [
 	^ self == TFUFFITestCase
 ]
 
+{ #category : #'building suites' }
+TFUFFITestCase class >> testParameters [ 
+
+	^ ParametrizedTestMatrix new
+		forSelector: #ffiLibrary addOptions: { TFTestLibraryUsingWorker. TFTestLibraryUsingSameThreadRunner }
+]
+
 { #category : #accessing }
 TFUFFITestCase >> calloutAPIClass [
 
@@ -17,9 +27,14 @@ TFUFFITestCase >> calloutAPIClass [
 ]
 
 { #category : #accessing }
+TFUFFITestCase >> ffiLibrary: anObject [
+	ffiLibrary := anObject
+]
+
+{ #category : #accessing }
 TFUFFITestCase >> ffiLibraryName [
 
-	^ TFTestLibrary
+	^ ffiLibrary
 ]
 
 { #category : #running }
