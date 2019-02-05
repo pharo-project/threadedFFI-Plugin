@@ -32,6 +32,9 @@ cp "${__root}/results/PharoThreadedFFI-windows$ARCH.zip" "pharo-vm"
 unzip pharo-vm/PharoThreadedFFI-windows$ARCH.zip -d pharo-vm
 
 __winroot=`cygpath -w ${__root}`
+
+./pharo Pharo.image st --save --quit ${__winroot}/scripts/updateIceberg.st
+
 ./pharo Pharo.image eval "
 
 [Metacello new

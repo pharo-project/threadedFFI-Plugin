@@ -15,7 +15,7 @@ BaselineOfThreadedFFI >> baseline: spec [
 				baseline: 'ParametrizedTests' 
 				with: [ 
 					spec
-						repository: 'tonel:///Users/admin/dev/Pharo/git-repos/ThreadedFFI/results/ParametrizedTests/src';
+						repository: 'github://tesonep/ParametrizedTests/src';
 	  					loads: 'default' ].
 		spec 
 			package: 'UnifiedFFI';

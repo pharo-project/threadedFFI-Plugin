@@ -46,6 +46,8 @@ cp "${__root}/results/testLibrary/testLibrary.dylib" ${__root}/dev/
 
 cd ${__root}/dev/
 
+./pharo Pharo.image st --save --quit ${__root}/scripts/updateIceberg.st
+
 ./pharo Pharo.image eval --save "
 [Metacello new
         baseline: 'ThreadedFFI';

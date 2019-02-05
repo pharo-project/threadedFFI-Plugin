@@ -33,6 +33,8 @@ PHARO_PLUGIN_DIR=`find . -type d | grep "/pharo-vm/lib/pharo/"`
 cp "${__root}/results/PharoThreadedFFI-linux$ARCH.zip" "$PHARO_PLUGIN_DIR"
 unzip $PHARO_PLUGIN_DIR/PharoThreadedFFI-linux$ARCH.zip -d $PHARO_PLUGIN_DIR
 
+./pharo Pharo.image st --save --quit ${__root}/scripts/updateIceberg.st
+
 ./pharo Pharo.image eval "
 
 [Metacello new

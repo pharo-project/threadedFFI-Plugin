@@ -31,6 +31,8 @@ wget -O - $PHARO_URL | bash
 cp "${__root}/results/PharoThreadedFFI-osx$ARCH.zip" "pharo-vm/Pharo.app/Contents/MacOS/Plugins/"
 unzip pharo-vm/Pharo.app/Contents/MacOS/Plugins/PharoThreadedFFI-osx$ARCH.zip -d pharo-vm/Pharo.app/Contents/MacOS/Plugins/
 
+./pharo Pharo.image st --save --quit ${__root}/scripts/updateIceberg.st
+
 ./pharo Pharo.image eval "
 
 [Metacello new
