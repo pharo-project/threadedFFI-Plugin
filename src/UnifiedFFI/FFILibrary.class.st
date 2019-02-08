@@ -16,6 +16,12 @@ FFILibrary class >> asFFILibrary [
 	^ self uniqueInstance
 ]
 
+{ #category : #converting }
+FFILibrary class >> calloutAPIClass [
+
+	^ self uniqueInstance calloutAPIClass 
+]
+
 { #category : #'instance creation' }
 FFILibrary class >> new [
 	self error: 'Use #uniqueInstance'
@@ -31,6 +37,12 @@ FFILibrary class >> uniqueInstance [
 { #category : #converting }
 FFILibrary >> asFFILibrary [ 
 	^ self
+]
+
+{ #category : #converting }
+FFILibrary >> calloutAPIClass [
+
+	^ FFICalloutAPI calloutAPIClass 
 ]
 
 { #category : #'library path' }

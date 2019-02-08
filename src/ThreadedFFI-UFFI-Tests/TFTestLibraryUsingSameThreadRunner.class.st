@@ -5,6 +5,12 @@ Class {
 }
 
 { #category : #'accessing platform' }
+TFTestLibraryUsingSameThreadRunner >> calloutAPIClass [
+
+	^ TFCalloutAPI 
+]
+
+{ #category : #'accessing platform' }
 TFTestLibraryUsingSameThreadRunner >> macModuleName [ 
 
 	^ 'testLibrary.dylib'

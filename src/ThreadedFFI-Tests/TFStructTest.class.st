@@ -6,12 +6,29 @@ Class {
 
 { #category : #tests }
 TFStructTest >> longStructSize [ 
-	^ self ffiCall: #(int sizeOfLongStruct()) module: self libraryPath asFFILibrary 
+
+	^ TFWorker default
+		invokeFunction:
+			(TFExternalFunction
+				name: 'sizeOfLongStruct'
+				moduleName: self libraryPath
+				definition:
+					(TFFunctionDefinition parameterTypes: {} returnType: TFBasicType uint))
+		withArguments: #()
+
 ]
 
 { #category : #tests }
-TFStructTest >> pointSize [ 
-	^ self ffiCall: #(int sizeOfPoint()) module: self libraryPath asFFILibrary 
+TFStructTest >> pointSize [
+
+	^ TFWorker default
+		invokeFunction:
+			(TFExternalFunction
+				name: 'sizeOfPoint'
+				moduleName: self libraryPath
+				definition:
+					(TFFunctionDefinition parameterTypes: {} returnType: TFBasicType uint))
+		withArguments: #()
 ]
 
 { #category : #tests }

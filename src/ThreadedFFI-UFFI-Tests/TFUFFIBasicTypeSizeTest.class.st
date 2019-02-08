@@ -11,12 +11,6 @@ TFUFFIBasicTypeSizeTest >> assertType: typename equals: aSize [
 ]
 
 { #category : #accessing }
-TFUFFIBasicTypeSizeTest >> calloutAPIClass [
-
-	^ TFCalloutAPI
-]
-
-{ #category : #accessing }
 TFUFFIBasicTypeSizeTest >> ffiLibraryName [
 
 	Smalltalk os isUnix ifTrue: [ ^ 'testLibrary.so' ].

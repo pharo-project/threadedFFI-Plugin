@@ -2,7 +2,7 @@ Extension { #name : #Object }
 
 { #category : #'*UnifiedFFI' }
 Object >> calloutAPIClass [
-	^ FFICalloutAPI calloutAPIClass
+	^ self ffiLibrary calloutAPIClass
 ]
 
 { #category : #'*UnifiedFFI' }
@@ -12,16 +12,20 @@ Object >> ffiCall: fnSpec [
 	^ (self ffiCalloutIn: thisContext sender)
 		convention: self ffiCallingConvention;
 		options: self ffiLibrary options;
-		function: fnSpec module: self ffiLibraryName
+		function: fnSpec module: self ffiLibrary moduleName
 ]
 
 { #category : #'*UnifiedFFI' }
 Object >> ffiCall: fnSpec module: aModuleName [
 	<ffiCalloutTranslator>
 	
-	^ (self ffiCalloutIn: thisContext sender)
+	| ffiLibrary |
+	
+	ffiLibrary := aModuleName asFFILibrary.
+	
+	^ (ffiLibrary calloutAPIClass ffiCalloutIn: thisContext sender)
 		convention: self ffiCallingConvention;
-		options: aModuleName asFFILibrary options;
+		options: ffiLibrary options;
 		function: fnSpec module: aModuleName
 ]
 
@@ -29,9 +33,13 @@ Object >> ffiCall: fnSpec module: aModuleName [
 Object >> ffiCall: fnSpec module: aModuleName options: callOptions [
 	<ffiCalloutTranslator>
 	
-	^ (self ffiCalloutIn: thisContext sender)
+	| ffiLibrary |
+	
+	ffiLibrary := aModuleName asFFILibrary.	
+	
+	^ (ffiLibrary calloutAPIClass ffiCalloutIn: thisContext sender)
 		convention: self ffiCallingConvention;
-		options: (self ffiLibrary options), callOptions;
+		options: (ffiLibrary options), callOptions;
 		function: fnSpec module: aModuleName
 ]
 
@@ -42,7 +50,7 @@ Object >> ffiCall: fnSpec options: callOptions [
 	^ (self ffiCalloutIn: thisContext sender)
 		convention: self ffiCallingConvention;
 		options: (self ffiLibrary options), callOptions;
-		function: fnSpec module: self ffiLibraryName
+		function: fnSpec module: self ffiLibrary moduleName
 ]
 
 { #category : #'*UnifiedFFI' }
@@ -51,12 +59,8 @@ Object >> ffiCallingConvention [
 ]
 
 { #category : #'*UnifiedFFI' }
-Object >> ffiCallout [
-	^ self calloutAPIClass inContext: thisContext sender
-]
-
-{ #category : #'*UnifiedFFI' }
 Object >> ffiCalloutIn: aContext [
+	
 	^ self calloutAPIClass inContext: aContext
 ]
 
@@ -85,7 +89,7 @@ Object >> newCallbackWithSignature: signature block: aBlock [
 		convention: self ffiCallingConvention;
 		newCallbackWithSignature: signature
 			block: aBlock
-			library: self ffiLibraryName
+			library: self ffiLibrary
 ]
 
 { #category : #'*UnifiedFFI' }

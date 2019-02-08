@@ -88,7 +88,7 @@ TFUFFICallbackTest >> testCallbackInLoopUsingSubclassOfFFICallback [
 	| callback |
 
 	callback := TFUFFIIncrementCallback new
-		ffiLibraryName: self ffiLibraryName;
+		ffiLibrary: self ffiLibrary;
 		yourself.
 
 	self assert: (self callbackInALoop: callback) equals: 42
@@ -111,7 +111,7 @@ TFUFFICallbackTest >> testCallbackInSingleFunctionUsingSubclassOfFFICallback [
 	| callback |
 
 	callback := TFUFFIIncrementCallback new
-		ffiLibraryName: self ffiLibraryName;
+		ffiLibrary: self ffiLibrary;
 		yourself.
 
 	self assert: (self singleCallToCallback: callback value: 3) equals: 5
@@ -123,7 +123,7 @@ TFUFFICallbackTest >> testCallbackWithErrorHanlded [
 
 	| callback fun definition |
 	callback := TFUFFIFailingCallbackWithDefault new
-			ffiLibraryName: self ffiLibraryName;
+			ffiLibrary: self ffiLibrary;
 			yourself.
 
 	definition := TFFunctionDefinition

@@ -21,12 +21,6 @@ TFUFFITestCase class >> testParameters [
 ]
 
 { #category : #accessing }
-TFUFFITestCase >> calloutAPIClass [
-
-	^ TFCalloutAPI
-]
-
-{ #category : #accessing }
 TFUFFITestCase >> ffiLibrary: anObject [
 	ffiLibrary := anObject
 ]

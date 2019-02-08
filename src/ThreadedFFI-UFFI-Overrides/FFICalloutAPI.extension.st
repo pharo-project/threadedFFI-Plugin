@@ -7,10 +7,10 @@ FFICalloutAPI class >> newCallbackBackendFor: aCallback [
 ]
 
 { #category : #'*ThreadedFFI-UFFI-Overrides' }
-FFICalloutAPI >> newCallbackWithSignature: signature block: aBlock library: aLibraryName [
+FFICalloutAPI >> newCallbackWithSignature: signature block: aBlock library: aLibrary [
 
 	^ (FFICallback signature: signature block: aBlock)
 		calloutAPIClass: self class;
-		ffiLibraryName: aLibraryName;
+		ffiLibrary: aLibrary;
 		yourself
 ]

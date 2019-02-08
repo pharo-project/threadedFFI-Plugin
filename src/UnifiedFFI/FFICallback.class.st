@@ -103,15 +103,15 @@ FFICallback >> ffiInstVarArgument: argName generator: generator [
 ]
 
 { #category : #accessing }
-FFICallback >> ffiLibraryName [
+FFICallback >> ffiLibrary: aFFILibrary [
 
-	^ (library ifNil: [ 'default' ]) asFFILibrary
+	library := aFFILibrary
 ]
 
 { #category : #accessing }
-FFICallback >> ffiLibraryName: aFFILibrary [
+FFICallback >> ffiLibraryName [
 
-	library := aFFILibrary asFFILibrary
+	^ (library ifNil: [ 'default' ]) asFFILibrary
 ]
 
 { #category : #accessing }
