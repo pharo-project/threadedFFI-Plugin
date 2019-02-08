@@ -22,8 +22,7 @@ Object >> ffiCall: fnSpec module: aModuleName [
 	| ffiLibrary |
 	
 	ffiLibrary := aModuleName asFFILibrary.
-	
-	^ (ffiLibrary calloutAPIClass ffiCalloutIn: thisContext sender)
+	^ (ffiLibrary calloutAPIClass inContext: thisContext sender)
 		convention: self ffiCallingConvention;
 		options: ffiLibrary options;
 		function: fnSpec module: aModuleName
@@ -37,7 +36,7 @@ Object >> ffiCall: fnSpec module: aModuleName options: callOptions [
 	
 	ffiLibrary := aModuleName asFFILibrary.	
 	
-	^ (ffiLibrary calloutAPIClass ffiCalloutIn: thisContext sender)
+	^ (ffiLibrary calloutAPIClass inContext: thisContext sender)
 		convention: self ffiCallingConvention;
 		options: (ffiLibrary options), callOptions;
 		function: fnSpec module: aModuleName

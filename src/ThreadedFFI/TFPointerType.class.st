@@ -34,6 +34,7 @@ TFPointerType >> write: anExternalAddress into: targetAddress [
 	address isExternalAddress ifFalse: [
 		address pinInMemory.
 		address := self oopForObject: address ].
-			
+	
+		
 	targetAddress pointerAt: 1 put: address
 ]
