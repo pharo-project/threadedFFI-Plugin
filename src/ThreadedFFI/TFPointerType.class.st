@@ -19,5 +19,21 @@ TFPointerType >> readValue: anExternalAddress offset: offset [
 { #category : #writting }
 TFPointerType >> write: anExternalAddress into: targetAddress [ 
 
-	targetAddress pointerAt: 1 put: anExternalAddress getHandle
+	| address |
+	
+
+	(anExternalAddress isKindOf: ByteArray) ifTrue: [ address := anExternalAddress]
+	ifFalse: [ 
+
+	anExternalAddress 
+		ifNil: [ address := ExternalAddress null ] 
+		ifNotNil: [ anExternalAddress isExternalAddress 
+					ifTrue: [ address := anExternalAddress ]
+					ifFalse: [ address := anExternalAddress getHandle ] ]].
+
+	address isExternalAddress ifFalse: [
+		address pinInMemory.
+		address := self oopForObject: address ].
+			
+	targetAddress pointerAt: 1 put: address
 ]

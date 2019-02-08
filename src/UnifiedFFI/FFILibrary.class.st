@@ -27,6 +27,12 @@ FFILibrary class >> new [
 	self error: 'Use #uniqueInstance'
 ]
 
+{ #category : #options }
+FFILibrary class >> options [
+	
+	^ #()
+]
+
 { #category : #'instance creation' }
 FFILibrary class >> uniqueInstance [ 
 	self = FFILibrary 
@@ -58,6 +64,12 @@ FFILibrary >> macModuleName [
 { #category : #accessing }
 FFILibrary >> moduleName [ 
 	^ Smalltalk platform ffiModuleName: self
+]
+
+{ #category : #accessing }
+FFILibrary >> uniqueInstance [
+	
+	^ self
 ]
 
 { #category : #'accessing platform' }

@@ -21,14 +21,13 @@ TFUFFITestCase class >> testParameters [
 ]
 
 { #category : #accessing }
-TFUFFITestCase >> ffiLibrary: anObject [
-	ffiLibrary := anObject
+TFUFFITestCase >> ffiLibrary [
+	^ ffiLibrary
 ]
 
 { #category : #accessing }
-TFUFFITestCase >> ffiLibraryName [
-
-	^ ffiLibrary
+TFUFFITestCase >> ffiLibrary: anObject [
+	ffiLibrary := anObject
 ]
 
 { #category : #running }

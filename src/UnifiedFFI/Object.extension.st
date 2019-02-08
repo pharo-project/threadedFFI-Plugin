@@ -11,8 +11,8 @@ Object >> ffiCall: fnSpec [
 	
 	^ (self ffiCalloutIn: thisContext sender)
 		convention: self ffiCallingConvention;
-		options: self ffiLibrary options;
-		function: fnSpec module: self ffiLibrary moduleName
+		options: self ffiLibrary uniqueInstance options;
+		function: fnSpec module: self ffiLibrary uniqueInstance
 ]
 
 { #category : #'*UnifiedFFI' }

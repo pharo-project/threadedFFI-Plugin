@@ -36,6 +36,8 @@ TFOOPType >> primOopForObject: anObject [
 
 	<primitive: 'primitiveGetAddressOfOOP' module: 'PThreadedPlugin'>
 
+	anObject isPinned ifFalse: [ self error: 'Objects passed by reference should be pinned' ].
+
 	^ self primitiveFailed	
 ]
 

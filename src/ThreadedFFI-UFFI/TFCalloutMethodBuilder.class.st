@@ -34,7 +34,8 @@ TFCalloutMethodBuilder >> generateFFICallout: builder spec: functionSpec [
 	"Obtain the library to use"
 	builder 
 		pushReceiver;
-		send: #ffiLibrary.
+		send: #ffiLibrary;
+		send: #uniqueInstance.
 		
 	"Obtain the runner to use."
 	builder send: #runner.
