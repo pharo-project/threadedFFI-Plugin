@@ -143,14 +143,17 @@ TFExternalAsyncCall >> parameters: anObject [
 TFExternalAsyncCall >> prepareExecution [
 	self validateFunction.
 	self validateArguments.
+	
 	returnHolder := self allocateReturn.
 	returnHolder pinInMemory.
 	returnAddress := PointerUtils oopForObject: returnHolder.
+	
 	parameterArray := self allocateParameters.
 	parameterArray pinInMemory.
 	parameterAddress := parameterArray
 		ifNil: [ ExternalAddress null ]
 		ifNotNil: [ PointerUtils oopForObject: parameterArray ].
+		
 	index := self registerSemaphore
 ]
 
