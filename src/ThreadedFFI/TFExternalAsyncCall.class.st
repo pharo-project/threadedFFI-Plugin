@@ -12,7 +12,12 @@ Class {
 	#instVars : [
 		'function',
 		'semaphore',
-		'arguments'
+		'arguments',
+		'returnHolder',
+		'returnAddress',
+		'parameterArray',
+		'parameterAddress',
+		'index'
 	],
 	#category : #'ThreadedFFI-Base'
 }
@@ -30,9 +35,9 @@ TFExternalAsyncCall class >> forFunction: aTFExternalFunction [
 TFExternalAsyncCall >> allocateParameters [
 	| paramArray pointerSize |
 	
-	arguments ifEmpty: [ ^ ExternalAddress null ].
+	arguments ifEmpty: [ ^ nil ].
 	pointerSize := TFBasicType pointer byteSize.
-	paramArray := ExternalAddress allocate: (arguments size * pointerSize).
+	paramArray := ByteArray new: (arguments size * pointerSize).
 	
 	function definition parameterTypes withIndexDo: [ :type :idx | |holder|
 		holder := ExternalAddress allocate: type byteSize.
@@ -46,13 +51,36 @@ TFExternalAsyncCall >> allocateParameters [
 { #category : #'private - allocation' }
 TFExternalAsyncCall >> allocateReturn [
 	
-	^ ExternalAddress allocate: function definition returnType byteSize.
+	^ ByteArray new: function definition returnType byteSize.
+]
+
+{ #category : #operations }
+TFExternalAsyncCall >> cleanUp [
+	self deregisterSemaphore.
+	^ self freeArguments: parameterArray
 ]
 
 { #category : #'private - semaphore' }
 TFExternalAsyncCall >> deregisterSemaphore [
 	
 	Smalltalk unregisterExternalObject: semaphore
+]
+
+{ #category : #operations }
+TFExternalAsyncCall >> doExecuteOn: aRunner [
+	
+	aRunner
+		executeFunction: function
+		withArguments: parameterAddress
+		withReturnHolder: returnAddress
+		usingSemaphore: index.
+	
+	"I check if the semaphore is already signaled, because doing it in this way 
+	is thousands of times faster than just executing the wait. 
+	I think is a bug in the VM"
+	semaphore isSignaled ifFalse: [ semaphore wait ].
+	
+	^ self readReturnValue: returnHolder
 ]
 
 { #category : #operations }
@@ -64,30 +92,10 @@ TFExternalAsyncCall >> executeOn: aRunner [
 	 from where the value is read.
 	 This method contains some boilerplate code to allocate and release external 
 	 value holders for the arguments and the return value."
-	| index parameterArray returnHolder |
 
-	self validateFunction.
-	self validateArguments.
-	
-	returnHolder := self allocateReturn.
-	parameterArray := self allocateParameters.
-	index := self registerSemaphore.
-
-	^ [
-
-		aRunner 
-			executeFunction: function 
-			withArguments: parameterArray 
-			withReturnHolder: returnHolder 
-			usingSemaphore: index.
-
-		semaphore wait.
-
-		self readReturnValue: returnHolder
-	] ensure: [ 
-		self deregisterSemaphore.
-		self freeReturn: returnHolder.
-		self freeArguments: parameterArray].
+	self prepareExecution.
+	^ [ self doExecuteOn: aRunner ]
+		ensure: [ self cleanUp ]
 ]
 
 { #category : #'private - allocation' }
@@ -95,7 +103,7 @@ TFExternalAsyncCall >> freeArguments: argumentsArray [
 
 	| pointerSize |
 	
-	argumentsArray isNull ifTrue: [ ^ self ].
+	argumentsArray isNil ifTrue: [ ^ self ].
 	pointerSize := TFBasicType pointer byteSize.
 
 	function definition parameterTypes withIndexDo: [ :type :idx |
@@ -103,13 +111,7 @@ TFExternalAsyncCall >> freeArguments: argumentsArray [
 		(argumentsArray pointerAt: 1 + ((idx-1)*pointerSize)) free.
 	].
 
-	argumentsArray free.
-]
 
-{ #category : #'private - allocation' }
-TFExternalAsyncCall >> freeReturn: returnHolder [
-
-	returnHolder free.
 ]
 
 { #category : #accessing }
@@ -135,6 +137,21 @@ TFExternalAsyncCall >> parameters [
 { #category : #accessing }
 TFExternalAsyncCall >> parameters: anObject [
 	arguments := anObject
+]
+
+{ #category : #operations }
+TFExternalAsyncCall >> prepareExecution [
+	self validateFunction.
+	self validateArguments.
+	returnHolder := self allocateReturn.
+	returnHolder pinInMemory.
+	returnAddress := PointerUtils oopForObject: returnHolder.
+	parameterArray := self allocateParameters.
+	parameterArray pinInMemory.
+	parameterAddress := parameterArray
+		ifNil: [ ExternalAddress null ]
+		ifNotNil: [ PointerUtils oopForObject: parameterArray ].
+	index := self registerSemaphore
 ]
 
 { #category : #'private - marshalling' }

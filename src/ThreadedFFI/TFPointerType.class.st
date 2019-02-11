@@ -27,13 +27,13 @@ TFPointerType >> write: anExternalAddress into: targetAddress [
 
 	anExternalAddress 
 		ifNil: [ address := ExternalAddress null ] 
-		ifNotNil: [ anExternalAddress isExternalAddress 
+		ifNotNil: [ (anExternalAddress isKindOf: ExternalAddress) 
 					ifTrue: [ address := anExternalAddress ]
 					ifFalse: [ address := anExternalAddress getHandle ] ]].
 
 	address isExternalAddress ifFalse: [
 		address pinInMemory.
-		address := self oopForObject: address ].
+		address := PointerUtils oopForObject: address ].
 	
 		
 	targetAddress pointerAt: 1 put: address
