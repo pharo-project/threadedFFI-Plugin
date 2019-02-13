@@ -1,4 +1,4 @@
 [submodule "vm"]
 	path = vm
-	url = git@gitlab.com:pharo-project/forkichi.git
+	url = https://gitlab.com/pharo-project/threadedffi.git
 	branch = threadedFFIHack
