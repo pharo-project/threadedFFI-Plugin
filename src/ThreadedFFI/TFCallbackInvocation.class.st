@@ -45,11 +45,10 @@ TFCallbackInvocation >> callbackData [
 
 { #category : #operations }
 TFCallbackInvocation >> execute [ 
-	| callback returnValue |
-	
-	callback := self callback.
+	|  returnValue |
 	
 	returnValue := callback frontendCallback valueWithArguments: self arguments.
+	
 	callback returnType isVoid 
 		ifFalse: [ self writeReturnValue: returnValue ].
 

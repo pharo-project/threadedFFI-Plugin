@@ -57,8 +57,8 @@ TFCallbackQueue >> executeCallback: aCallbackInvocation [
 	aCallbackInvocation callback: (self lookupCallback: aCallbackInvocation callbackData).
 	
 	[[ aCallbackInvocation execute ] 
-			on: Error 
-			fork: [ :e | e pass ]] fork
+			on: Exception 
+			fork: [ :e |  e pass ]] fork
 ]
 
 { #category : #initialization }
