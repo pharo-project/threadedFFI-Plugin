@@ -7,7 +7,7 @@ all: $(BUILD_DIR)/$(PLUGIN_NAME) ../results/$(PACKAGE_NAME)
 #
 $(VMSOURCES):
 	mkdir -p $(VMSOURCES)	
-	cd $(VMSOURCES) && git clone --depth 1 https://github.com/OpenSmalltalk/opensmalltalk-vm.git .
+	cd $(VMSOURCES) && git clone --depth 1 https://gitlab.com/pharo-project/forkichi.git .
 
 #
 # Build of libFFI
