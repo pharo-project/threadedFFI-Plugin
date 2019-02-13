@@ -18,7 +18,7 @@ BUILD_DIR=../results/linux$(ARCHITECTURE)
 PACKAGE_NAME=PharoThreadedFFI-linux$(ARCHITECTURE).zip
 
 SRCS=./src
-VMSOURCES=../results/vm/src
+VMSOURCES=../vm
 PLUGIN_NAME=libPThreadedPlugin.so
 
 SOURCES=$(shell find $(SRCS) -iname *.c)

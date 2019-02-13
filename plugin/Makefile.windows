@@ -17,7 +17,7 @@ CXX=$(CC)
 LD=$(CC)
 
 SRCS=./src
-VMSOURCES=../results/vm/src
+VMSOURCES=../vm
 PLUGIN_NAME=PThreadedPlugin.dll
 
 SOURCES=$(shell find $(SRCS) -iname *.c)
