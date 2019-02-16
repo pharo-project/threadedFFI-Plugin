@@ -3,6 +3,21 @@
 
 #include "vmCallback.h"
 
+#undef sigsetjmp
+#undef siglongjmp
+#if _MSC_VER
+# define sigsetjmp(jb,ssmf) _setjmp(jb)
+# define siglongjmp(jb,v) longjmp(jb,v)
+#elif _WIN64 && GNUC
+# define sigsetjmp(jb,ssmf) _setjmp(jb,NULL)
+# define siglongjmp(jb,v) longjmp(jb,v)
+#elif _WIN32
+# define sigsetjmp(jb,ssmf) setjmp(jb)
+# define siglongjmp(jb,v) longjmp(jb,v)
+#else
+# define sigsetjmp(jb,ssmf) _setjmp(jb)
+# define siglongjmp(jb,v) _longjmp(jb,v)
+#endif
 
 void sameThreadCallbackEnter(struct _Runner* runner, struct _CallbackInvocation* callback);
 void sameThreadCallbackExit(struct _Runner* runner, struct _CallbackInvocation* callback);
