@@ -53,20 +53,6 @@ TFWorker >> ensureInitialized [
 	self isNull ifTrue: [ self primitiveCreateWorker ]
 ]
 
-{ #category : #'as yet unclassified' }
-TFWorker >> executeFunction: aTFExternalFunction withArguments: argumentHolder withReturnHolder: aReturnHolder usingSemaphore: anInteger [
-
-	self ensureInitialized.
-
-	self
-		primitivePerformWorkerCall: aTFExternalFunction
-		withArguments: argumentHolder
-		withReturnHolder: aReturnHolder
-		usingSemaphore: anInteger.
-		
-
-]
-
 { #category : #accessing }
 TFWorker >> name [
 
@@ -79,7 +65,7 @@ TFWorker >> name: aName [
 	name := aName
 ]
 
-{ #category : #accessing }
+{ #category : #private }
 TFWorker >> primitiveCreateWorker [
 
 	<primitive: 'primitiveCreateWorker' module: 'PThreadedPlugin'>
@@ -87,7 +73,7 @@ TFWorker >> primitiveCreateWorker [
 	^ self primitiveFailed 
 ]
 
-{ #category : #executing }
+{ #category : #private }
 TFWorker >> primitivePerformWorkerCall: aTFExternalFunction withArguments: argumentHolder withReturnHolder: aReturnHolder usingSemaphore: anInteger [ 
 	
 	<primitive: 'primitivePerformWorkerCall' module: 'PThreadedPlugin'>
@@ -95,7 +81,7 @@ TFWorker >> primitivePerformWorkerCall: aTFExternalFunction withArguments: argum
 	^ self primitiveFailed 
 ]
 
-{ #category : #accessing }
+{ #category : #private }
 TFWorker >> primitiveReleaseWorker [
 
 	<primitive: 'primitiveReleaseWorker' module: 'PThreadedPlugin'>

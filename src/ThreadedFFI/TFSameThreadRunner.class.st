@@ -4,23 +4,13 @@ Class {
 	#category : #'ThreadedFFI-Worker'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #executing }
 TFSameThreadRunner >> ensureInitialized [
 
 	handle := self primitiveGetRunnerAddress.
 ]
 
-{ #category : #'as yet unclassified' }
-TFSameThreadRunner >> executeFunction: aTFExternalFunction withArguments: argumentHolder withReturnHolder: aReturnHolder usingSemaphore: anInteger [
-
-	self
-		primitiveInvokeFunction: aTFExternalFunction
-		withArguments: argumentHolder
-		returnHolder: aReturnHolder
-		andSemaphoreIndex: anInteger.
-]
-
-{ #category : #executing }
+{ #category : #private }
 TFSameThreadRunner >> primitiveGetRunnerAddress [
 
 	<primitive: 'primitiveGetSameThreadRunnerAddress' module: 'PThreadedPlugin'>
@@ -28,9 +18,9 @@ TFSameThreadRunner >> primitiveGetRunnerAddress [
 	self primitiveFailed 	
 ]
 
-{ #category : #executing }
-TFSameThreadRunner >> primitiveInvokeFunction: aTFExternalFunction withArguments: argumentHolder returnHolder: aReturnHolder
-andSemaphoreIndex: semaphoreIndex [
+{ #category : #private }
+TFSameThreadRunner >> primitivePerformWorkerCall: aTFExternalFunction withArguments: argumentHolder withReturnHolder: aReturnHolder usingSemaphore: anInteger [ 
+
 	<primitive: 'primitiveSameThreadCallout' module: 'PThreadedPlugin'>
 
 	self primitiveFailed 	

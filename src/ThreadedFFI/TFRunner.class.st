@@ -13,7 +13,15 @@ TFRunner >> ensureInitialized [
 { #category : #executing }
 TFRunner >> executeFunction: aTFExternalFunction withArguments: argumentHolder withReturnHolder: aReturnHolder usingSemaphore: anInteger [
 
-	^ self subclassResponsibility
+	self ensureInitialized.
+
+	self
+		primitivePerformWorkerCall: aTFExternalFunction
+		withArguments: argumentHolder
+		withReturnHolder: aReturnHolder
+		usingSemaphore: anInteger.
+		
+
 ]
 
 { #category : #execution }
