@@ -1,9 +1,6 @@
 Class {
 	#name : #TFUFFICallbackTest,
 	#superclass : #TFUFFITestCase,
-	#instVars : [
-		'runner'
-	],
 	#category : #'ThreadedFFI-UFFI-Tests'
 }
 
@@ -23,7 +20,7 @@ TFUFFICallbackTest >> returnAnswer [
 TFUFFICallbackTest >> setUp [ 
 	
 	super setUp.
-	runner := TFWorker default.
+
 ]
 
 { #category : #tests }
@@ -52,7 +49,9 @@ TFUFFICallbackTest >> sumInt:a andInt: b [
 
 { #category : #tests }
 TFUFFICallbackTest >> testCallbackAsFunction [
-	| callback fun definition |
+	| callback fun definition runner |
+	
+	runner := self ffiLibrary uniqueInstance runner.
 	
 	callback := self
 		newCallbackWithSignature: #(float (int a, float b))
@@ -121,7 +120,10 @@ TFUFFICallbackTest >> testCallbackInSingleFunctionUsingSubclassOfFFICallback [
 { #category : #tests }
 TFUFFICallbackTest >> testCallbackWithErrorHanlded [
 
-	| callback fun definition |
+	| callback fun definition runner |
+
+	runner := self ffiLibrary uniqueInstance runner.
+
 	callback := TFUFFIFailingCallbackWithDefault new
 			ffiLibrary: self ffiLibrary;
 			yourself.
