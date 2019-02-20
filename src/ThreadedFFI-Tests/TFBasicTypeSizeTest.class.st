@@ -85,9 +85,27 @@ TFBasicTypeSizeTest >> testSizeSignedInt8 [
 ]
 
 { #category : #tests }
-TFBasicTypeSizeTest >> testSizeSignedLong [
+TFBasicTypeSizeTest >> testSizeSignedLongLong [
 
+	self assertType: 'longlong' equals: 8
+]
+
+{ #category : #tests }
+TFBasicTypeSizeTest >> testSizeSignedLongUnix [
+
+	OSPlatform current isWindows ifTrue: [ 
+		"Check #testSizeSignedLongWindows"
+		^ self skip ].
 	self assertType: 'long' equals: Smalltalk wordSize
+]
+
+{ #category : #tests }
+TFBasicTypeSizeTest >> testSizeSignedLongWindows [
+
+	OSPlatform current isWindows ifFalse: [ 
+		"Check #testSizeSignedLongUnix"
+		^ self skip ].
+	self assertType: 'long' equals: 4
 ]
 
 { #category : #tests }
@@ -127,9 +145,27 @@ TFBasicTypeSizeTest >> testSizeUnsignedInt8 [
 ]
 
 { #category : #tests }
-TFBasicTypeSizeTest >> testSizeUnsignedLong [
+TFBasicTypeSizeTest >> testSizeUnsignedLongLong [
 
+	self assertType: 'ulonglong' equals: 8
+]
+
+{ #category : #tests }
+TFBasicTypeSizeTest >> testSizeUnsignedLongUnix [
+
+	OSPlatform current isWindows ifTrue: [ 
+		"Check #testSizeUnsignedLongWindows"
+		^ self skip ].
 	self assertType: 'ulong' equals: Smalltalk wordSize
+]
+
+{ #category : #tests }
+TFBasicTypeSizeTest >> testSizeUnsignedLongWindows [
+
+	OSPlatform current isWindows ifFalse: [ 
+		"Check #testSizeUnsignedLongUnix"
+		^ self skip ].
+	self assertType: 'ulong' equals: 4
 ]
 
 { #category : #tests }

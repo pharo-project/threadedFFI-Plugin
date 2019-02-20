@@ -24,12 +24,6 @@ TFBasicTypeTest >> testIntSize [
 ]
 
 { #category : #tests }
-TFBasicTypeTest >> testLongSize [
-
-	self assert: TFBasicType ulong byteSize equals: Smalltalk wordSize 
-]
-
-{ #category : #tests }
 TFBasicTypeTest >> testPointerSize [
 
 	self assert: TFBasicType pointer byteSize equals: Smalltalk wordSize 
@@ -48,9 +42,45 @@ TFBasicTypeTest >> testSIntSize [
 ]
 
 { #category : #tests }
+TFBasicTypeTest >> testSignedLongUnix [
+
+	OSPlatform current isWindows ifTrue: [ 
+		"Check #testSignedLongWindows"
+		^ self skip ].
+	self assert: TFBasicType slong byteSize equals: Smalltalk wordSize
+]
+
+{ #category : #tests }
+TFBasicTypeTest >> testSignedLongWindows [
+
+	OSPlatform current isWindows ifFalse: [ 
+		"Check #testSignedLongUnix"
+		^ self skip ].
+	self assert: TFBasicType slong byteSize equals: 4
+]
+
+{ #category : #tests }
 TFBasicTypeTest >> testUInt32Size [
 
 	self assert: TFBasicType uint32 byteSize equals: 4
+]
+
+{ #category : #tests }
+TFBasicTypeTest >> testUnsignedLongUnix [
+
+	OSPlatform current isWindows ifTrue: [ 
+		"Check #testUnsignedLongWindows"
+		^ self skip ].
+	self assert: TFBasicType ulong byteSize equals: Smalltalk wordSize
+]
+
+{ #category : #tests }
+TFBasicTypeTest >> testUnsignedLongWindows [
+
+	OSPlatform current isWindows ifTrue: [ 
+		"Check #testUnsignedLongUnix"
+		^ self skip ].
+	self assert: TFBasicType ulong byteSize equals: 4
 ]
 
 { #category : #tests }
