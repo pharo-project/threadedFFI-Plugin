@@ -3,12 +3,16 @@
 
 #include "vmCallback.h"
 
+/*
+ * Define sigsetjmp and siglongjmp to be the most minimal setjmp/longjmp available on the platform.
+ * Note: on windows 64 via mingw-w64, the 2nd argument NULL to _setjmp prevents stack unwinding
+ */
 #undef sigsetjmp
 #undef siglongjmp
 #if _MSC_VER
 # define sigsetjmp(jb,ssmf) _setjmp(jb)
 # define siglongjmp(jb,v) longjmp(jb,v)
-#elif _WIN64 && GNUC
+#elif _WIN64 && __GNUC__
 # define sigsetjmp(jb,ssmf) _setjmp(jb,NULL)
 # define siglongjmp(jb,v) longjmp(jb,v)
 #elif _WIN32
