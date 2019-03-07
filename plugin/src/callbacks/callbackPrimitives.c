@@ -147,6 +147,10 @@ PrimitiveWithDepth(primitiveCallbackReturn, 2) {
     callbackInvocation = (CallbackInvocation*)getHandler(receiver);
     checkFailed();
 
+    if(callbackInvocation == NULL || callbackInvocation->callback == NULL || callbackInvocation->callback->runner == NULL || callbackInvocation->callback->runner->callbackExitFunction == NULL){
+    	interpreterProxy->primitiveFail();
+    	return;
+    }
 
     callbackInvocation->callback->runner->callbackExitFunction(callbackInvocation->callback->runner, callbackInvocation	);
 
