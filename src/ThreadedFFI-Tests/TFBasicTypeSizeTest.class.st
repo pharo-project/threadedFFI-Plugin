@@ -25,6 +25,12 @@ TFBasicTypeSizeTest >> externalFunction: name [
 ]
 
 { #category : #tests }
+TFBasicTypeSizeTest >> testSizeCharEnum [
+
+	self assertType: 'charenum' equals: 4.
+]
+
+{ #category : #tests }
 TFBasicTypeSizeTest >> testSizeDouble [
 
 	self assertType: 'double' equals: 8.
@@ -85,6 +91,12 @@ TFBasicTypeSizeTest >> testSizeSignedInt8 [
 ]
 
 { #category : #tests }
+TFBasicTypeSizeTest >> testSizeSignedIntEnum [
+
+	self assertType: 'sintenum' equals: 4.
+]
+
+{ #category : #tests }
 TFBasicTypeSizeTest >> testSizeSignedLongLong [
 
 	self assertType: 'longlong' equals: 8
@@ -142,6 +154,12 @@ TFBasicTypeSizeTest >> testSizeUnsignedInt64 [
 TFBasicTypeSizeTest >> testSizeUnsignedInt8 [
 
 	self assertType: 'uint8_t' equals: 1
+]
+
+{ #category : #tests }
+TFBasicTypeSizeTest >> testSizeUnsignedIntEnum [
+
+	self assertType: 'uintenum' equals: 4.
 ]
 
 { #category : #tests }
