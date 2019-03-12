@@ -1,4 +1,5 @@
 #include <unistd.h>
+#include "testLibrary.h"
 
 //Deprecated
 int returnAnswer(){
