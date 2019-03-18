@@ -43,7 +43,8 @@ TFStringType >> freeValueIfNeeded: aCHeapValueHolder [
 	
 	(self allocatedStrings includes: pointer) ifTrue: [ 
 		self allocatedStrings remove: pointer.
-		pointer free.]
+		pointer isNull ifFalse: [ 
+			pointer free ] ]
 	
 ]
 
