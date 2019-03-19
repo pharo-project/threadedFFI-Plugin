@@ -144,13 +144,11 @@ FFICallout >> directArgName: typeName ptrArity: ptrArity [
 	"Answer 'direct' type arguments (without argument names): 
 		self, nil,true, false or a constant (like a number)"
 
-	typeName = 'NULL'
+	(typeName = 'NULL' or: [ typeName = 'nil' ])
 		ifTrue: [ 
 			^ (self resolveType: #'void *')
 				loader: (self valueArgumentLoader: ExternalAddress null);
 				yourself ].
-	typeName = 'nil'
-		ifTrue: [ ^ FFIConst value: 0 type: (self resolveType: #ulong) ].
 	typeName = 'false'
 		ifTrue: [ ^ FFIConst value: 0 type: (self resolveType: #bool) ].
 	typeName = 'true'
