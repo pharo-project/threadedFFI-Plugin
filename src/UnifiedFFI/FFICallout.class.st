@@ -191,6 +191,14 @@ FFICallout >> integerConstantArgument: anInteger [
 			ifFalse: [ self resolveType: #int32 ])
 ]
 
+{ #category : #private }
+FFICallout >> integerConstantArgument: anInteger type: aType [
+
+	^ FFIConst 
+		value: anInteger
+		type: (self resolveType: aType)
+]
+
 { #category : #'argument loaders' }
 FFICallout >> loaderForArgNamed: argName [
 	| loader |

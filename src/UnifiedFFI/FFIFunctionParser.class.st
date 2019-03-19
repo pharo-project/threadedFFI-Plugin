@@ -105,6 +105,16 @@ FFIFunctionParser >> parseArgument [
 ]
 
 { #category : #parsing }
+FFIFunctionParser >> parseArgumentCastedType [
+	| castedType number |
+
+	castedType := self parseCastedType.
+	self skipSpace.
+	number := self parseInt.
+	^ self requestor integerConstantArgument: number type: castedType
+]
+
+{ #category : #parsing }
 FFIFunctionParser >> parseArguments [
 "
 Parse a arguments spec in a form of: 
@@ -120,6 +130,20 @@ Parse a arguments spec in a form of:
 		stream atEnd ifFalse: [ stream peek = $, ifFalse: [ self error: 'comma expected' ].
 			stream next. self skipSpace. ]
 	].
+]
+
+{ #category : #parsing }
+FFIFunctionParser >> parseCastedType [
+	| castedType |
+
+	stream next. "skip $("
+	castedType := String new writeStream.	
+	[ stream atEnd not and: [stream peek ~= $) ] ] 
+	whileTrue: [ castedType nextPut: stream next ].
+	stream next. "skip $)"	
+
+	"first one will always be $#"
+	^ castedType contents allButFirst trimmed
 ]
 
 { #category : #parsing }
