@@ -78,8 +78,14 @@ FFIFunctionParser >> parseArgument [
 
 "
 	char := stream peek.
-	(char isDigit or: [ char = $- ])
-		ifTrue: [ ^ self requestor integerConstantArgument: self parseInt ].
+	
+	"constant conditions"
+	(char isDigit or: [ char = $- ]) ifTrue: [ 
+		^ self requestor integerConstantArgument: self parseInt ].
+	char = $# ifTrue: [ 
+		^ self parseArgumentCastedType ].
+
+	"none of them, parse type and name"
 	typeAndPtrArity := self parseType.
 	self skipSpace.
 	argName := self parseWord.
@@ -101,6 +107,7 @@ FFIFunctionParser >> parseArgument [
 		ptrArity: typeAndPtrArity second.
 	argument isExternalType
 		ifTrue: [ argument validateAfterParse: typeAndPtrArity ].
+
 	^ argument 
 ]
 
@@ -137,6 +144,8 @@ FFIFunctionParser >> parseCastedType [
 	| castedType |
 
 	stream next. "skip $("
+	stream next = $( ifFalse: [ 
+		self error: '$( expected' ].
 	castedType := String new writeStream.	
 	[ stream atEnd not and: [stream peek ~= $) ] ] 
 	whileTrue: [ castedType nextPut: stream next ].

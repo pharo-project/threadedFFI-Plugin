@@ -76,7 +76,7 @@ FFICalloutTests >> testBuildingFnSpec [
 "TYPEVAR arg1"	self checkType: s next class: FFILong arity: 0 argument: 'arg1'.
 "char arg3"		self checkType: s next class: FFICharacterType arity: 0 argument: 'arg3'.
 "0"					self checkType: s next class: FFIConst value: 0.
-"(ulong)0"		self checkType: s next class: FFIConst value: 0.
+"(ulong)42"		self checkType: s next class: FFIConst value: 42.
 "nil"				self checkType: s next class: FFIVoid arity: 1 value: ExternalAddress null.
 "NULL"				self checkType: s next class: FFIVoid arity: 1 value: ExternalAddress null.
 "true"				self checkType: s next class: FFIConst value: 1.
