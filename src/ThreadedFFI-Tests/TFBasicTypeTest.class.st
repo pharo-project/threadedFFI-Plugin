@@ -77,7 +77,7 @@ TFBasicTypeTest >> testUnsignedLongUnix [
 { #category : #tests }
 TFBasicTypeTest >> testUnsignedLongWindows [
 
-	OSPlatform current isWindows ifTrue: [ 
+	OSPlatform current isWindows ifFalse: [ 
 		"Check #testUnsignedLongUnix"
 		^ self skip ].
 	self assert: TFBasicType ulong byteSize equals: 4

@@ -66,6 +66,12 @@ FFILibrary >> moduleName [
 	^ Smalltalk platform ffiModuleName: self
 ]
 
+{ #category : #'accessing platform' }
+FFILibrary >> options [
+	
+	^ self class options
+]
+
 { #category : #accessing }
 FFILibrary >> uniqueInstance [
 	

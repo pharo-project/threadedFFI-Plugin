@@ -1,7 +1,9 @@
 "
-I am a FFICompilerPlugin. I am a plugin for the OpalCompiler for the compiler that makes the compiled method store the arguments names 
-to be used for FFI when the sources are not loaded or unloaded.
-I can be activated with the command FFICompilerPlugin install.
+I am a FFICompilerPlugin - a compiler plugin for the OpalCompiler that makes the compiled method store the arguments names to be used for FFI when the sources are not loaded or unloaded.
+I can be activated with the command 
+
+  FFICompilerPlugin install
+
 I am pragma-based to detect the methods where the arguments names should be remembered.
 The pragma should be added in the FFI API methods, i.e., the methods that are called by the FFI methods where the arguments have to be remembered.
 Example:
@@ -22,11 +24,9 @@ call: fnSpec options: options
 		options: options;
 		function: fnSpec module: self ffiLibraryName
 
-To remove to be able to remove the sources (.changes and .sources), you only have to activate the plugin, 
-no recompilation is necessary. You can even import new FFI methods or change the FFI API.
+To remove to be able to remove the sources (.changes and .sources), you only have to activate the plugin, no recompilation is necessary. You can even import new FFI methods or change the FFI API.
 
-N.B: Users that redefine the FFI API (like TLGitCalloutTrait >> call:options:) also have to wear the pragma.
-See also FFIAdditionalFFIMethodState and FDBDecompiler>>createNArgs:
+N.B: Users that redefine the FFI API (like TLGitCalloutTrait >> call:options:) also have to wear the pragma. See also FFIAdditionalFFIMethodState and FDBDecompiler>>createNArgs:
 "
 Class {
 	#name : #FFICompilerPlugin,
@@ -173,8 +173,8 @@ FFICompilerPlugin >> transform [
 
 { #category : #api }
 FFICompilerPlugin >> transformsFFIMethod [
-
- 	ast nodesDo: [:each | 
+ 
+  ast nodesDo: [:each | 
       each isMessage ifTrue: [    
     		(self ffiCalloutSelectors includes: each selector) ifTrue: [^true]]].
   ^false

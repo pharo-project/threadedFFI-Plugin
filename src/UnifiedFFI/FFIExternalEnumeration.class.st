@@ -163,7 +163,6 @@ FFIExternalEnumeration class >> includes: aSymbol [
 
 { #category : #'class initialization' }
 FFIExternalEnumeration class >> initialize [
-	" self allSubclassesDo:#initialize. "
 	self initializeEnumeration
 ]
 
