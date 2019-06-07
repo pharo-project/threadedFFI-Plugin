@@ -26,6 +26,11 @@ TFUFFIBasicTypeSizeTest >> sizeof_char [
 ]
 
 { #category : #'ffi-calls' }
+TFUFFIBasicTypeSizeTest >> sizeof_charenum [
+	self ffiCall: #(size_t sizeof_charenum())
+]
+
+{ #category : #'ffi-calls' }
 TFUFFIBasicTypeSizeTest >> sizeof_double [
 	self ffiCall: #(size_t sizeof_double())
 ]
@@ -81,6 +86,11 @@ TFUFFIBasicTypeSizeTest >> sizeof_short [
 ]
 
 { #category : #'ffi-calls' }
+TFUFFIBasicTypeSizeTest >> sizeof_sintenum [
+	self ffiCall: #(size_t sizeof_sintenum())
+]
+
+{ #category : #'ffi-calls' }
 TFUFFIBasicTypeSizeTest >> sizeof_size_t [
 	self ffiCall: #(size_t sizeof_size_t())
 ]
@@ -113,6 +123,11 @@ TFUFFIBasicTypeSizeTest >> sizeof_uint64_t [
 { #category : #'ffi-calls' }
 TFUFFIBasicTypeSizeTest >> sizeof_uint8_t [
 	self ffiCall: #(size_t sizeof_uint8_t())
+]
+
+{ #category : #'ffi-calls' }
+TFUFFIBasicTypeSizeTest >> sizeof_uintenum [
+	self ffiCall: #(size_t sizeof_uintenum())
 ]
 
 { #category : #'ffi-calls' }
