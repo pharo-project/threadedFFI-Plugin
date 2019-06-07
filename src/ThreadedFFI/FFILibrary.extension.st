@@ -19,9 +19,3 @@ FFILibrary >> ffiCall: fnSpec options: callOptions [
 		options: (self ffiLibrary options), callOptions;
 		function: fnSpec module: self
 ]
-
-{ #category : #'*ThreadedFFI' }
-FFILibrary >> options [
-
-	^ #()
-]
