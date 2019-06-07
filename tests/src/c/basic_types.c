@@ -30,9 +30,15 @@ sizeof_with_name(TYPE, NAME) \
 sum_with_name(TYPE, NAME)
 
 /************************************************************
+*** Enum Types
+************************************************************/
+test_functions(uintenum);
+test_functions(sintenum);
+test_functions(charenum);
+
+/************************************************************
 *** Floating point number types
 ************************************************************/
-
 test_functions(float)
 test_functions(double)
   

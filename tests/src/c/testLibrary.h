@@ -9,4 +9,16 @@
 
 #include "structures.h"
 
+typedef enum {
+	firstuint = 1
+} uintenum;
+
+typedef enum {
+	firstsint = -1
+} sintenum;
+
+typedef enum {
+	firstchar = 'a'
+} charenum;
+
 #endif

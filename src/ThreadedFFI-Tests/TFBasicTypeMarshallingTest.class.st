@@ -33,6 +33,14 @@ TFBasicTypeMarshallingTest >> externalFunction: name ofType: type [
 ]
 
 { #category : #tests }
+TFBasicTypeMarshallingTest >> testSumCharEnum [
+
+	| function |
+	function := self externalFunction: 'sum_charenum' ofType: TFBasicType sint.
+	self assertUnsignedIntsWithFunction: function.
+]
+
+{ #category : #tests }
 TFBasicTypeMarshallingTest >> testSumDouble [
 
 	| function return |
@@ -101,6 +109,14 @@ TFBasicTypeMarshallingTest >> testSumSignedInt8 [
 ]
 
 { #category : #tests }
+TFBasicTypeMarshallingTest >> testSumSignedIntEnum [
+
+	| function |
+	function := self externalFunction: 'sum_sintenum' ofType: TFBasicType sint.
+	self assertSignedIntsWithFunction: function.
+]
+
+{ #category : #tests }
 TFBasicTypeMarshallingTest >> testSumSignedLong [
 
 	| function |
@@ -161,6 +177,14 @@ TFBasicTypeMarshallingTest >> testSumUnsignedInt8 [
 
 	| function |
 	function := self externalFunction: 'sum_uint8_t' ofType: TFBasicType uint8.
+	self assertUnsignedIntsWithFunction: function.
+]
+
+{ #category : #tests }
+TFBasicTypeMarshallingTest >> testSumUnsignedIntEnum [
+
+	| function |
+	function := self externalFunction: 'sum_uintenum' ofType: TFBasicType sint.
 	self assertUnsignedIntsWithFunction: function.
 ]
 

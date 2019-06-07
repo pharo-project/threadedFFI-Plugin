@@ -67,6 +67,7 @@ FFICalloutAPI >> convention: aCallingConvention [
 { #category : #action }
 FFICalloutAPI >> function: functionSignature module: moduleNameOrLibrary [
 	| sender ffiMethod ffiMethodSelector |
+
 	sender := context ifNil: [ thisContext sender sender ].
 	ffiMethodSelector := thisContext sender method selector.
 

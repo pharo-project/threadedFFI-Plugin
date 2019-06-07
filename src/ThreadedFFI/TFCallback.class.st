@@ -16,7 +16,8 @@ Class {
 { #category : #finalization }
 TFCallback class >> finalizeResourceData: aCallbackDataHandler [
 
-	self primUnregister: aCallbackDataHandler
+	self primUnregister: aCallbackDataHandler.
+	aCallbackDataHandler beNull
 ]
 
 { #category : #'instance creation' }
