@@ -41,6 +41,13 @@ TFCallback class >> primUnregister: callbackHandle [
 ]
 
 { #category : #accessing }
+TFCallback >> beNull [
+
+	self setHandle: ExternalAddress null
+
+]
+
+{ #category : #accessing }
 TFCallback >> callbackData [
 	^ callbackData
 ]
