@@ -10,12 +10,21 @@ BaselineOfThreadedFFI >> baseline: spec [
 
 	spec for: #common do: [
 
+		spec postLoadDoIt: #reset.
+
 		spec
 			package: 'ThreadedFFI';
-			package: 'ThreadedFFI-UFFI' with: [ spec requires: #('ThreadedFFI')];
-			package: 'ThreadedFFI-Tests' with: [ spec requires: #('ThreadedFFI')];
-			package: 'ThreadedFFI-UFFI-Overrides' with: [ spec requires: #('ThreadedFFI-UFFI')];
-			package: 'ThreadedFFI-UFFI-Tests' with: [ spec requires: #('ThreadedFFI-UFFI' 'ThreadedFFI-UFFI-Overrides')]
-	].		
+			package: 'ThreadedFFI-UFFI' with: [ spec requires: #('ThreadedFFI') ];
+			package: 'ThreadedFFI-Tests' with: [ spec requires: #('ThreadedFFI') ];
+			package: 'ThreadedFFI-UFFI-Overrides' with: [ spec requires: #('ThreadedFFI-UFFI') ];
+			package: 'ThreadedFFI-UFFI-Tests' with: [ spec requires: #('ThreadedFFI-UFFI' 'ThreadedFFI-UFFI-Overrides') ] ].		
 
+]
+
+{ #category : #doits }
+BaselineOfThreadedFFI >> reset [
+
+	Smalltalk globals
+		at: #FFIMethodRegistry 
+		ifPresent: [ :class | class resetAll ]
 ]
