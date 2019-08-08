@@ -2,7 +2,7 @@
 This TestSuite evaluates the correct implementation of the callback parameter extraction.
 "
 Class {
-	#name : #FFICallbackParametersTests,
+	#name : #FFICallbackParametersTest,
 	#superclass : #TestCase,
 	#instVars : [
 		'callback'
@@ -17,7 +17,7 @@ Class {
 }
 
 { #category : #executing }
-FFICallbackParametersTests >> callCallback: aFFICallback withArgs: aCollection [ 
+FFICallbackParametersTest >> callCallback: aFFICallback withArgs: aCollection [ 
 
 	^ (ExternalLibraryFunction 
 			name: nil
@@ -33,7 +33,7 @@ FFICallbackParametersTests >> callCallback: aFFICallback withArgs: aCollection [
 ]
 
 { #category : #running }
-FFICallbackParametersTests >> testCharacterParameters [
+FFICallbackParametersTest >> testCharacterParameters [
 	
 	| params |
 	params := (1 to: 6) collect: [ :i | i asCharacter ].	
@@ -50,11 +50,11 @@ FFICallbackParametersTests >> testCharacterParameters [
 			$z asInteger
 		].
 
-	self assert: (self callCallback: callback withArgs: params) equals: $z asInteger.
+	self assert: (self callCallback: callback withArgs: params) equals: $z asInteger
 ]
 
 { #category : #running }
-FFICallbackParametersTests >> testFloatParameters [ 
+FFICallbackParametersTest >> testFloatParameters [ 
 	
 	callback := FFICallback 
 		signature: #(double (double a, double b, float c, float d, double e, float f))
@@ -68,11 +68,11 @@ FFICallbackParametersTests >> testFloatParameters [
 			7.0
 		].
 
-	self assert: (self callCallback: callback withArgs: {1.0. 2.0. 3.0. 4.0. 5.0. 6.0}) equals: 7.0.
+	self assert: (self callCallback: callback withArgs: {1.0. 2.0. 3.0. 4.0. 5.0. 6.0}) equals: 7.0
 ]
 
 { #category : #running }
-FFICallbackParametersTests >> testIdentityStruct [ 
+FFICallbackParametersTest >> testIdentityStruct [ 
 	
 	<expectedFailure>		
 	
@@ -101,11 +101,11 @@ FFICallbackParametersTests >> testIdentityStruct [
 		autoRelease;
 		yourself.
 
-	self assert: (self callCallback: callback withArgs: { param }) equals: param.
+	self assert: (self callCallback: callback withArgs: { param }) equals: param
 ]
 
 { #category : #running }
-FFICallbackParametersTests >> testIntegerParameters [ 
+FFICallbackParametersTest >> testIntegerParameters [ 
 	
 	callback := FFICallback 
 		signature: #(int (int, int, int, int, int, int))
@@ -119,13 +119,13 @@ FFICallbackParametersTests >> testIntegerParameters [
 			7
 		].
 
-	self assert: (self callCallback: callback withArgs: #(1 2 3 4 5 6)) equals: 7.
+	self assert: (self callCallback: callback withArgs: #(1 2 3 4 5 6)) equals: 7
 
 
 ]
 
 { #category : #running }
-FFICallbackParametersTests >> testIntegerPointerParameters [ 
+FFICallbackParametersTest >> testIntegerPointerParameters [ 
 	
 	| params |
 	params := (1 to: 6) collect: [ :i | ExternalAddress fromAddress: i ].	
@@ -141,11 +141,11 @@ FFICallbackParametersTests >> testIntegerPointerParameters [
 			self assert: f value equals: 6.
 		].
 
-	self callCallback: callback withArgs: params.
+	self callCallback: callback withArgs: params
 ]
 
 { #category : #running }
-FFICallbackParametersTests >> testMixingParameters [ 
+FFICallbackParametersTest >> testMixingParameters [ 
 	
 	callback := FFICallback 
 		signature: #(void (int a, float b, char c, int d, double e, int f, char g))
@@ -159,11 +159,11 @@ FFICallbackParametersTests >> testMixingParameters [
 			self assert: g value equals: $g.
 		].
 
-	self callCallback: callback withArgs: {1. 2.0. $c. 4. 5.0. 6. $g}.
+	self callCallback: callback withArgs: {1. 2.0. $c. 4. 5.0. 6. $g}
 ]
 
 { #category : #running }
-FFICallbackParametersTests >> testPassing2DoubleStructureInTheStack [ 
+FFICallbackParametersTest >> testPassing2DoubleStructureInTheStack [ 
 			
 	| param |
 	callback := FFICallback 
@@ -181,11 +181,11 @@ FFICallbackParametersTests >> testPassing2DoubleStructureInTheStack [
 		autoRelease;
 		yourself.
 
-	self assert: (self callCallback: callback withArgs: { param }) equals: 99.
+	self assert: (self callCallback: callback withArgs: { param }) equals: 99
 ]
 
 { #category : #running }
-FFICallbackParametersTests >> testPassing2Int64StructureInTheStack [ 
+FFICallbackParametersTest >> testPassing2Int64StructureInTheStack [ 
 			
 	| param |
 	callback := FFICallback 
@@ -203,11 +203,11 @@ FFICallbackParametersTests >> testPassing2Int64StructureInTheStack [
 		autoRelease;
 		yourself.
 
-	self assert: (self callCallback: callback withArgs: { param }) equals: 99.
+	self assert: (self callCallback: callback withArgs: { param }) equals: 99
 ]
 
 { #category : #running }
-FFICallbackParametersTests >> testPassing4DoubleStructureInTheStack [ 
+FFICallbackParametersTest >> testPassing4DoubleStructureInTheStack [ 
 			
 	| param |
 	callback := FFICallback 
@@ -234,11 +234,11 @@ FFICallbackParametersTests >> testPassing4DoubleStructureInTheStack [
 		autoRelease;
 		yourself.
 
-	self assert: (self callCallback: callback withArgs: { param }) equals: 99.
+	self assert: (self callCallback: callback withArgs: { param }) equals: 99
 ]
 
 { #category : #running }
-FFICallbackParametersTests >> testPassing4Int64StructureInTheStack [ 
+FFICallbackParametersTest >> testPassing4Int64StructureInTheStack [ 
 			
 	| param |
 	callback := FFICallback 
@@ -260,11 +260,11 @@ FFICallbackParametersTests >> testPassing4Int64StructureInTheStack [
 		autoRelease;
 		yourself.
 
-	self assert: (self callCallback: callback withArgs: { param }) equals: 99.
+	self assert: (self callCallback: callback withArgs: { param }) equals: 99
 ]
 
 { #category : #running }
-FFICallbackParametersTests >> testPassing4IntStructureInTheStack [ 
+FFICallbackParametersTest >> testPassing4IntStructureInTheStack [ 
 			
 	| param |
 	callback := FFICallback 
@@ -286,11 +286,11 @@ FFICallbackParametersTests >> testPassing4IntStructureInTheStack [
 		autoRelease;
 		yourself.
 
-	self assert: (self callCallback: callback withArgs: { param }) equals: 99.
+	self assert: (self callCallback: callback withArgs: { param }) equals: 99
 ]
 
 { #category : #running }
-FFICallbackParametersTests >> testPassingStructureInTheStack [ 
+FFICallbackParametersTest >> testPassingStructureInTheStack [ 
 	
 	| param |
 	callback := FFICallback 
@@ -317,5 +317,5 @@ FFICallbackParametersTests >> testPassingStructureInTheStack [
 		autoRelease;
 		yourself.
 		
-	self assert: (self callCallback: callback withArgs: { param }) equals: 77.
+	self assert: (self callCallback: callback withArgs: { param }) equals: 77
 ]

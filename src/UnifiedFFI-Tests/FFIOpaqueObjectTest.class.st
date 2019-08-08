@@ -2,23 +2,23 @@
 Tests for FFIOpaqueObjectType
 "
 Class {
-	#name : #FFIOpaqueObjectTests,
+	#name : #FFIOpaqueObjectTest,
 	#superclass : #TestCase,
 	#category : #'UnifiedFFI-Tests-Tests'
 }
 
 { #category : #private }
-FFIOpaqueObjectTests >> ffiBindingOf: aName [
+FFIOpaqueObjectTest >> ffiBindingOf: aName [
 	^ self class ffiBindingOf: aName
 ]
 
 { #category : #private }
-FFIOpaqueObjectTests >> ffiInstVarArgument: argName generator: generator [
+FFIOpaqueObjectTest >> ffiInstVarArgument: argName generator: generator [
 	^ argName
 ]
 
 { #category : #tests }
-FFIOpaqueObjectTests >> newParser [ 
+FFIOpaqueObjectTest >> newParser [ 
 	^ FFIFunctionParser new
 		requestor: (FFICallout new
 			requestor: self;
@@ -27,7 +27,7 @@ FFIOpaqueObjectTests >> newParser [
 ]
 
 { #category : #tests }
-FFIOpaqueObjectTests >> testDereferencedExternalObjectError [
+FFIOpaqueObjectTest >> testDereferencedExternalObjectError [
 	self 
 		should: [ self newParser parseNamedFunction: #( void function ( FFIOpaqueObject arg ) ) ]
 		raise: FFIDereferencedOpaqueObjectError.
@@ -39,7 +39,7 @@ FFIOpaqueObjectTests >> testDereferencedExternalObjectError [
 ]
 
 { #category : #tests }
-FFIOpaqueObjectTests >> testParseAsBigArityPointer [
+FFIOpaqueObjectTest >> testParseAsBigArityPointer [
 	 | fnSpec arg returnType |
 	
 	fnSpec := self newParser parseNamedFunction: #( void function ( FFIOpaqueObject **arg ) ). 
@@ -50,11 +50,11 @@ FFIOpaqueObjectTests >> testParseAsBigArityPointer [
 	fnSpec := self newParser parseNamedFunction: #( FFIOpaqueObject **function ( ) ). 
 	returnType := fnSpec returnType.
 	self assert: returnType class equals: FFIOpaqueObjectType.
-	self assert: returnType pointerArity equals: 2.
+	self assert: returnType pointerArity equals: 2
 ]
 
 { #category : #tests }
-FFIOpaqueObjectTests >> testParseAsPointer [
+FFIOpaqueObjectTest >> testParseAsPointer [
 	 | fnSpec arg returnType |
 	
 	fnSpec := self newParser parseNamedFunction: #( void function ( FFIOpaqueObject *arg ) ). 
@@ -65,5 +65,5 @@ FFIOpaqueObjectTests >> testParseAsPointer [
 	fnSpec := self newParser parseNamedFunction: #( FFIOpaqueObject *function ( ) ). 
 	returnType := fnSpec returnType.
 	self assert: returnType class equals: FFIOpaqueObjectType.
-	self assert: returnType pointerArity equals: 1.
+	self assert: returnType pointerArity equals: 1
 ]

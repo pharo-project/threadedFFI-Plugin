@@ -2,13 +2,13 @@
 Tests for external structures
 "
 Class {
-	#name : #FFIExternalStructureTests,
+	#name : #FFIExternalStructureTest,
 	#superclass : #TestCase,
 	#category : #'UnifiedFFI-Tests-Tests'
 }
 
 { #category : #tests }
-FFIExternalStructureTests >> testExternalStructWithArray [
+FFIExternalStructureTest >> testExternalStructWithArray [
 	| structWithArrays structureSize |	
 
 	structureSize := FFITestArrayStructure structureSize.
@@ -24,11 +24,11 @@ FFIExternalStructureTests >> testExternalStructWithArray [
 		equals: {$A. $B. $C. $D. $E}.
 	self 
 		assert: structWithArrays byte10 asArray 
-		equals: #(1 2 3 4 5 6 7 8 9 0).
+		equals: #(1 2 3 4 5 6 7 8 9 0)
 ]
 
 { #category : #tests }
-FFIExternalStructureTests >> testExternallyAllocatedNestedStructure [
+FFIExternalStructureTest >> testExternallyAllocatedNestedStructure [
 	| s1 |
 	
 	s1 := FFITestNestingStructure externalNew.
@@ -38,7 +38,7 @@ FFIExternalStructureTests >> testExternallyAllocatedNestedStructure [
 ]
 
 { #category : #tests }
-FFIExternalStructureTests >> testExternallyAllocatedStructure [
+FFIExternalStructureTest >> testExternallyAllocatedStructure [
 	| struct struct2 |
 	
 	struct := FFITestStructure externalNew.
@@ -65,7 +65,7 @@ FFIExternalStructureTests >> testExternallyAllocatedStructure [
 ]
 
 { #category : #tests }
-FFIExternalStructureTests >> testFlatStructureLayout [
+FFIExternalStructureTest >> testFlatStructureLayout [
 	| flatLayout |
 	flatLayout := FFITestStructureSmallFloatStructure flatStructureLayout.
 	self assert: flatLayout size equals: 16.
@@ -74,12 +74,12 @@ FFIExternalStructureTests >> testFlatStructureLayout [
 	self assert: flatLayout fields first registerClass equals: #float.
 	self assert: flatLayout fields second registerClass equals: #float.
 	self assert: flatLayout fields third registerClass equals: #float.
-	self assert: flatLayout fields fourth registerClass equals: #float.
+	self assert: flatLayout fields fourth registerClass equals: #float
 
 ]
 
 { #category : #tests }
-FFIExternalStructureTests >> testFlatStructureLayout2 [
+FFIExternalStructureTest >> testFlatStructureLayout2 [
 	| flatLayout |
 	flatLayout := FFITestStructureSmallIntFloatStructure flatStructureLayout.
 	self assert: flatLayout size equals: 16.
@@ -88,12 +88,12 @@ FFIExternalStructureTests >> testFlatStructureLayout2 [
 	self assert: flatLayout fields first registerClass equals: #float.
 	self assert: flatLayout fields second registerClass equals: #integer.
 	self assert: flatLayout fields third registerClass equals: #float.
-	self assert: flatLayout fields fourth registerClass equals: #float.
+	self assert: flatLayout fields fourth registerClass equals: #float
 
 ]
 
 { #category : #tests }
-FFIExternalStructureTests >> testFlatStructureLayoutSysVAMD64PostProcess [
+FFIExternalStructureTest >> testFlatStructureLayoutSysVAMD64PostProcess [
 	| flatLayout |
 	flatLayout := FFITestStructureSmallFloatStructure flatStructureLayout sysVAMD64PostProcess.
 	self assert: flatLayout size equals: 16.
@@ -102,11 +102,11 @@ FFIExternalStructureTests >> testFlatStructureLayoutSysVAMD64PostProcess [
 	self assert: flatLayout fields first registerClass equals: #float.
 	self assert: flatLayout fields second registerClass equals: #float.
 	self assert: flatLayout integerRegisterCount equals: 0.
-	self assert: flatLayout floatRegisterCount equals: 2.
+	self assert: flatLayout floatRegisterCount equals: 2
 ]
 
 { #category : #tests }
-FFIExternalStructureTests >> testFlatStructureLayoutSysVAMD64PostProcess2 [
+FFIExternalStructureTest >> testFlatStructureLayoutSysVAMD64PostProcess2 [
 	| flatLayout |
 	flatLayout := FFITestStructureSmallIntFloatStructure flatStructureLayout sysVAMD64PostProcess.
 	self assert: flatLayout size equals: 16.
@@ -115,12 +115,12 @@ FFIExternalStructureTests >> testFlatStructureLayoutSysVAMD64PostProcess2 [
 	self assert: flatLayout fields first registerClass equals: #integer.
 	self assert: flatLayout fields second registerClass equals: #float.
 	self assert: flatLayout integerRegisterCount equals: 1.
-	self assert: flatLayout floatRegisterCount equals: 1.
+	self assert: flatLayout floatRegisterCount equals: 1
 	
 ]
 
 { #category : #tests }
-FFIExternalStructureTests >> testNestedStructure [
+FFIExternalStructureTest >> testNestedStructure [
 	| s1 |
 
 	s1 := FFITestNestingStructure new.
@@ -137,12 +137,12 @@ FFIExternalStructureTests >> testNestedStructure [
 	self assert: s1 nested double equals: 42.0.	
 	self assert: s1 nested long equals: -123456.
 	self assert: s1 nested ulong equals: 123456.
-	self assert: s1 nested size_t equals: 23.
+	self assert: s1 nested size_t equals: 23
 
 ]
 
 { #category : #tests }
-FFIExternalStructureTests >> testNestedStructureWithArray [
+FFIExternalStructureTest >> testNestedStructureWithArray [
 	| nestedStruct |	
 
 	nestedStruct := FFITestNestingStructureWithArray new.
@@ -161,11 +161,11 @@ FFIExternalStructureTests >> testNestedStructureWithArray [
 		equals: {$A. $B. $C. $D. $E}.
 	self 
 		assert: nestedStruct nested byte10 asArray 
-		equals: #(1 2 3 4 5 6 7 8 9 0).
+		equals: #(1 2 3 4 5 6 7 8 9 0)
 ]
 
 { #category : #tests }
-FFIExternalStructureTests >> testStructAccess [
+FFIExternalStructureTest >> testStructAccess [
 
 	| struct |
 	
@@ -191,7 +191,7 @@ FFIExternalStructureTests >> testStructAccess [
 ]
 
 { #category : #tests }
-FFIExternalStructureTests >> testStructWithArray [
+FFIExternalStructureTest >> testStructWithArray [
 	| structWithArrays |	
 
 	structWithArrays := FFITestArrayStructure new.
@@ -210,14 +210,14 @@ FFIExternalStructureTests >> testStructWithArray [
 		equals: {$A. $B. $C. $D. $E}.
 	self 
 		assert: structWithArrays byte10 asArray 
-		equals: #(1 2 3 4 5 6 7 8 9 0).
+		equals: #(1 2 3 4 5 6 7 8 9 0)
 	
 	
 
 ]
 
 { #category : #tests }
-FFIExternalStructureTests >> testStructWithPointerAccess [
+FFIExternalStructureTest >> testStructWithPointerAccess [
 	| s1 s2 |	
 
 	s1 := FFITestPointerStructure new.
@@ -229,5 +229,5 @@ FFIExternalStructureTests >> testStructWithPointerAccess [
 	s2 long: 42.
 	s1 nestedPointer: s2.
 	self deny: s1 nestedPointer isNull.
-	self assert: s1 nestedPointer long equals: 42.
+	self assert: s1 nestedPointer long equals: 42
 ]

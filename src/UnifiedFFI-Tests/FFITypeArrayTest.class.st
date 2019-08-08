@@ -2,13 +2,13 @@
 Tests for FFITypeArray
 "
 Class {
-	#name : #FFITypeArrayTests,
+	#name : #FFITypeArrayTest,
 	#superclass : #TestCase,
 	#category : #'UnifiedFFI-Tests-Tests'
 }
 
 { #category : #tests }
-FFITypeArrayTests >> testAt [
+FFITypeArrayTest >> testAt [
 	| externalArray |
 	
 	externalArray := (FFITypeArray ofType: 'int' size: 10) new.
@@ -18,7 +18,7 @@ FFITypeArrayTests >> testAt [
 ]
 
 { #category : #tests }
-FFITypeArrayTests >> testAtPut [
+FFITypeArrayTest >> testAtPut [
 	| externalArray |
 	
 	externalArray := (FFITypeArray ofType: 'int' size: 1) new.
@@ -27,7 +27,7 @@ FFITypeArrayTests >> testAtPut [
 ]
 
 { #category : #tests }
-FFITypeArrayTests >> testExternalAt [
+FFITypeArrayTest >> testExternalAt [
 	| externalArray |
 	
 	[
@@ -43,7 +43,7 @@ FFITypeArrayTests >> testExternalAt [
 ]
 
 { #category : #tests }
-FFITypeArrayTests >> testExternalAtPut [
+FFITypeArrayTest >> testExternalAtPut [
 	| externalArray |
 	
 	[	
@@ -55,12 +55,12 @@ FFITypeArrayTests >> testExternalAtPut [
 ]
 
 { #category : #tests }
-FFITypeArrayTests >> testExternalAtPutFloat [
+FFITypeArrayTest >> testExternalAtPutFloat [
 	| random array |
 	random := Random new.
 	[
 		array := (FFITypeArray ofType: 'float' size: 10) externalNew.
 		1 to: 10 do: [ :index | array at: index put: random next ].
 		1 to: 10 do: [ :index | self assert: (array at: index) isFloat ] ]
-	ensure: [ array free ].
+	ensure: [ array free ]
 ]

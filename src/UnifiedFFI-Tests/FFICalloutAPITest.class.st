@@ -2,63 +2,63 @@
 Tests for FFICalloutAPI
 "
 Class {
-	#name : #FFICalloutAPITests,
+	#name : #FFICalloutAPITest,
 	#superclass : #TestCase,
 	#category : #'UnifiedFFI-Tests-Tests'
 }
 
 { #category : #running }
-FFICalloutAPITests >> ffiCalloutClass [
+FFICalloutAPITest >> ffiCalloutClass [
 	^ FFICalloutAPI
 ]
 
 { #category : #'primitives atomic' }
-FFICalloutAPITests >> ffiCopyString: aString to: dest [
+FFICalloutAPITest >> ffiCopyString: aString to: dest [
 	^ self ffiCall: #( String strcpy ( String dest, String aString ) )
 ]
 
 { #category : #'primitives atomic' }
-FFICalloutAPITests >> ffiDoubleAbs: number [ 
+FFICalloutAPITest >> ffiDoubleAbs: number [ 
 	^ self ffiCall: #( double DoubleAbsolute (double number) ) options: #(+optCallbackCall)
 ]
 
 { #category : #'primitives atomic' }
-FFICalloutAPITests >> ffiFloatAbs: number [ 
+FFICalloutAPITest >> ffiFloatAbs: number [ 
 	^ self ffiCall: #( float FloatAbsolute (float number) ) options: #(+optCallbackCall)
 ]
 
 { #category : #'primitives atomic' }
-FFICalloutAPITests >> ffiIntAbs: number [
+FFICalloutAPITest >> ffiIntAbs: number [
 	^ self ffiCall: #( int abs ( int number ) )
 ]
 
 { #category : #accessing }
-FFICalloutAPITests >> ffiLibraryName [
+FFICalloutAPITest >> ffiLibraryName [
 	^ LibC
 ]
 
 { #category : #'primitives atomic' }
-FFICalloutAPITests >> ffiLongLongAbs: number [
+FFICalloutAPITest >> ffiLongLongAbs: number [
 	^ self ffiCall: #( longlong llabs (longlong number) )
 ]
 
 { #category : #'primitives constant' }
-FFICalloutAPITests >> ffiTestConstantFormat: format to: buffer [
+FFICalloutAPITest >> ffiTestConstantFormat: format to: buffer [
 	^ self ffiCall: #( int sprintf ( ByteArray buffer, String format, 65, 65, true ) )
 ]
 
 { #category : #'primitives constant' }
-FFICalloutAPITests >> ffiTestContantFormat: format value: aNumber to: buffer [
+FFICalloutAPITest >> ffiTestContantFormat: format value: aNumber to: buffer [
 	^ self ffiCall: #( int sprintf ( ByteArray buffer, String format, 65, 65, long aNumber ) )
 ]
 
 { #category : #'primitives atomic' }
-FFICalloutAPITests >> ffiToLower: c [
+FFICalloutAPITest >> ffiToLower: c [
 	^ self ffiCall: #( char tolower (char c) )
 ]
 
 { #category : #accessing }
-FFICalloutAPITests >> method1 [ 
+FFICalloutAPITest >> method1 [ 
 	| object index |
 	object := FFICalloutObjectForTest new.
 	index := FFICalloutObjectForTest class instVarIndexFor: #handle ifAbsent: [ nil ].
@@ -66,7 +66,7 @@ FFICalloutAPITests >> method1 [
 ]
 
 { #category : #accessing }
-FFICalloutAPITests >> method2 [
+FFICalloutAPITest >> method2 [
 	| result tmpResult |
 	
 	result := self call: {1. 2. 3. 4}.
@@ -78,21 +78,21 @@ FFICalloutAPITests >> method2 [
 ]
 
 { #category : #'primitives pointer' }
-FFICalloutAPITests >> primFromByteArray: src toExternalAddress: dest size: n [
+FFICalloutAPITest >> primFromByteArray: src toExternalAddress: dest size: n [
 	^ self 
 		ffiCall: #( void *memcpy(ExternalAddress dest, ByteArray src, size_t n) )
 		module: LibC
 ]
 
 { #category : #'primitives pointer' }
-FFICalloutAPITests >> primMemMoveFrom: src to: dest size: n [
+FFICalloutAPITest >> primMemMoveFrom: src to: dest size: n [
 	^ self 
 		ffiCall: #( void *memcpy(void *dest, const void *src, size_t n) )
 		module: LibC
 ]
 
 { #category : #'primitives pointer' }
-FFICalloutAPITests >> primStr: aString cat: otherString [  
+FFICalloutAPITest >> primStr: aString cat: otherString [  
 	^ self 
 		ffiCall: #( char *strcat ( char *aString, char *otherString ) )
 		module: LibC
@@ -100,14 +100,14 @@ FFICalloutAPITests >> primStr: aString cat: otherString [
 ]
 
 { #category : #running }
-FFICalloutAPITests >> resetFFIMethods [
+FFICalloutAPITest >> resetFFIMethods [
 	| ffiMethods |
-	ffiMethods := FFICalloutAPITests methodDict select: [ :method | (method selector beginsWith: 'ffi') or: [method selector beginsWith: 'prim'] ].
+	ffiMethods := FFICalloutAPITest methodDict select: [ :method | (method selector beginsWith: 'ffi') or: [method selector beginsWith: 'prim'] ].
 	ffiMethods do: #recompile
 ]
 
 { #category : #running }
-FFICalloutAPITests >> runCase [ 
+FFICalloutAPITest >> runCase [ 
 	| oldAPIClass |
 	
 	"Ensure I use this class for running the tests"
@@ -118,7 +118,7 @@ FFICalloutAPITests >> runCase [
 ]
 
 { #category : #'tests pointer' }
-FFICalloutAPITests >> testByteArrayToExternalAddress [
+FFICalloutAPITest >> testByteArrayToExternalAddress [
 	| result dest |
 	
 
@@ -127,12 +127,12 @@ FFICalloutAPITests >> testByteArrayToExternalAddress [
 		toExternalAddress: (dest := ExternalAddress allocate: 12) autoRelease 
 		size: 12.
 		
-	self assert: (dest copyFrom: 1 to: 12) asString = 'Hello, World'.
+	self assert: (dest copyFrom: 1 to: 12) asString equals: 'Hello, World'.
 	
 ]
 
 { #category : #'tests constant' }
-FFICalloutAPITests >> testCallWithAllConstParameter [
+FFICalloutAPITest >> testCallWithAllConstParameter [
 	"Tests a function in the form: 
 	
 	self nbCall: #( long ffiTestInts ( 65, 65, 65, long aNumber ) )
@@ -148,7 +148,7 @@ FFICalloutAPITests >> testCallWithAllConstParameter [
 ]
 
 { #category : #'tests constant' }
-FFICalloutAPITests >> testCallWithConstParameter [
+FFICalloutAPITest >> testCallWithConstParameter [
 	"Tests a function in the form: 
 	
 	self nbCall: #( long ffiTestInts ( 65, 65, 65, long aNumber ) )
@@ -164,7 +164,7 @@ FFICalloutAPITests >> testCallWithConstParameter [
 ]
 
 { #category : #'tests object' }
-FFICalloutAPITests >> testCallWithObjectCreation [
+FFICalloutAPITest >> testCallWithObjectCreation [
 	"Test a call of the form: 
 	
 		self nbCall: #( NBFFICalloutVMObjectForTest malloc ( size_t size ) )
@@ -176,7 +176,7 @@ FFICalloutAPITests >> testCallWithObjectCreation [
 	[
 		self shouldnt: [ object := FFICalloutObjectForTest primCreate: 1 ] raise: Error.
 		self assert: object notNil.
-		self assert: object class = FFICalloutObjectForTest.
+		self assert: object class equals: FFICalloutObjectForTest.
 		self assert: object handle notNil.
 		self deny: object handle isNull ]
 	ensure: [ 
@@ -184,7 +184,7 @@ FFICalloutAPITests >> testCallWithObjectCreation [
 ]
 
 { #category : #'tests object' }
-FFICalloutAPITests >> testCallWithObjectParameter [
+FFICalloutAPITest >> testCallWithObjectParameter [
 	"Test a call of the form: 
 	
 		self nbCall: #( void function ( self ) )
@@ -201,11 +201,11 @@ FFICalloutAPITests >> testCallWithObjectParameter [
 	self 
 		shouldnt: [ FFICalloutObjectForTest primObject: object strcpy: text ] 
 		raise: Error.
-	self assert: object handle asString = (text copyWith: (Character value: 0))
+	self assert: object handle asString equals: (text copyWith: (Character value: 0))
 ]
 
 { #category : #'tests object' }
-FFICalloutAPITests >> testCallWithSelfParameter [
+FFICalloutAPITest >> testCallWithSelfParameter [
 	"Test a call of the form: 
 	
 		self nbCall: #( void function ( self ) )
@@ -219,11 +219,11 @@ FFICalloutAPITests >> testCallWithSelfParameter [
 		shouldnt: [ object strcpy: 'Hello, World' ] 
 		raise: Error.
 	"Since is a strcpy it will answer a byte array terminated in zero"
-	self assert: object handle asString = ('Hello, World' copyWith: (Character value: 0))
+	self assert: object handle asString equals: ('Hello, World' copyWith: (Character value: 0))
 ]
 
 { #category : #'tests atomic' }
-FFICalloutAPITests >> testCharCall [
+FFICalloutAPITest >> testCharCall [
 	"Test using generic FFI spec"
 	| result  |
 	
@@ -237,21 +237,22 @@ FFICalloutAPITests >> testCharCall [
 	self assert: result equals: $a.
 
 	result := self ffiToLower: true.
-	self assert: result equals: (Character value: 1).
+	self assert: result equals: (Character value: 1)
 
 ]
 
 { #category : #'tests pointer' }
-FFICalloutAPITests >> testCharPointer [
+FFICalloutAPITest >> testCharPointer [
 	| result |
 	result := self 
 		primStr: ('Hello, ' asByteArray copyWith: 0) 
 		cat: ('World' asByteArray copyWith: 0).
-	self assert: result = 'Hello, World'.
+				
+	self assert: result equals: 'Hello, World'.
 ]
 
 { #category : #'tests atomic' }
-FFICalloutAPITests >> testDoubleCall [
+FFICalloutAPITest >> testDoubleCall [
 	"Test using generic FFI spec"
 	| callback result |
 	
@@ -270,12 +271,12 @@ FFICalloutAPITests >> testDoubleCall [
 	self assert: result equals: 65.0.
 
 	result := self ffiDoubleAbs: true.
-	self assert: result equals: 1.0.
+	self assert: result equals: 1.0
 
 ]
 
 { #category : #'tests atomic' }
-FFICalloutAPITests >> testFloatCall [
+FFICalloutAPITest >> testFloatCall [
 	"Test using generic FFI spec"
 	| callback result |
 	
@@ -294,14 +295,14 @@ FFICalloutAPITests >> testFloatCall [
 	self assert: result equals: 65.0.
 
 	result := self ffiFloatAbs: true.
-	self assert: result equals: 1.0.
+	self assert: result equals: 1.0
 
 	
 
 ]
 
 { #category : #'tests atomic' }
-FFICalloutAPITests >> testIntCall [
+FFICalloutAPITest >> testIntCall [
 	"Test using generic FFI spec"
 	| result |
 	
@@ -320,7 +321,7 @@ FFICalloutAPITests >> testIntCall [
 ]
 
 { #category : #'tests atomic' }
-FFICalloutAPITests >> testLongLongs [
+FFICalloutAPITest >> testLongLongs [
 	"Test passing and returning longlongs"
 	| long1 long2 result  |
 	
@@ -335,22 +336,22 @@ FFICalloutAPITests >> testLongLongs [
 	self assert: result equals: long1.
 	
 	result := self ffiLongLongAbs: long2.
-	self assert: result equals: long2 abs.
+	self assert: result equals: long2 abs
 ]
 
 { #category : #'tests atomic' }
-FFICalloutAPITests >> testPrintString [
+FFICalloutAPITest >> testPrintString [
 	"Test using generic FFI spec"
 	| result buffer |
 	
 	buffer := ByteArray new: 12.
 	result := self ffiCopyString: 'Hello World!' to: buffer.
 	self assert: result equals: 'Hello World!'.
-	self assert: buffer asString equals: 'Hello World!'.	
+	self assert: buffer asString equals: 'Hello World!'
 ]
 
 { #category : #'tests pointer' }
-FFICalloutAPITests >> testVoidPointer [
+FFICalloutAPITest >> testVoidPointer [
 	| result dest |
 	
 	result := self 
@@ -358,5 +359,6 @@ FFICalloutAPITests >> testVoidPointer [
 		to: (dest := ByteArray new: 12) 
 		size: 12.
 		
-	self assert: dest asString = 'Hello, World'
+	self deny: result isNull.	
+	self assert: dest asString equals: 'Hello, World'
 ]
