@@ -40,7 +40,7 @@ void worker_callback_return(Runner* worker, CallbackInvocation *invocation){
 static void executeWorkerTask(Worker *worker, WorkerTask *task);
 
 
-Worker *worker_new() {
+Worker *worker_newSpawning(bool spawn) {
     Worker *worker = (Worker *)malloc(sizeof(Worker));
     
     worker->next = NULL;
@@ -49,14 +49,20 @@ Worker *worker_new() {
     worker->runner.callbackEnterFunction = worker_enter_callback;
     worker->runner.callbackExitFunction = worker_callback_return;
 
-    if (pthread_create(&(worker->threadId), NULL, worker_run, (void *)worker) != 0) {
-        perror("pthread_create() error");
-        return NULL;
+    if(spawn){
+    	if (pthread_create(&(worker->threadId), NULL, worker_run, (void *)worker) != 0) {
+    		perror("pthread_create() error");
+    		return NULL;
+    	}
+
+    	pthread_detach(worker->threadId);
     }
 
-    pthread_detach(worker->threadId);
-
     return worker;
+}
+
+Worker *worker_new(){
+	return worker_newSpawning(true);
 }
 
 void worker_release(Worker *worker) {
