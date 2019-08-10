@@ -1,13 +1,18 @@
 Class {
 	#name : #TFMainThreadRunner,
 	#superclass : #TFRunner,
+	#classVars : [
+		'MainThreadHandle'
+	],
 	#category : #'ThreadedFFI-Worker'
 }
 
 { #category : #private }
 TFMainThreadRunner >> ensureInitialized [
 
-	handle := self workerAddress
+	(MainThreadHandle isNil or: [ MainThreadHandle isNull ]) ifTrue: [
+		MainThreadHandle := self workerAddress ].
+	handle := MainThreadHandle
 ]
 
 { #category : #private }
