@@ -1,4 +1,4 @@
-#include "../worker/worker.h"
+#include "worker.h"
 #include "callbacks.h"
 
 TSQueue* callbackQueue = NULL;

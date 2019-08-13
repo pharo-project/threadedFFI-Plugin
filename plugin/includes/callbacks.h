@@ -3,10 +3,10 @@
 
 #include <ffi.h>
 
-#include "../PThreadedPlugin.h"
-#include "../queue/threadSafeQueue.h"
-#include "../semaphores/semaphore.h"
-#include "../semaphores/pharoSemaphore.h"
+#include "PThreadedPlugin.h"
+#include "threadSafeQueue.h"
+#include "semaphore.h"
+#include "pharoSemaphore.h"
 
 struct _Callback;
 struct _Runner;

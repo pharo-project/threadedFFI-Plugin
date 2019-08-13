@@ -1,5 +1,5 @@
 #include "setjmp.h"
-#include "../PThreadedPlugin.h"
+#include "PThreadedPlugin.h"
 
 #include "vmCallback.h"
 
