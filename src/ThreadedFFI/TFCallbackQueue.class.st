@@ -23,6 +23,8 @@ TFCallbackQueue class >> initialize [
 	SessionManager default
 		registerSystemClassNamed: self name
 		atPriority: 70.	
+		
+	self startUp: true
 ]
 
 { #category : #'instance creation' }
