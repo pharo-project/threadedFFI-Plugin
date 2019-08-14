@@ -85,6 +85,8 @@ endif()
 
 link_directories("${CMAKE_SOURCE_DIR}/build/libffi/install/lib")
 
+add_custom_target(libFFI DEPENDS "${LIBFFI_OUTPUT}")
+
 #
 # Definition of the Plugin
 #
@@ -118,7 +120,7 @@ set(PLUGIN_SOURCES
 addLibraryWithRPATH(${PLUGIN_NAME} SHARED ${PLUGIN_SOURCES})
 target_link_libraries(${PLUGIN_NAME} "ffi")
 
-add_dependencies(${PLUGIN_NAME} vmIncludes "${LIBFFI_OUTPUT}")
+add_dependencies(${PLUGIN_NAME} vmIncludes libFFI)
 
 target_include_directories(${PLUGIN_NAME} PRIVATE "plugin/includes" )
 target_include_directories(${PLUGIN_NAME} PRIVATE "build/vmIncludes/include")
