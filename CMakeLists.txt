@@ -89,7 +89,7 @@ else()
     add_custom_command(
       OUTPUT  ${LIBFFI_OUTPUT}
       DEPENDS build_libFFI
-      COMMAND cp "${CMAKE_SOURCE_DIR}/build/libffi/install/lib/*" "${CMAKE_SOURCE_DIR}/build/bin/"
+      COMMAND cp "${CMAKE_SOURCE_DIR}/build/libffi/install/lib/${DYLIB_EXT}" "${CMAKE_SOURCE_DIR}/build/bin/"
       WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/bin"
       COMMENT "Copying of Libffi")
 endif()
