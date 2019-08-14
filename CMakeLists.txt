@@ -11,6 +11,12 @@ if(WIN)
   SET(CMAKE_CXX_COMPILER ${CMAKE_TOOLCHAIN_PREFIX}-clang++)
   SET(CMAKE_RC_COMPILER ${CMAKE_TOOLCHAIN_PREFIX}-windres)
   SET(CMAKE_SYSTEM_PROCESSOR x86_64)
+
+  set(CMAKE_SHARED_LIBRARY_PREFIX "")
+  set(CMAKE_SHARED_LIBRARY_SUFFIX ".dll")
+  set(CMAKE_SHARED_MODULE_PREFIX "")
+  set(CMAKE_SHARED_MODULE_SUFFIX ".dll")    
+
 endif()
 
 project(PThreadedFFI)
@@ -76,6 +82,7 @@ if(OSX)
       DEPENDS build_libFFI
       COMMAND cp "${CMAKE_SOURCE_DIR}/build/libffi/install/lib/${DYLIB_EXT}" "${CMAKE_SOURCE_DIR}/build/bin/"
       COMMAND install_name_tool -id "@executable_path/Plugins/libffi.7.dylib" libffi.7.dylib
+      COMMAND install_name_tool -id "@executable_path/Plugins/libffi.dylib" libffi.dylib
       WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/bin"
       COMMENT "Changing RPath of Libffi")
 else()
@@ -84,7 +91,7 @@ else()
       DEPENDS build_libFFI
       COMMAND cp "${CMAKE_SOURCE_DIR}/build/libffi/install/lib/*" "${CMAKE_SOURCE_DIR}/build/bin/"
       WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/bin"
-      COMMENT "Changing RPath of Libffi")
+      COMMENT "Copying of Libffi")
 endif()
 
 link_directories("${CMAKE_SOURCE_DIR}/build/libffi/install/lib")
@@ -195,6 +202,7 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/build/dist")
 
 install(
       DIRECTORY "${CMAKE_SOURCE_DIR}/build/bin/"
+      USE_SOURCE_PERMISSIONS
       DESTINATION "./"
       USE_SOURCE_PERMISSIONS FILES_MATCHING PATTERN *)
 
