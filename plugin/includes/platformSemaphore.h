@@ -1,8 +1,8 @@
 #ifndef __SEMAPHORE_WRAPPER__
 #define __SEMAPHORE_WRAPPER__
 
-#include "semaphore.h"
 #include <stdlib.h>
+#include "pSemaphore.h"
 
 #ifndef __APPLE__
 // I am a normal unix

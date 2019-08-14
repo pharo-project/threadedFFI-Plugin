@@ -40,7 +40,7 @@ void worker_callback_return(Runner* worker, CallbackInvocation *invocation){
 static void executeWorkerTask(Worker *worker, WorkerTask *task);
 
 
-Worker *worker_newSpawning(bool spawn) {
+Worker *worker_newSpawning(int spawn) {
     Worker *worker = (Worker *)malloc(sizeof(Worker));
     
     worker->next = NULL;
