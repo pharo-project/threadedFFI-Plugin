@@ -2,6 +2,15 @@ cmake_minimum_required(VERSION 2.8.4)
 
 include(ExternalProject)
 
+macro(addLibraryWithRPATH NAME)
+    SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+    set(CMAKE_INSTALL_RPATH "@executable_path/Plugins")
+
+    add_library(${NAME} SHARED ${ARGN})
+    set_target_properties(${NAME} PROPERTIES MACOSX_RPATH ON)
+    set_target_properties(${NAME} PROPERTIES INSTALL_NAME_DIR "@executable_path/Plugins")
+endmacro()
+
 macro(get_commit_hash VARNAME)
     execute_process(
         COMMAND git log -1 --format=%h
@@ -43,7 +52,7 @@ set(LIBRARY_OUTPUT_PATH "build/bin")
 make_directory("build/vmIncludes")
 add_custom_command(
   OUTPUT build/vmIncludes/include/interp.h 
-  COMMAND wget https://ci.inria.fr/pharo-ci-jenkins2/job/pharo-vm/job/headless/79/artifact/build/packages/PharoVM-8.1.0-5427b3f-mac64-include.zip
+  COMMAND wget "https://ci.inria.fr/pharo-ci-jenkins2/job/pharo-vm/job/headless/83/artifact/build/packages/PharoVM-8.1.0-59aa2c8-mac64-include.zip"
   COMMAND unzip PharoVM-*-include.zip
   WORKING_DIRECTORY "build/vmIncludes"
   COMMENT "Downloading Pharo VM Headers")
@@ -56,16 +65,32 @@ add_custom_target("vmIncludes"
 # LibFFI
 #
 
-ExternalProject_Add(libFFI
+ExternalProject_Add(build_libFFI
     PREFIX "build/libffi"
     SOURCE_DIR "build/libffi/src"
     STAMP_DIR "build/libffi/stamp"
     BINARY_DIR "build/libffi/src"
 
+    UPDATE_COMMAND ""
+
     GIT_REPOSITORY "https://github.com/libffi/libffi.git"
     GIT_TAG "v3.3-rc0"
     CONFIGURE_COMMAND "./autogen.sh" COMMAND ./configure "--target=x86_64-apple-darwin" "--prefix=${CMAKE_SOURCE_DIR}/build/libffi/install"
 )
+
+add_custom_command(
+  OUTPUT "${CMAKE_SOURCE_DIR}/build/bin/libffi.dylib" "${CMAKE_SOURCE_DIR}/build/bin/libffi.7.dylib"
+  DEPENDS build_libFFI
+  COMMAND cp "${CMAKE_SOURCE_DIR}/build/libffi/install/lib/libffi.dylib" "${CMAKE_SOURCE_DIR}/build/bin/libffi.dylib"
+  COMMAND cp "${CMAKE_SOURCE_DIR}/build/libffi/install/lib/libffi.7.dylib" "${CMAKE_SOURCE_DIR}/build/bin/libffi.7.dylib"
+  COMMAND install_name_tool -id "@executable_path/Plugins/libffi.7.dylib" libffi.7.dylib
+  WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/bin"
+  COMMENT "Changing RPath of Libffi")
+
+add_custom_target("libFFI"
+  DEPENDS "${CMAKE_SOURCE_DIR}/build/bin/libffi.dylib" "${CMAKE_SOURCE_DIR}/build/bin/libffi.7.dylib"
+  COMMENT "Building LibFFI")
+
 
 link_directories("${CMAKE_SOURCE_DIR}/build/libffi/install/lib")
 
@@ -99,7 +124,7 @@ set(PLUGIN_SOURCES
     plugin/src/worker/workerTask.c
 )
 
-add_library(${PLUGIN_NAME} SHARED ${PLUGIN_SOURCES})
+addLibraryWithRPATH(${PLUGIN_NAME} SHARED ${PLUGIN_SOURCES})
 target_link_libraries(${PLUGIN_NAME} "ffi")
 
 add_dependencies(${PLUGIN_NAME} vmIncludes libFFI)
@@ -123,5 +148,5 @@ set(TEST_LIBRARY_SOURCES
     testLibrary/src/structures.c
 )
 
-add_library(${TEST_LIBRARY} SHARED ${TEST_LIBRARY_SOURCES})
+addLibraryWithRPATH(${TEST_LIBRARY} SHARED ${TEST_LIBRARY_SOURCES})
 target_include_directories(${TEST_LIBRARY} PRIVATE "testLibrary/includes" )
