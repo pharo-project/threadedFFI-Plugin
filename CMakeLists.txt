@@ -136,7 +136,7 @@ target_include_directories(${PLUGIN_NAME} PRIVATE "build/vmIncludes/include")
 # Definition of the Test Library
 #
 
-set(TEST_LIBRARY testLibrary)
+set(TEST_LIBRARY TestLibrary)
 
 # Plugin sources
 set(TEST_LIBRARY_SOURCES
@@ -150,3 +150,42 @@ set(TEST_LIBRARY_SOURCES
 
 addLibraryWithRPATH(${TEST_LIBRARY} SHARED ${TEST_LIBRARY_SOURCES})
 target_include_directories(${TEST_LIBRARY} PRIVATE "testLibrary/includes" )
+
+# 
+# Preparing tests
+# 
+
+make_directory("${CMAKE_SOURCE_DIR}/build/test")
+
+add_custom_command(
+    OUTPUT "${CMAKE_SOURCE_DIR}/build/test/Pharo.image"
+    DEPENDS ${TEST_LIBRARY} ${PLUGIN_NAME}
+  
+  
+    COMMAND wget -O - "get.pharo.org/64/80+vmHeadlessLatest" | bash
+    COMMAND cp "${CMAKE_SOURCE_DIR}/build/bin/*" pharo-vm/Pharo.app/Contents/MacOS/Plugins/
+    COMMAND ./pharo Pharo.image metacello install "tonel://../../src" BaselineOfThreadedFFI
+    
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/test"
+    COMMENT "Creating Test Image")
+
+add_custom_target("prepare-tests" ALL
+    DEPENDS "${CMAKE_SOURCE_DIR}/build/test/Pharo.image"
+    COMMENT "Preparing Tests")
+
+
+#
+# Adding tests
+#
+
+enable_testing()
+
+add_test(
+    NAME "UnifiedFFI-Tests"
+    COMMAND ./pharo Pharo.image test --junit-xml-output --fail-on-failure "UnifiedFFI-Tests"
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/test")
+    
+add_test(
+    NAME "ThreadedFFI-UFFI-Tests"
+    COMMAND ./pharo Pharo.image test --junit-xml-output --fail-on-failure "ThreadedFFI-UFFI-Tests"
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/test")            

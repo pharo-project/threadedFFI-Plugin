@@ -4,3 +4,5 @@ CMakeFiles/
 Makefile
 build/
 cmake_install.cmake
+CTestTestfile.cmake
+Testing/
