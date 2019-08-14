@@ -13,11 +13,7 @@ TFUFFIBasicTypeSizeTest >> assertType: typename equals: aSize [
 { #category : #accessing }
 TFUFFIBasicTypeSizeTest >> ffiLibraryName [
 
-	Smalltalk os isUnix ifTrue: [ ^ 'testLibrary.so' ].
-	Smalltalk os isMacOS ifTrue: [ ^ 'testLibrary.dylib' ].
-	Smalltalk os isWindows ifTrue: [ ^ 'testLibrary.dll' ].
-
-	self error: 'Unsupported Platform'
+	^ self libraryPath
 ]
 
 { #category : #'ffi-calls' }

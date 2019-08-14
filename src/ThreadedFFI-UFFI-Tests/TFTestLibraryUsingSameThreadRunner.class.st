@@ -13,7 +13,7 @@ TFTestLibraryUsingSameThreadRunner >> calloutAPIClass [
 { #category : #'accessing platform' }
 TFTestLibraryUsingSameThreadRunner >> macModuleName [ 
 
-	^ 'testLibrary.dylib'
+	^ 'libTestLibrary.dylib'
 ]
 
 { #category : #accessing }
@@ -25,11 +25,11 @@ TFTestLibraryUsingSameThreadRunner >> runner [
 { #category : #'accessing platform' }
 TFTestLibraryUsingSameThreadRunner >> unixModuleName [
 
-	^ 'testLibrary.so'
+	^ 'libTestLibrary.so'
 ]
 
 { #category : #'accessing platform' }
 TFTestLibraryUsingSameThreadRunner >> win32ModuleName [
  
-	^ 'testLibrary.dll'
+	^ 'TestLibrary.dll'
 ]
