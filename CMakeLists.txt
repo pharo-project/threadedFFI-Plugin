@@ -1,5 +1,14 @@
 cmake_minimum_required(VERSION 2.8.4)
 
+
+if (CMAKE_HOST_UNIX AND ${CMAKE_HOST_SYSTEM_NAME} MATCHES "CYGWIN*")
+  message(STATUS "Building on CYGWIN CMAKE: Adapting paths")
+  set(CYGWIN 1)
+  set(WIN 1)
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  set(OSX 1)
+endif()
+
 include(ExternalProject)
 
 macro(addLibraryWithRPATH NAME)
@@ -33,6 +42,37 @@ macro(get_git_date VARNAME)
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         OUTPUT_VARIABLE ${VARNAME}
         OUTPUT_STRIP_TRAILING_WHITESPACE)
+endmacro()
+
+macro(get_platform_name VARNAME)
+    if(WIN)
+        set(${VARNAME} "win")
+    else()    
+        if(OSX)
+            set(${VARNAME} "osx")
+        else()
+            set(${VARNAME} "linux")
+        endif()
+    endif()
+endmacro()
+
+macro(get_full_platform_name VARNAME)
+    
+    if(SIZEOF_VOID_P EQUAL 8)
+        set(ARCH 64)
+    else()    
+        set(ARCH 32)
+    endif()
+
+    if(WIN)
+        set(${VARNAME} "win${ARCH}")
+    else()    
+        if(OSX)
+            set(${VARNAME} "mac${ARCH}")
+        else()
+            set(${VARNAME} "linux${ARCH}")
+        endif()
+    endif()
 endmacro()
 
 set(VERSION_MAJOR 1)
@@ -184,8 +224,36 @@ add_test(
     NAME "UnifiedFFI-Tests"
     COMMAND ./pharo Pharo.image test --junit-xml-output --fail-on-failure "UnifiedFFI-Tests"
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/test")
-    
+
 add_test(
     NAME "ThreadedFFI-UFFI-Tests"
     COMMAND ./pharo Pharo.image test --junit-xml-output --fail-on-failure "ThreadedFFI-UFFI-Tests"
-    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/test")            
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/test")
+
+#
+# Packaging Setup 
+#
+set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/build/dist")
+
+install(
+      DIRECTORY "${CMAKE_SOURCE_DIR}/build/bin/"
+      DESTINATION "./"
+      USE_SOURCE_PERMISSIONS FILES_MATCHING PATTERN *)
+
+make_directory("build/packages")
+
+get_full_platform_name(FULL_PLATFORM_NAME)
+
+set(CPACK_PACKAGE_DESCRIPTION "Pharo Threaded FFI for ${FULL_PLATFORM_NAME}")
+set(CPACK_PACKAGE_VERSION_MAJOR "${VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH "${VERSION_PATCH}")
+set(CPACK_PACKAGE_VENDOR "Pharo")
+set(CPACK_PACKAGE_HOMEPAGE_URL "https://pharo.org")
+set(CPACK_PACKAGE_FILE_NAME "PThreadedFFI-${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}-${GIT_COMMIT_HASH}-${FULL_PLATFORM_NAME}")
+set(CPACK_PACKAGE_DIRECTORY "${CMAKE_SOURCE_DIR}/build/packages")
+set(CPACK_PACKAGE_CHECKSUM "SHA1")
+set(CPACK_GENERATOR "ZIP")
+set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY FALSE)
+   
+include (CPack)
