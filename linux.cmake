@@ -3,3 +3,5 @@ set(LIBFFI_TARGET "x86_64-pc-linux-gnu")
 
 set(LIBFFI_OUTPUT "${CMAKE_SOURCE_DIR}/build/bin/libffi.so" "${CMAKE_SOURCE_DIR}/build/bin/libffi.7.so")
 set(PHARO_PLUGIN_DIR "pharo-vm/lib/")
+
+set(DYLIB_EXT "*.so")

@@ -3,3 +3,5 @@ set(LIBFFI_TARGET "x86_64-apple-darwin")
 
 set(LIBFFI_OUTPUT "${CMAKE_SOURCE_DIR}/build/bin/libffi.dylib" "${CMAKE_SOURCE_DIR}/build/bin/libffi.7.dylib")
 set(PHARO_PLUGIN_DIR pharo-vm/Pharo.app/Contents/MacOS/Plugins/)
+
+set(DYLIB_EXT "*.dylib")

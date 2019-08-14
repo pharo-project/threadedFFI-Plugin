@@ -15,6 +15,10 @@ endif()
 
 project(PThreadedFFI)
 
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  set(OSX 1)
+endif()
+
 if(WIN)
     include(win.cmake)
 elseif(OSX)
@@ -68,15 +72,15 @@ ExternalProject_Add(build_libFFI
 
 if(OSX)
     add_custom_command(
-      OUTPUT "${LIBFFI_OUTPUT}"
+      OUTPUT  ${LIBFFI_OUTPUT}
       DEPENDS build_libFFI
-      COMMAND cp "${CMAKE_SOURCE_DIR}/build/libffi/install/lib/*" "${CMAKE_SOURCE_DIR}/build/bin/"
+      COMMAND cp "${CMAKE_SOURCE_DIR}/build/libffi/install/lib/${DYLIB_EXT}" "${CMAKE_SOURCE_DIR}/build/bin/"
       COMMAND install_name_tool -id "@executable_path/Plugins/libffi.7.dylib" libffi.7.dylib
       WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/bin"
       COMMENT "Changing RPath of Libffi")
 else()
     add_custom_command(
-      OUTPUT "${LIBFFI_OUTPUT}"
+      OUTPUT  ${LIBFFI_OUTPUT}
       DEPENDS build_libFFI
       COMMAND cp "${CMAKE_SOURCE_DIR}/build/libffi/install/lib/*" "${CMAKE_SOURCE_DIR}/build/bin/"
       WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/bin"
@@ -157,7 +161,7 @@ add_custom_command(
   
   
     COMMAND wget -O - "get.pharo.org/64/80+vmHeadlessLatest" | bash
-    COMMAND cp "${CMAKE_SOURCE_DIR}/build/bin/*" ${PHARO_PLUGIN_DIR}
+    COMMAND cp "${CMAKE_SOURCE_DIR}/build/bin/${DYLIB_EXT}" ${PHARO_PLUGIN_DIR}
     COMMAND ./pharo Pharo.image metacello install "tonel://../../src" BaselineOfThreadedFFI
     
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/test"

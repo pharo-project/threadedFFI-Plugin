@@ -5,4 +5,6 @@ Makefile
 build/
 cmake_install.cmake
 CTestTestfile.cmake
+CPackConfig.cmake
+CPackSourceConfig.cmake
 Testing/
