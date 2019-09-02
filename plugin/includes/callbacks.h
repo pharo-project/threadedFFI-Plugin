@@ -5,8 +5,8 @@
 
 #include "PThreadedPlugin.h"
 #include "threadSafeQueue.h"
-#include "semaphore.h"
 #include "pharoSemaphore.h"
+#include "pSemaphore.h"
 
 struct _Callback;
 struct _Runner;

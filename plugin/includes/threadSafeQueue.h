@@ -1,7 +1,7 @@
 #ifndef __TSQUEUE__
 #define __TSQUEUE__
 
-#include "semaphore.h"
+#include "pSemaphore.h"
 
 typedef struct __TSQueue TSQueue;
 

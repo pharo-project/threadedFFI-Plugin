@@ -1,79 +1,37 @@
 cmake_minimum_required(VERSION 2.8.4)
 
+include(macros.cmake)
+include(ExternalProject)
 
-if (CMAKE_HOST_UNIX AND ${CMAKE_HOST_SYSTEM_NAME} MATCHES "CYGWIN*")
-  message(STATUS "Building on CYGWIN CMAKE: Adapting paths")
-  set(CYGWIN 1)
-  set(WIN 1)
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+if(WIN)
+  # specify the cross compiler
+  set(CMAKE_TOOLCHAIN_PREFIX x86_64-w64-mingw32)
+
+  SET(CMAKE_C_COMPILER   ${CMAKE_TOOLCHAIN_PREFIX}-clang)
+  SET(CMAKE_CXX_COMPILER ${CMAKE_TOOLCHAIN_PREFIX}-clang++)
+  SET(CMAKE_RC_COMPILER ${CMAKE_TOOLCHAIN_PREFIX}-windres)
+  SET(CMAKE_SYSTEM_PROCESSOR x86_64)
+
+  set(CMAKE_SHARED_LIBRARY_PREFIX "")
+  set(CMAKE_SHARED_LIBRARY_SUFFIX ".dll")
+  set(CMAKE_SHARED_MODULE_PREFIX "")
+  set(CMAKE_SHARED_MODULE_SUFFIX ".dll")    
+
+endif()
+
+project(PThreadedFFI)
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   set(OSX 1)
 endif()
 
-include(ExternalProject)
-
-macro(addLibraryWithRPATH NAME)
-    SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-    set(CMAKE_INSTALL_RPATH "@executable_path/Plugins")
-
-    add_library(${NAME} SHARED ${ARGN})
-    set_target_properties(${NAME} PROPERTIES MACOSX_RPATH ON)
-    set_target_properties(${NAME} PROPERTIES INSTALL_NAME_DIR "@executable_path/Plugins")
-endmacro()
-
-macro(get_commit_hash VARNAME)
-    execute_process(
-        COMMAND git log -1 --format=%h
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        OUTPUT_VARIABLE ${VARNAME}
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-endmacro()
-
-macro(get_git_describe VARNAME)
-    execute_process(
-        COMMAND git describe --always
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        OUTPUT_VARIABLE ${VARNAME}
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-endmacro()
-
-macro(get_git_date VARNAME)
-    execute_process(
-        COMMAND git log -1 --format=%ai
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        OUTPUT_VARIABLE ${VARNAME}
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-endmacro()
-
-macro(get_platform_name VARNAME)
-    if(WIN)
-        set(${VARNAME} "win")
-    else()    
-        if(OSX)
-            set(${VARNAME} "osx")
-        else()
-            set(${VARNAME} "linux")
-        endif()
-    endif()
-endmacro()
-
-macro(get_full_platform_name VARNAME)
-    
-    if(SIZEOF_VOID_P EQUAL 8)
-        set(ARCH 64)
-    else()    
-        set(ARCH 32)
-    endif()
-
-    if(WIN)
-        set(${VARNAME} "win${ARCH}")
-    else()    
-        if(OSX)
-            set(${VARNAME} "mac${ARCH}")
-        else()
-            set(${VARNAME} "linux${ARCH}")
-        endif()
-    endif()
-endmacro()
+if(WIN)
+    include(win.cmake)
+elseif(OSX)
+    include(osx.cmake)
+else()
+    include(linux.cmake)
+endif()
 
 set(VERSION_MAJOR 1)
 set(VERSION_MINOR 0)
@@ -92,7 +50,7 @@ set(LIBRARY_OUTPUT_PATH "build/bin")
 make_directory("build/vmIncludes")
 add_custom_command(
   OUTPUT build/vmIncludes/include/interp.h 
-  COMMAND wget "https://ci.inria.fr/pharo-ci-jenkins2/job/pharo-vm/job/headless/83/artifact/build/packages/PharoVM-8.1.0-59aa2c8-mac64-include.zip"
+  COMMAND wget ${HEADER_URL}
   COMMAND unzip PharoVM-*-include.zip
   WORKING_DIRECTORY "build/vmIncludes"
   COMMENT "Downloading Pharo VM Headers")
@@ -115,24 +73,30 @@ ExternalProject_Add(build_libFFI
 
     GIT_REPOSITORY "https://github.com/libffi/libffi.git"
     GIT_TAG "v3.3-rc0"
-    CONFIGURE_COMMAND "./autogen.sh" COMMAND ./configure "--target=x86_64-apple-darwin" "--prefix=${CMAKE_SOURCE_DIR}/build/libffi/install"
+    CONFIGURE_COMMAND "./autogen.sh" COMMAND ./configure "--target=${LIBFFI_TARGET}" "--prefix=${CMAKE_SOURCE_DIR}/build/libffi/install"
 )
 
-add_custom_command(
-  OUTPUT "${CMAKE_SOURCE_DIR}/build/bin/libffi.dylib" "${CMAKE_SOURCE_DIR}/build/bin/libffi.7.dylib"
-  DEPENDS build_libFFI
-  COMMAND cp "${CMAKE_SOURCE_DIR}/build/libffi/install/lib/libffi.dylib" "${CMAKE_SOURCE_DIR}/build/bin/libffi.dylib"
-  COMMAND cp "${CMAKE_SOURCE_DIR}/build/libffi/install/lib/libffi.7.dylib" "${CMAKE_SOURCE_DIR}/build/bin/libffi.7.dylib"
-  COMMAND install_name_tool -id "@executable_path/Plugins/libffi.7.dylib" libffi.7.dylib
-  WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/bin"
-  COMMENT "Changing RPath of Libffi")
-
-add_custom_target("libFFI"
-  DEPENDS "${CMAKE_SOURCE_DIR}/build/bin/libffi.dylib" "${CMAKE_SOURCE_DIR}/build/bin/libffi.7.dylib"
-  COMMENT "Building LibFFI")
-
+if(OSX)
+    add_custom_command(
+      OUTPUT  ${LIBFFI_OUTPUT}
+      DEPENDS build_libFFI
+      COMMAND cp "${CMAKE_SOURCE_DIR}/build/libffi/install/lib/${DYLIB_EXT}" "${CMAKE_SOURCE_DIR}/build/bin/"
+      COMMAND install_name_tool -id "@executable_path/Plugins/libffi.7.dylib" libffi.7.dylib
+      COMMAND install_name_tool -id "@executable_path/Plugins/libffi.dylib" libffi.dylib
+      WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/bin"
+      COMMENT "Changing RPath of Libffi")
+else()
+    add_custom_command(
+      OUTPUT  ${LIBFFI_OUTPUT}
+      DEPENDS build_libFFI
+      COMMAND cp "${CMAKE_SOURCE_DIR}/build/libffi/install/lib/${DYLIB_EXT}" "${CMAKE_SOURCE_DIR}/build/bin/"
+      WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/bin"
+      COMMENT "Copying of Libffi")
+endif()
 
 link_directories("${CMAKE_SOURCE_DIR}/build/libffi/install/lib")
+
+add_custom_target(libFFI DEPENDS "${LIBFFI_OUTPUT}")
 
 #
 # Definition of the Plugin
@@ -171,6 +135,7 @@ add_dependencies(${PLUGIN_NAME} vmIncludes libFFI)
 
 target_include_directories(${PLUGIN_NAME} PRIVATE "plugin/includes" )
 target_include_directories(${PLUGIN_NAME} PRIVATE "build/vmIncludes/include")
+target_include_directories(${PLUGIN_NAME} PRIVATE "build/libffi/install/include/" )
 
 #
 # Definition of the Test Library
@@ -203,7 +168,7 @@ add_custom_command(
   
   
     COMMAND wget -O - "get.pharo.org/64/80+vmHeadlessLatest" | bash
-    COMMAND cp "${CMAKE_SOURCE_DIR}/build/bin/*" pharo-vm/Pharo.app/Contents/MacOS/Plugins/
+    COMMAND cp "${CMAKE_SOURCE_DIR}/build/bin/${DYLIB_EXT}" ${PHARO_PLUGIN_DIR}
     COMMAND ./pharo Pharo.image metacello install "tonel://../../src" BaselineOfThreadedFFI
     
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/test"
@@ -237,6 +202,7 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/build/dist")
 
 install(
       DIRECTORY "${CMAKE_SOURCE_DIR}/build/bin/"
+      USE_SOURCE_PERMISSIONS
       DESTINATION "./"
       USE_SOURCE_PERMISSIONS FILES_MATCHING PATTERN *)
 

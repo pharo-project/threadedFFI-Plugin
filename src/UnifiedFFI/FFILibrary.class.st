@@ -52,6 +52,12 @@ FFILibrary >> calloutAPIClass [
 ]
 
 { #category : #'library path' }
+FFILibrary >> ffiLibrary [
+	
+	^ self
+]
+
+{ #category : #'library path' }
 FFILibrary >> ffiLibraryName [
 	^ self moduleName
 ]
