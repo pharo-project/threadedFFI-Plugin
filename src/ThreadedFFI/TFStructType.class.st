@@ -30,6 +30,11 @@ TFStructType class >> forClass: aClass withMembers: aCollectionOfMembers [
 		yourself
 ]
 
+{ #category : #accessing }
+TFStructType >> basicType [ 
+	^ self
+]
+
 { #category : #utils }
 TFStructType >> copyFrom: from to: to size: size [ 
 	"Copy from the from an externalAdress or a ByteArray or to a ByteArray or an External Address"
@@ -97,8 +102,8 @@ TFStructType >> readReturnValue: anExternalAddress [
 ]
 
 { #category : #reading }
-TFStructType >> readValue: anExternalAddress offset: anInteger [ 
-	self shouldBeImplemented.
+TFStructType >> readValue: anExternalAddress offset: anInteger [
+	^ self targetClass fromHandle: anExternalAddress + (anInteger - 1)
 ]
 
 { #category : #accessing }

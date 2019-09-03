@@ -19,6 +19,11 @@ TFPointTestStruct class >> fieldsDesc [
 	)
 ]
 
+{ #category : #hanlde }
+TFPointTestStruct >> handle [
+	^ handle
+]
+
 { #category : #'accessing structure variables' }
 TFPointTestStruct >> x [
 	"This method was automatically generated"
