@@ -52,7 +52,7 @@ TFCallbackInvocation >> execute [
 	callback returnType isVoid 
 		ifFalse: [ self writeReturnValue: returnValue ].
 
-	self returnExecution
+	self runner returnCallback: self
 ]
 
 { #category : #private }
@@ -73,6 +73,12 @@ TFCallbackInvocation >> returnExecution [
 TFCallbackInvocation >> returnHolder [
 
 	^ TFBasicType pointer readValue: handle offset: 1 + TFBasicType pointer byteSize
+]
+
+{ #category : #accessing }
+TFCallbackInvocation >> runner [
+
+	^ self callback runner
 ]
 
 { #category : #operations }

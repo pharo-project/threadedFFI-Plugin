@@ -57,20 +57,20 @@ TFCallbackQueue >> executeCallback: aCallbackInvocation [
 	aCallbackInvocation getHandle isNull ifTrue: [ ^self ].
 	
 	aCallbackInvocation callback: (self lookupCallback: aCallbackInvocation callbackData).
-	
-	[[ aCallbackInvocation execute ] 
-			on: Exception 
-			fork: [ :e |  e pass ]] fork
+	aCallbackInvocation runner executeCallback: aCallbackInvocation
 ]
 
 { #category : #initialization }
 TFCallbackQueue >> forkCallbackProcess [
 	
-	callbackProcess ifNotNil: [ ^ self ].
+	(callbackProcess notNil and: [ callbackProcess isTerminated not ])
+		ifTrue: [ ^ self ].
+
 	callbackProcess := [
 		[ true ] whileTrue: [
 			semaphore wait.
-			self executeCallback: self nextPendingCallback ] ] 
+			[self executeCallback: self nextPendingCallback]
+				on: Exception fork:  [:ex | ex pass ] ] ] 
 		forkAt: Processor highIOPriority
 		named: 'Callback queue'
 ]
