@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8.4)
 
 include(macros.cmake)
 include(ExternalProject)
+include(CheckTypeSize)
 
 if(WIN)
   # specify the cross compiler
@@ -36,6 +37,8 @@ endif()
 set(VERSION_MAJOR 1)
 set(VERSION_MINOR 0)
 set(VERSION_PATCH 0)
+
+check_type_size("void*" SIZEOF_VOID_P)
 
 get_commit_hash(GIT_COMMIT_HASH)
 get_git_describe(GIT_DESCRIBE)
@@ -166,9 +169,9 @@ add_custom_command(
     OUTPUT "${CMAKE_SOURCE_DIR}/build/test/Pharo.image"
     DEPENDS ${TEST_LIBRARY} ${PLUGIN_NAME}
   
-  
     COMMAND wget -O - "get.pharo.org/64/80+vmHeadlessLatest" | bash
     COMMAND cp "${CMAKE_SOURCE_DIR}/build/bin/${DYLIB_EXT}" ${PHARO_PLUGIN_DIR}
+    COMMAND cp "${CMAKE_SOURCE_DIR}/build/bin/${TEST_LIBRARY_DLL}" .
     COMMAND ./pharo Pharo.image metacello install "tonel://../../src" BaselineOfThreadedFFI
     
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/test"
