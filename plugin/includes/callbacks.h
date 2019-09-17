@@ -12,7 +12,7 @@ typedef struct _Callback Callback;
 typedef struct _Runner Runner;
 typedef struct _CallbackInvocation CallbackInvocation;
 
-typedef void (*CALLBACK_FUNCTION)(struct Runner* runner, struct CallbackInvocation* callback);
+typedef void (*CALLBACK_FUNCTION)(Runner* runner, CallbackInvocation* callback);
 
 struct _Runner {
 	CALLBACK_FUNCTION callbackEnterFunction;
