@@ -140,19 +140,32 @@ PrimitiveWithDepth(primitiveRegisterCallback, 3){
 PrimitiveWithDepth(primitiveCallbackReturn, 2) {
     CallbackInvocation *callbackInvocation;
     sqInt receiver;
+    Runner *runner;
 
+    // A callback invocation
     receiver = getReceiver();
     checkFailed();
-
+    
     callbackInvocation = (CallbackInvocation*)getHandler(receiver);
     checkFailed();
-
-    if(callbackInvocation == NULL || callbackInvocation->callback == NULL || callbackInvocation->callback->runner == NULL || callbackInvocation->callback->runner->callbackExitFunction == NULL){
-    	interpreterProxy->primitiveFail();
-    	return;
+    
+    if(!callbackInvocation){
+        interpreterProxy->primitiveFail();
+        return;
     }
-
-    callbackInvocation->callback->runner->callbackExitFunction(callbackInvocation->callback->runner, callbackInvocation	);
+    
+    runner = callbackInvocation->callback->runner;
+    
+    // If the returning callback is not the last callback that entered, we cannot return
+    // Otherwise this would produce a stack corruption (returning to an older callback erasing/overriding the stack of newer ones)
+    if (callbackInvocation != runner->callbackStack){
+        interpreterProxy->primitiveFail();
+        return;
+    }
+    
+    // If the callback was the last one, we need to pop it from the callback stack
+    runner->callbackStack = runner->callbackStack->previous;
+    runner->callbackExitFunction(runner, callbackInvocation);
 
     primitiveEnd();
 }

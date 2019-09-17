@@ -8,32 +8,34 @@
 #include "pharoSemaphore.h"
 #include "pSemaphore.h"
 
-struct _Callback;
-struct _Runner;
-struct _CallbackInvocation;
+typedef struct _Callback Callback;
+typedef struct _Runner Runner;
+typedef struct _CallbackInvocation CallbackInvocation;
 
-typedef void (*CALLBACK_FUNCTION)(struct _Runner* runner, struct _CallbackInvocation* callback);
+typedef void (*CALLBACK_FUNCTION)(Runner* runner, CallbackInvocation* callback);
 
-typedef struct _Runner {
+struct _Runner {
 	CALLBACK_FUNCTION callbackEnterFunction;
 	CALLBACK_FUNCTION callbackExitFunction;
-} Runner;
+    CallbackInvocation *callbackStack;
+};
 
-typedef struct _Callback {
+struct _Callback {
     Runner* runner;
     ffi_closure *closure;
     ffi_cif cif;
     void *functionAddress;
     ffi_type **parameterTypes;
-} Callback;
+};
 
-typedef struct _CallbackInvocation {
+struct _CallbackInvocation {
     Callback *callback;
     void *returnHolder;
     void **arguments;
     //Optional payload used by the runners
     void *payload;
-} CallbackInvocation;
+    void *previous;
+};
 
 Callback *callback_new(Runner * runner, ffi_type** parameters, sqInt count, ffi_type* returnType);
 void callback_release(Callback* callbackData);

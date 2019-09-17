@@ -28,7 +28,8 @@ void sameThreadCallbackExit(struct _Runner* runner, struct _CallbackInvocation* 
 
 static Runner sameThreadRunner = {
 	sameThreadCallbackEnter,
-	sameThreadCallbackExit
+	sameThreadCallbackExit,
+    NULL
 };
 
 /* primitivePerformWorkerCall

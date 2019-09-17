@@ -63,6 +63,22 @@ void threadsafe_queue_free(TSQueue *queue) {
 }
 
 /**
+ *  Return the number of elements in the queue
+ **/
+int threadsafe_queue_size(TSQueue *queue) {
+    int size = 0;
+    TSQueueNode *node;
+    pthread_mutex_lock(&(queue->mutex));
+    node = queue->first;
+    while(node){
+        size++;
+        node = node->next;
+    }
+    pthread_mutex_unlock(&(queue->mutex));
+    return size;
+}
+
+/**
  *  Put an element at the end of in the thread safe queue
  *  Only one process may modify the queue at a single point in time
  *  Allocates a new node and puts the element into it

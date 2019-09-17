@@ -48,6 +48,7 @@ Worker *worker_newSpawning(int spawn) {
     worker->taskQueue = threadsafe_queue_new(platform_semaphore_new(0));
     worker->runner.callbackEnterFunction = worker_enter_callback;
     worker->runner.callbackExitFunction = worker_callback_return;
+    worker->runner.callbackStack = NULL;
 
     if(spawn){
     	if (pthread_create(&(worker->threadId), NULL, worker_run, (void *)worker) != 0) {
