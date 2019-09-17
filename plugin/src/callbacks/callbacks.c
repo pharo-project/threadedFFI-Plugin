@@ -18,7 +18,13 @@ static void callbackFrontend(ffi_cif *cif, void *ret, void* args[], void* cbPtr)
 	invocation.callback = callback;
 	invocation.arguments = args;
 	invocation.returnHolder = ret;
-	queue_add_pending_callback(&invocation);
+    
+    // Push callback invocation into a callback stack
+    // This callback stack is used to validate that callbacks return in order
+    invocation.previous = callback->runner->callbackStack;
+    callback->runner->callbackStack = &invocation;
+    
+    queue_add_pending_callback(&invocation);
 	
 	// Manage callouts while waiting this callback to return
 	callback->runner->callbackEnterFunction(callback->runner, &invocation);
