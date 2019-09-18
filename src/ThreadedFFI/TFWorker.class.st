@@ -96,5 +96,5 @@ TFWorker >> release [
 	self isNull ifTrue: [ ^ self ].
 	
 	self primitiveReleaseWorker.
-	handle beNull
+	super release.
 ]

@@ -35,10 +35,30 @@ TFCallbacksTest >> setUp [
 ]
 
 { #category : #tests }
-TFCallbacksTest >> tearDown [
+TFCallbacksTest >> testCallbackFromOldSessionFailsReturn [
+	"If a callback survives a session (e.g., an image is saved and reopened), returning it will fail.
+	This test validates a surviving callback throws a meaningful exception when trying to return in this case."
+	
+	| smain s1 c1 |
+	smain := Semaphore new.
 
+	s1 := Semaphore new.
+	c1 := self newTestCallbackDoing: [ smain signal. s1 wait ].
+
+	[ self callCallback: c1 ] fork.
+
+	"wait until callback starts"
+	smain wait.
+
+	"Release the runner as if a new session started"
 	runner release.
-	super tearDown
+
+	"make callback finish and wait until it fails"
+	s1 signal.
+	runner exceptionHandler wait.
+
+	self assert: runner exceptionHandler lastException class equals: TFInvalidSessionCallbackReturn.
+	self assert: runner exceptionHandler lastException callback equals: c1.
 ]
 
 { #category : #tests }

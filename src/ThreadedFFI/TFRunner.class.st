@@ -10,7 +10,15 @@ Class {
 }
 
 { #category : #errors }
-TFRunner >> cannotReturnCallback: aCallbackInvocation [
+TFRunner >> cannotReturnCallbackFromOldSession: aCallbackInvocation [
+
+	^ TFInvalidSessionCallbackReturn new
+		callbackInvocation: aCallbackInvocation;
+		signal
+]
+
+{ #category : #errors }
+TFRunner >> cannotReturnCallbackInWrongOrder: aCallbackInvocation [
 
 	^ TFIncorrectOrderCallbackReturn new
 		callbackInvocation: aCallbackInvocation;
@@ -94,6 +102,14 @@ TFRunner >> invokeFunction: aTFExternalFunction withArguments: aCollection [
 ]
 
 { #category : #executing }
+TFRunner >> release [ 
+	
+	handle beNull.
+	stackProtect critical: [
+		callbackInvocationStack := nil ]
+]
+
+{ #category : #executing }
 TFRunner >> returnCallback: aCallbackInvocation [
 	"Entry point to return a callback invocation.
 	Check the callbackInvocation stack to see if the given invocation is the last one.
@@ -102,8 +118,10 @@ TFRunner >> returnCallback: aCallbackInvocation [
 	The user must guarantee callbacks return in the correct order"
 	
 	stackProtect critical: [
+		callbackInvocationStack ifNil: [ 
+			^ self cannotReturnCallbackFromOldSession: aCallbackInvocation ].
 		(callbackInvocationStack top == aCallbackInvocation)
-			ifFalse: [ ^ self cannotReturnCallback: aCallbackInvocation ].
+			ifFalse: [ ^ self cannotReturnCallbackInWrongOrder: aCallbackInvocation ].
 		aCallbackInvocation returnExecution.
 		callbackInvocationStack pop ]
 ]

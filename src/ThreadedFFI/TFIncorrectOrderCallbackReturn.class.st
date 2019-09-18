@@ -4,28 +4,12 @@ I notify the user with the problematic callback and the list of callbacks that s
 "
 Class {
 	#name : #TFIncorrectOrderCallbackReturn,
-	#superclass : #Error,
+	#superclass : #TFCallbackCannotReturn,
 	#instVars : [
-		'previousCallbacks',
-		'callbackInvocation'
+		'previousCallbacks'
 	],
 	#category : #'ThreadedFFI-Callbacks'
 }
-
-{ #category : #accessing }
-TFIncorrectOrderCallbackReturn >> callback [
-	^ self callbackInvocation callback
-]
-
-{ #category : #accessing }
-TFIncorrectOrderCallbackReturn >> callbackInvocation [
-	^ callbackInvocation
-]
-
-{ #category : #accessing }
-TFIncorrectOrderCallbackReturn >> callbackInvocation: anObject [
-	callbackInvocation := anObject
-]
 
 { #category : #accessing }
 TFIncorrectOrderCallbackReturn >> previousCallbacks [
