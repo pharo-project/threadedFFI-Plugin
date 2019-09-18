@@ -65,7 +65,6 @@ TFCallbackInvocation >> primCallbackReturn [
 { #category : #operations }
 TFCallbackInvocation >> returnExecution [
 
-	self assert: self runner getHandle isNull not.
 	self primCallbackReturn.
 	handle beNull
 ]
