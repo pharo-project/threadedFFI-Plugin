@@ -4,20 +4,18 @@ include(macros.cmake)
 include(ExternalProject)
 include(CheckTypeSize)
 
-if(WIN)
+if ((CMAKE_HOST_UNIX) AND (${CMAKE_HOST_SYSTEM_NAME} MATCHES "CYGWIN*"))
+  message(STATUS "Building on CYGWIN CMAKE: Adapting paths")
+  set(CYGWIN 1)
+  set(WIN 1)
+
   # specify the cross compiler
   set(CMAKE_TOOLCHAIN_PREFIX x86_64-w64-mingw32)
 
-  SET(CMAKE_C_COMPILER   ${CMAKE_TOOLCHAIN_PREFIX}-clang)
-  SET(CMAKE_CXX_COMPILER ${CMAKE_TOOLCHAIN_PREFIX}-clang++)
+  SET(CMAKE_C_COMPILER   ${CMAKE_TOOLCHAIN_PREFIX}-gcc)
+  SET(CMAKE_CXX_COMPILER ${CMAKE_TOOLCHAIN_PREFIX}-g++)
   SET(CMAKE_RC_COMPILER ${CMAKE_TOOLCHAIN_PREFIX}-windres)
   SET(CMAKE_SYSTEM_PROCESSOR x86_64)
-
-  set(CMAKE_SHARED_LIBRARY_PREFIX "")
-  set(CMAKE_SHARED_LIBRARY_SUFFIX ".dll")
-  set(CMAKE_SHARED_MODULE_PREFIX "")
-  set(CMAKE_SHARED_MODULE_SUFFIX ".dll")    
-
 endif()
 
 project(PThreadedFFI)
@@ -92,7 +90,7 @@ else()
     add_custom_command(
       OUTPUT  ${LIBFFI_OUTPUT}
       DEPENDS build_libFFI
-      COMMAND cp "${CMAKE_SOURCE_DIR}/build/libffi/install/lib/${DYLIB_EXT}" "${CMAKE_SOURCE_DIR}/build/bin/"
+      COMMAND cp "${LIBFFI_FILES}" "${CMAKE_SOURCE_DIR}/build/bin/"
       WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/bin"
       COMMENT "Copying of Libffi")
 endif()
@@ -134,7 +132,13 @@ set(PLUGIN_SOURCES
 addLibraryWithRPATH(${PLUGIN_NAME} SHARED ${PLUGIN_SOURCES})
 target_link_libraries(${PLUGIN_NAME} "ffi")
 
+if(WIN)
+    target_link_libraries(${PLUGIN_NAME} "pthread") 
+endif(WIN)
+
 add_dependencies(${PLUGIN_NAME} vmIncludes libFFI)
+
+target_link_directories(${PLUGIN_NAME} "build/libffi/install/lib")
 
 target_include_directories(${PLUGIN_NAME} PRIVATE "plugin/includes" )
 target_include_directories(${PLUGIN_NAME} PRIVATE "build/vmIncludes/include")
@@ -172,7 +176,7 @@ add_custom_command(
     COMMAND wget -O - "get.pharo.org/64/80+vmHeadlessLatest" | bash
     COMMAND cp "${CMAKE_SOURCE_DIR}/build/bin/${DYLIB_EXT}" ${PHARO_PLUGIN_DIR}
     COMMAND cp "${CMAKE_SOURCE_DIR}/build/bin/${TEST_LIBRARY_DLL}" .
-    COMMAND ./pharo Pharo.image metacello install "tonel://../../src" BaselineOfThreadedFFI
+#    COMMAND ./pharo Pharo.image metacello install "tonel://../../src" BaselineOfThreadedFFI
     
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/test"
     COMMENT "Creating Test Image")
