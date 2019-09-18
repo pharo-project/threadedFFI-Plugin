@@ -105,6 +105,8 @@ TFRunner >> invokeFunction: aTFExternalFunction withArguments: aCollection [
 TFRunner >> release [ 
 	
 	handle beNull.
+	"If the stack is not initialized it means this worker was never used for callbacks"
+	stackProtect ifNil: [ ^ self ].
 	stackProtect critical: [
 		callbackInvocationStack := nil ]
 ]
