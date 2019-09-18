@@ -1,5 +1,5 @@
 test:
   script: 
     - cmake .
-    - make
+    - make install
     - make test
