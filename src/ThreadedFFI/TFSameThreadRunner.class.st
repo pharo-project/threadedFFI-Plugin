@@ -5,8 +5,9 @@ Class {
 }
 
 { #category : #executing }
-TFSameThreadRunner >> ensureInitialized [
+TFSameThreadRunner >> doInitialize [
 
+	super doInitialize.
 	handle := self primitiveGetRunnerAddress.
 ]
 

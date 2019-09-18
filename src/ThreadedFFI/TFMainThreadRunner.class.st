@@ -8,10 +8,10 @@ Class {
 }
 
 { #category : #private }
-TFMainThreadRunner >> ensureInitialized [
-
-	(MainThreadHandle isNil or: [ MainThreadHandle isNull ]) ifTrue: [
-		MainThreadHandle := self workerAddress ].
+TFMainThreadRunner >> doInitialize [
+	
+	super doInitialize.
+	MainThreadHandle := self workerAddress.
 	handle := MainThreadHandle
 ]
 

@@ -48,9 +48,10 @@ TFWorker class >> named: aName [
 ]
 
 { #category : #accessing }
-TFWorker >> ensureInitialized [
-	
-	self isNull ifTrue: [ self primitiveCreateWorker ]
+TFWorker >> doInitialize [
+
+	super doInitialize.
+	self primitiveCreateWorker
 ]
 
 { #category : #accessing }
@@ -92,5 +93,8 @@ TFWorker >> primitiveReleaseWorker [
 { #category : #accessing }
 TFWorker >> release [ 
 	
-	self isNull ifFalse: [ self primitiveReleaseWorker ]
+	self isNull ifTrue: [ ^ self ].
+	
+	self primitiveReleaseWorker.
+	super release.
 ]
