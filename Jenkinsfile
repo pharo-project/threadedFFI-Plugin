@@ -76,8 +76,8 @@ def upload(platform, configuration, vmDir) {
 }
 
 def uploadPackages(){
-	node('unix'){
-		stage('Upload'){
+//	node('unix'){
+//		stage('Upload'){
 //			if (isPullRequest()) {
 				//Only upload files if not in a PR (i.e., CHANGE_ID not empty)
 //				echo "[DO NO UPLOAD] In PR " + (env.CHANGE_ID?.trim())
@@ -92,8 +92,8 @@ def uploadPackages(){
 //			upload('osx', "CoInterpreterWithQueueFFI", 'mac')
 //			upload('unix', "CoInterpreterWithQueueFFI",'linux')
 //			upload('windows', "CoInterpreterWithQueueFFI", 'win')
-		}
-	}
+//		}
+//	}
 }
 
 try{
