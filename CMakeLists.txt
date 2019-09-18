@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.4)
+cmake_minimum_required(VERSION 3.10)
 
 include(macros.cmake)
 include(ExternalProject)
@@ -138,7 +138,7 @@ endif(WIN)
 
 add_dependencies(${PLUGIN_NAME} vmIncludes libFFI)
 
-target_link_directories(${PLUGIN_NAME} PRIVATE "build/libffi/install/lib")
+link_directories(BEFORE "build/libffi/install/lib")
 
 target_include_directories(${PLUGIN_NAME} PRIVATE "plugin/includes" )
 target_include_directories(${PLUGIN_NAME} PRIVATE "build/vmIncludes/include")
