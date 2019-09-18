@@ -138,7 +138,7 @@ endif(WIN)
 
 add_dependencies(${PLUGIN_NAME} vmIncludes libFFI)
 
-target_link_directories(${PLUGIN_NAME} "build/libffi/install/lib")
+target_link_directories(${PLUGIN_NAME} PRIVATE "build/libffi/install/lib")
 
 target_include_directories(${PLUGIN_NAME} PRIVATE "plugin/includes" )
 target_include_directories(${PLUGIN_NAME} PRIVATE "build/vmIncludes/include")
@@ -176,7 +176,7 @@ add_custom_command(
     COMMAND wget -O - "get.pharo.org/64/80+vmHeadlessLatest" | bash
     COMMAND cp "${CMAKE_SOURCE_DIR}/build/bin/${DYLIB_EXT}" ${PHARO_PLUGIN_DIR}
     COMMAND cp "${CMAKE_SOURCE_DIR}/build/bin/${TEST_LIBRARY_DLL}" .
-#    COMMAND ./pharo Pharo.image metacello install "tonel://../../src" BaselineOfThreadedFFI
+    COMMAND ./pharo Pharo.image metacello install "tonel://../../src" BaselineOfThreadedFFI
     
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/test"
     COMMENT "Creating Test Image")
