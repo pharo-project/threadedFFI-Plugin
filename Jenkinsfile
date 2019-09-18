@@ -46,8 +46,8 @@ def runBuild(platform){
 			shell "make test"
 			shell "make package"
     	}
-		stash excludes: '_CPack_Packages', includes: 'build/build/packages/*', name: "packages-${platform}-${configuration}"
-		archiveArtifacts artifacts: 'build/build/packages/*', excludes: '_CPack_Packages'
+		stash excludes: '_CPack_Packages', includes: 'build/packages/*', name: "packages-${platform}-${configuration}"
+		archiveArtifacts artifacts: 'build/packages/*', excludes: '_CPack_Packages'
 	}
 }
 
