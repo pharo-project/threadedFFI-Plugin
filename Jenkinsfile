@@ -29,11 +29,9 @@ def runBuild(platform){
 	cleanWs()
 	
 
-    stage("Checkout-${platform}"){
-      dir('repository') {
-          checkout scm
-      }
-    }
+	stage("Checkout-${platform}"){
+		checkout scm
+	}
 
 
 	stage("Build-${platform}"){
