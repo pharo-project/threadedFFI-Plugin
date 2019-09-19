@@ -58,7 +58,7 @@ def upload(platform, dir) {
 
 	unstash name: "packages-${platform}"
 
-	def expandedFileName = sh(returnStdout: true, script: "ls build/packages/PThreadedFFI*.zip").trim()
+	def expandedFileName = sh(returnStdout: true, script: "ls build/packages/PThreadedFFI*${platform}*.zip").trim()
 
 	sshagent (credentials: ['b5248b59-a193-4457-8459-e28e9eb29ed7']) {
 		sh "scp -o StrictHostKeyChecking=no \
