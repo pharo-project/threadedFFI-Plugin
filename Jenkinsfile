@@ -54,11 +54,11 @@ def runBuild(platform){
 	}
 }
 
-def upload(platform, dir) {
+def upload(platform, dir, zipPlatformName) {
 
 	unstash name: "packages-${platform}"
 
-	def expandedFileName = sh(returnStdout: true, script: "ls build/packages/PThreadedFFI*${platform}*.zip").trim()
+	def expandedFileName = sh(returnStdout: true, script: "ls build/packages/PThreadedFFI*${zipPlatformName}*.zip").trim()
 
 	sshagent (credentials: ['b5248b59-a193-4457-8459-e28e9eb29ed7']) {
 		sh "scp -o StrictHostKeyChecking=no \
@@ -81,9 +81,9 @@ def uploadPackages(){
 			}
 			
 			if(env.TAG_NAME ==~ /v\d+\.\d+\.\d+.*/){
-				upload('osx', 'mac')
-				upload('unix', 'linux')
-				upload('windows', 'win')
+				upload('osx', 'mac', 'osx64')
+				upload('unix', 'linux', 'linux64')
+				upload('windows', 'win', 'win64')
 				return;
 			}
 			
