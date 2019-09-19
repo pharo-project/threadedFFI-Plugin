@@ -46,6 +46,9 @@ def runBuild(platform){
 			shell "make test"
 			shell "make package"
     	}
+		
+		junit allowEmptyResults: true, testResults: "build/test/*.xml"
+		
 		stash excludes: '_CPack_Packages', includes: 'build/packages/*', name: "packages-${platform}"
 		archiveArtifacts artifacts: 'build/packages/*', excludes: '_CPack_Packages'
 	}
