@@ -54,49 +54,42 @@ def runBuild(platform){
 	}
 }
 
-def upload(platform, configuration, vmDir) {
+def upload(platform, dir) {
 
-	unstash name: "packages-${platform}-${configuration}"
+	unstash name: "packages-${platform}"
 
-	def expandedBinaryFileName = sh(returnStdout: true, script: "ls build/build/packages/PharoVM-*-${vmDir}64-bin.zip").trim()
-	def expandedHeadersFileName = sh(returnStdout: true, script: "ls build/build/packages/PharoVM-*-${vmDir}64-include.zip").trim()
+	def expandedFileName = sh(returnStdout: true, script: "ls build/packages/PThreadedFFI*.zip").trim()
 
 	sshagent (credentials: ['b5248b59-a193-4457-8459-e28e9eb29ed7']) {
 		sh "scp -o StrictHostKeyChecking=no \
 		${expandedBinaryFileName} \
-		pharoorgde@ssh.cluster023.hosting.ovh.net:/home/pharoorgde/files/vm/pharo-spur64-headless/${vmDir}"
-		sh "scp -o StrictHostKeyChecking=no \
-		${expandedHeadersFileName} \
-		pharoorgde@ssh.cluster023.hosting.ovh.net:/home/pharoorgde/files/vm/pharo-spur64-headless/${vmDir}/include"
-
-		sh "scp -o StrictHostKeyChecking=no \
-		${expandedBinaryFileName} \
-		pharoorgde@ssh.cluster023.hosting.ovh.net:/home/pharoorgde/files/vm/pharo-spur64-headless/${vmDir}/latest.zip"
-		sh "scp -o StrictHostKeyChecking=no \
-		${expandedHeadersFileName} \
-		pharoorgde@ssh.cluster023.hosting.ovh.net:/home/pharoorgde/files/vm/pharo-spur64-headless/${vmDir}/include/latest.zip"
+		pharoorgde@ssh.cluster023.hosting.ovh.net:/home/pharoorgde/files/vm/pharo-spur64/${dir}/third-party"
 	}
 }
 
+def isPullRequest() {
+  return env.CHANGE_ID != null
+}
+
 def uploadPackages(){
-//	node('unix'){
-//		stage('Upload'){
-//			if (isPullRequest()) {
+	node('unix'){
+		stage('Upload'){
+			if (isPullRequest()) {
 				//Only upload files if not in a PR (i.e., CHANGE_ID not empty)
-//				echo "[DO NO UPLOAD] In PR " + (env.CHANGE_ID?.trim())
-//				return;
-//			}
+				echo "[DO NO UPLOAD] In PR " + (env.CHANGE_ID?.trim())
+				return;
+			}
 			
-//			if(env.BRANCH_NAME != 'headless'){
-//				echo "[DO NO UPLOAD] In branch different that 'headless': ${env.BRANCH_NAME}";
-//				return;
-//			}
+			if(env.TAG_NAME ==~ /v\d+\.\d+\.\d+.*/){
+				upload('osx', 'mac')
+				upload('unix', 'linux')
+				upload('windows', 'win')
+				return;
+			}
 			
-//			upload('osx', "CoInterpreterWithQueueFFI", 'mac')
-//			upload('unix', "CoInterpreterWithQueueFFI",'linux')
-//			upload('windows', "CoInterpreterWithQueueFFI", 'win')
-//		}
-//	}
+			echo "[DO NO UPLOAD] It is not a tag with the form v1.0.0"
+		}
+	}
 }
 
 try{
