@@ -64,7 +64,7 @@ TFRunner >> executeCallback: aCallbackInvocation [
 
 	stackProtect critical: [ callbackInvocationStack push: aCallbackInvocation ].
 	[ self handleExceptionDuring: [ aCallbackInvocation execute ] ]
-		forkAt: Processor userSchedulingPriority
+		fork"At: Processor userSchedulingPriority"
 ]
 
 { #category : #executing }
