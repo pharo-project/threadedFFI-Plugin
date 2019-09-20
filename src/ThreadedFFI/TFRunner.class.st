@@ -17,23 +17,6 @@ TFRunner >> callbackExecutor [
 		callbackExecutor := TFCallbackExecutor new ]
 ]
 
-{ #category : #errors }
-TFRunner >> cannotReturnCallbackFromOldSession: aCallbackInvocation [
-
-	^ TFInvalidSessionCallbackReturn new
-		callbackInvocation: aCallbackInvocation;
-		signal
-]
-
-{ #category : #errors }
-TFRunner >> cannotReturnCallbackInWrongOrder: aCallbackInvocation [
-
-	^ TFIncorrectOrderCallbackReturn new
-		callbackInvocation: aCallbackInvocation;
-		previousCallbacks: (callbackInvocationStack copyUpTo: aCallbackInvocation);
-		signal
-]
-
 { #category : #executing }
 TFRunner >> doInitialize [
 

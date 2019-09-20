@@ -1,3 +1,8 @@
+"
+I am the execution of a callback. I read the incoming arguments, execute the associated callback and write the return value befor returning.
+
+I am created from a handle (using #fromHandle:) pointing to a C structure containing the data required fro the callback. I am then executed using #execute.
+"
 Class {
 	#name : #TFCallbackInvocation,
 	#superclass : #FFIExternalObject,
