@@ -14,9 +14,7 @@ Class {
 TFRunner >> callbackExecutor [
 
 	^ callbackExecutor ifNil: [ 
-		callbackExecutor := TFCallbackExecutor new
-			runner: self;
-			yourself ]
+		callbackExecutor := TFCallbackExecutor new ]
 ]
 
 { #category : #errors }

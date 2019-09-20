@@ -2,19 +2,10 @@ Class {
 	#name : #TFCallbackExecutor,
 	#superclass : #Object,
 	#instVars : [
-		'process',
-		'semaphore',
-		'runner',
-		'protet'
+		'process'
 	],
 	#category : #'ThreadedFFI-Callbacks'
 }
-
-{ #category : #initialization }
-TFCallbackExecutor >> runner: aRunner [
-
-	runner := aRunner
-]
 
 { #category : #'user-api' }
 TFCallbackExecutor >> schedule: aCallbackInvocation [
