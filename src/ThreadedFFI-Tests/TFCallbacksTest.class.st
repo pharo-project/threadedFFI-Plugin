@@ -68,10 +68,10 @@ TFCallbacksTest >> testCallbackNotRespectingLIFOOrderFailsReturn [
 	smain := Semaphore new.
 
 	s1 := Semaphore new.
-	c1 := self newTestCallbackDoing: [ smain signal. s1 wait ].
+	c1 := self newTestCallbackDoing: [  smain signal. s1 wait ].
 
 	s2 := Semaphore new.
-	c2 := self newTestCallbackDoing: [ smain signal. s2 wait ].
+	c2 := self newTestCallbackDoing: [  smain signal. s2 wait ].
 	
 	[ self callCallback: c1 ] fork.
 	[ self callCallback: c2 ] fork.
@@ -93,29 +93,37 @@ TFCallbacksTest >> testCallbackNotRespectingLIFOOrderFailsReturn [
 
 { #category : #tests }
 TFCallbacksTest >> testReentrantCalloutsDuringCallback [
-
 	| callback fun returnValue |
 	"Avoid running this test before the image side support handles this case.
 	Otherwise both the UI thread and the callback management thread will get blocked in a deadlock."
 	"true ifTrue: [ ^ self skip ]."
-	
 	fun := TFExternalFunction
 		name: 'singleCallToCallback'
 		moduleName: self libraryPath
-		definition: (TFFunctionDefinition
-			parameterTypes: {TFBasicType pointer. TFBasicType sint}
-			returnType: TFBasicType sint).
-
-	callback := TFCallback 
+		definition:
+			(TFFunctionDefinition
+				parameterTypes:
+					{TFBasicType pointer.
+					TFBasicType sint}
+				returnType: TFBasicType sint).
+	callback := TFCallback
 		forCallback: [ :times | 
+			times traceCr.
 			times = 7
 				ifTrue: [ times ]
-				ifFalse: [ runner invokeFunction: fun withArguments: {callback getHandle. times + 1} ] ] 
-		parameters: { TFBasicType sint. } 
+				ifFalse: [ runner
+						invokeFunction: fun
+						withArguments:
+							{callback getHandle.
+							(times + 1)} ] ]
+		parameters: {TFBasicType sint}
 		returnType: TFBasicType sint
 		runner: runner.
-
-	returnValue := runner invokeFunction: fun withArguments: {callback getHandle. 0}.
+	returnValue := runner
+		invokeFunction: fun
+		withArguments:
+			{callback getHandle.
+			0}.
 	self assert: returnValue equals: 7
 ]
 

@@ -4,10 +4,20 @@ Class {
 	#instVars : [
 		'callbackInvocationStack',
 		'stackProtect',
-		'exceptionHandler'
+		'exceptionHandler',
+		'callbackExecutor'
 	],
 	#category : #'ThreadedFFI-Worker'
 }
+
+{ #category : #executing }
+TFRunner >> callbackExecutor [
+
+	^ callbackExecutor ifNil: [ 
+		callbackExecutor := TFCallbackExecutor new
+			runner: self;
+			yourself ]
+]
 
 { #category : #errors }
 TFRunner >> cannotReturnCallbackFromOldSession: aCallbackInvocation [
@@ -31,6 +41,7 @@ TFRunner >> doInitialize [
 
 	callbackInvocationStack := Stack new.
 	stackProtect := Semaphore forMutualExclusion.
+	callbackExecutor := nil.
 ]
 
 { #category : #executing }
@@ -62,9 +73,7 @@ TFRunner >> executeCallback: aCallbackInvocation [
 	To guarantee the stack is not modified while this method runs, this method should be called from a high priority process.
 	  => no callbacks should finish while this method runs."
 
-	stackProtect critical: [ callbackInvocationStack push: aCallbackInvocation ].
-	[ self handleExceptionDuring: [ aCallbackInvocation execute ] ]
-		forkAt: Processor userSchedulingPriority
+	self handleExceptionDuring: [ self callbackExecutor schedule: aCallbackInvocation ]
 ]
 
 { #category : #executing }
@@ -119,11 +128,5 @@ TFRunner >> returnCallback: aCallbackInvocation [
 	Otherwise, throw an exception as returning means a bug in your application.
 	The user must guarantee callbacks return in the correct order"
 	
-	stackProtect critical: [
-		callbackInvocationStack ifNil: [ 
-			^ self cannotReturnCallbackFromOldSession: aCallbackInvocation ].
-		(callbackInvocationStack top == aCallbackInvocation)
-			ifFalse: [ ^ self cannotReturnCallbackInWrongOrder: aCallbackInvocation ].
-		aCallbackInvocation returnExecution.
-		callbackInvocationStack pop ]
+	aCallbackInvocation returnExecution
 ]

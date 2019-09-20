@@ -19,7 +19,7 @@ TFTestLibraryUsingSameThreadRunner >> macModuleName [
 { #category : #accessing }
 TFTestLibraryUsingSameThreadRunner >> runner [ 
 	
-	^ TFSameThreadRunner new
+	^ TFSameThreadRunner uniqueInstance
 ]
 
 { #category : #'accessing platform' }
