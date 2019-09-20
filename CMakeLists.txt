@@ -1,22 +1,21 @@
-cmake_minimum_required(VERSION 2.8.4)
+cmake_minimum_required(VERSION 3.10)
 
 include(macros.cmake)
 include(ExternalProject)
+include(CheckTypeSize)
 
-if(WIN)
+if ((CMAKE_HOST_UNIX) AND (${CMAKE_HOST_SYSTEM_NAME} MATCHES "CYGWIN*"))
+  message(STATUS "Building on CYGWIN CMAKE: Adapting paths")
+  set(CYGWIN 1)
+  set(WIN 1)
+
   # specify the cross compiler
   set(CMAKE_TOOLCHAIN_PREFIX x86_64-w64-mingw32)
 
-  SET(CMAKE_C_COMPILER   ${CMAKE_TOOLCHAIN_PREFIX}-clang)
-  SET(CMAKE_CXX_COMPILER ${CMAKE_TOOLCHAIN_PREFIX}-clang++)
+  SET(CMAKE_C_COMPILER   ${CMAKE_TOOLCHAIN_PREFIX}-gcc)
+  SET(CMAKE_CXX_COMPILER ${CMAKE_TOOLCHAIN_PREFIX}-g++)
   SET(CMAKE_RC_COMPILER ${CMAKE_TOOLCHAIN_PREFIX}-windres)
   SET(CMAKE_SYSTEM_PROCESSOR x86_64)
-
-  set(CMAKE_SHARED_LIBRARY_PREFIX "")
-  set(CMAKE_SHARED_LIBRARY_SUFFIX ".dll")
-  set(CMAKE_SHARED_MODULE_PREFIX "")
-  set(CMAKE_SHARED_MODULE_SUFFIX ".dll")    
-
 endif()
 
 project(PThreadedFFI)
@@ -35,7 +34,9 @@ endif()
 
 set(VERSION_MAJOR 1)
 set(VERSION_MINOR 0)
-set(VERSION_PATCH 0)
+set(VERSION_PATCH 3)
+
+check_type_size("void*" SIZEOF_VOID_P)
 
 get_commit_hash(GIT_COMMIT_HASH)
 get_git_describe(GIT_DESCRIBE)
@@ -73,7 +74,7 @@ ExternalProject_Add(build_libFFI
 
     GIT_REPOSITORY "https://github.com/libffi/libffi.git"
     GIT_TAG "v3.3-rc0"
-    CONFIGURE_COMMAND "./autogen.sh" COMMAND ./configure "--target=${LIBFFI_TARGET}" "--prefix=${CMAKE_SOURCE_DIR}/build/libffi/install"
+    CONFIGURE_COMMAND "./autogen.sh" COMMAND ./configure "--target=${LIBFFI_TARGET}" "--disable-docs" "--prefix=${CMAKE_SOURCE_DIR}/build/libffi/install" "CC=${CMAKE_C_COMPILER}" "CXX=${CMAKE_C_COMPILER}"
 )
 
 if(OSX)
@@ -89,7 +90,7 @@ else()
     add_custom_command(
       OUTPUT  ${LIBFFI_OUTPUT}
       DEPENDS build_libFFI
-      COMMAND cp "${CMAKE_SOURCE_DIR}/build/libffi/install/lib/${DYLIB_EXT}" "${CMAKE_SOURCE_DIR}/build/bin/"
+      COMMAND cp "${LIBFFI_FILES}" "${CMAKE_SOURCE_DIR}/build/bin/"
       WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/bin"
       COMMENT "Copying of Libffi")
 endif()
@@ -131,7 +132,13 @@ set(PLUGIN_SOURCES
 addLibraryWithRPATH(${PLUGIN_NAME} SHARED ${PLUGIN_SOURCES})
 target_link_libraries(${PLUGIN_NAME} "ffi")
 
+if(WIN)
+    target_link_libraries(${PLUGIN_NAME} "pthread") 
+endif(WIN)
+
 add_dependencies(${PLUGIN_NAME} vmIncludes libFFI)
+
+link_directories(BEFORE "build/libffi/install/lib")
 
 target_include_directories(${PLUGIN_NAME} PRIVATE "plugin/includes" )
 target_include_directories(${PLUGIN_NAME} PRIVATE "build/vmIncludes/include")
@@ -166,9 +173,9 @@ add_custom_command(
     OUTPUT "${CMAKE_SOURCE_DIR}/build/test/Pharo.image"
     DEPENDS ${TEST_LIBRARY} ${PLUGIN_NAME}
   
-  
     COMMAND wget -O - "get.pharo.org/64/80+vmHeadlessLatest" | bash
     COMMAND cp "${CMAKE_SOURCE_DIR}/build/bin/${DYLIB_EXT}" ${PHARO_PLUGIN_DIR}
+    COMMAND cp "${CMAKE_SOURCE_DIR}/build/bin/${TEST_LIBRARY_DLL}" .
     COMMAND ./pharo Pharo.image metacello install "tonel://../../src" BaselineOfThreadedFFI
     
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/test"
@@ -216,7 +223,7 @@ set(CPACK_PACKAGE_VERSION_MINOR "${VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "${VERSION_PATCH}")
 set(CPACK_PACKAGE_VENDOR "Pharo")
 set(CPACK_PACKAGE_HOMEPAGE_URL "https://pharo.org")
-set(CPACK_PACKAGE_FILE_NAME "PThreadedFFI-${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}-${GIT_COMMIT_HASH}-${FULL_PLATFORM_NAME}")
+set(CPACK_PACKAGE_FILE_NAME "PThreadedFFI-${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}-${FULL_PLATFORM_NAME}")
 set(CPACK_PACKAGE_DIRECTORY "${CMAKE_SOURCE_DIR}/build/packages")
 set(CPACK_PACKAGE_CHECKSUM "SHA1")
 set(CPACK_GENERATOR "ZIP")

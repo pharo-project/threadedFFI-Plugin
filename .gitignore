@@ -7,4 +7,5 @@ cmake_install.cmake
 CTestTestfile.cmake
 CPackConfig.cmake
 CPackSourceConfig.cmake
+install_manifest.txt
 Testing/
