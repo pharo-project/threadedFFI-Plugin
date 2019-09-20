@@ -7,9 +7,6 @@ Class {
 		'runner',
 		'protet'
 	],
-	#classVars : [
-		'ThisProcess'
-	],
 	#category : #'ThreadedFFI-Callbacks'
 }
 
@@ -23,21 +20,21 @@ TFCallbackExecutor >> runner: aRunner [
 TFCallbackExecutor >> schedule: aCallbackInvocation [
 
 	| previous callbackContext |
-	ThisProcess ifNil: [ 
-		ThisProcess := [ 
+	process ifNil: [ 
+		process := [ 
 			[aCallbackInvocation execute] on: Error do: [ :e | 
 				Stdio stdout nextPutAll: 'Error! ', e signalerContext stack asString, ' from ', aCallbackInvocation callback frontendCallback asString; crlf.].
-			ThisProcess := nil. ] newProcess.
-		ThisProcess priority: 40.
-		^ ThisProcess resume
+			process := nil. ] newProcess.
+		process priority: 40.
+		^ process resume
 	].
 	
-	previous := ThisProcess suspendedContext.
+	previous := process suspendedContext.
 	callbackContext := [ 
 		[aCallbackInvocation execute] on: Error do: [ :e | 
 			Stdio stdout nextPutAll: 'Error! ', e signalerContext stack asString, ' from ', aCallbackInvocation callback frontendCallback asString; crlf.].
 		previous jump.
 	] asContext.
 	callbackContext privSender: previous.
-	ThisProcess suspendedContext: callbackContext.
+	process suspendedContext: callbackContext.
 ]
