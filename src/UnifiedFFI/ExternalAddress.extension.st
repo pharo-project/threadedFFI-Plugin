@@ -8,6 +8,12 @@ ExternalAddress >> adoptAddress: anExternalAddress [
 ]
 
 { #category : #'*UnifiedFFI' }
+ExternalAddress >> asExternalAddress [
+
+	^ self
+]
+
+{ #category : #'*UnifiedFFI' }
 ExternalAddress >> autoRelease [
 	^ self class finalizationRegistry add: self
 ]
