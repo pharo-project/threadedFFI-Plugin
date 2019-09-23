@@ -30,11 +30,10 @@ TFCalloutMethodBuilder >> generateFFICallout: builder spec: functionSpec [
 		addTemps: (self method argumentNames copyWith: #result).
 
 	"Builds a method call"
-	
 	"Obtain the library to use"
 	builder 
-		pushReceiver;
-		send: #ffiLibrary;
+		pushLiteral: self module;
+		send: #asFFILibrary;
 		send: #uniqueInstance.
 		
 	"Obtain the runner to use."

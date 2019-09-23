@@ -1,3 +1,8 @@
+"
+I am a callback defining a C->Pharo function mapping.
+That is, I represent a C function with a Pharo block closure.
+For this purpose I contain also type information for the arguments and return value.
+"
 Class {
 	#name : #TFCallback,
 	#superclass : #FFIExternalReference,
