@@ -112,6 +112,7 @@ set(PLUGIN_SOURCES
     plugin/src/types.c
     plugin/src/typesPrimitives.c
     plugin/src/utils.c
+    plugin/src/primitiveCalls.c
     
     plugin/src/callbacks/callbackPrimitives.c
     plugin/src/callbacks/callbacks.c
@@ -139,6 +140,8 @@ endif(WIN)
 add_dependencies(${PLUGIN_NAME} vmIncludes libFFI)
 
 link_directories(BEFORE "build/libffi/install/lib")
+
+target_compile_options(${PLUGIN_NAME} PUBLIC "-g")
 
 target_include_directories(${PLUGIN_NAME} PRIVATE "plugin/includes" )
 target_include_directories(${PLUGIN_NAME} PRIVATE "build/vmIncludes/include")
