@@ -33,16 +33,16 @@ TFExternalAsyncCall class >> forFunction: aTFExternalFunction [
 
 { #category : #'private - allocation' }
 TFExternalAsyncCall >> allocateParameters [
-	| paramArray pointerSize |
+	| paramArray |
 	
 	arguments ifEmpty: [ ^ nil ].
-	pointerSize := TFBasicType pointer byteSize.
-	paramArray := ByteArray new: (arguments size * pointerSize).
+	paramArray := Array new: arguments size.
 	
 	function definition parameterTypes withIndexDo: [ :type :idx | |holder|
-		holder := ExternalAddress allocate: type byteSize.
+		holder := ByteArray new: type byteSize.
+		holder pinInMemory.
 		type write: (arguments at: idx) into: holder.
-		paramArray pointerAt: 1 + ((idx-1)*pointerSize) put: holder.
+		paramArray at: idx put: holder.
 	].
 
 	^ paramArray.
@@ -50,13 +50,20 @@ TFExternalAsyncCall >> allocateParameters [
 
 { #category : #'private - allocation' }
 TFExternalAsyncCall >> allocateReturn [
-	
-	^ ByteArray new: function definition returnType byteSize.
+
+	^ (ByteArray new: function definition returnType byteSize)
+		pinInMemory;
+		yourself
 ]
 
 { #category : #operations }
 TFExternalAsyncCall >> cleanUp [
 	self deregisterSemaphore.
+	
+	self 
+		primitiveReleaseParameters: parameterAddress
+	 	releaseReturn: returnHolder.	
+	
 	^ self freeArguments: parameterArray
 ]
 
@@ -100,15 +107,11 @@ TFExternalAsyncCall >> executeOn: aRunner [
 
 { #category : #'private - allocation' }
 TFExternalAsyncCall >> freeArguments: argumentsArray [
-
-	| pointerSize |
 	
-	argumentsArray isNil ifTrue: [ ^ self ].
-	pointerSize := TFBasicType pointer byteSize.
+	argumentsArray ifNil: [ ^ self ].
 
 	function definition parameterTypes withIndexDo: [ :type :idx |
-		type freeValueIfNeeded: (argumentsArray pointerAt: 1 + ((idx-1)*pointerSize)).
-		(argumentsArray pointerAt: 1 + ((idx-1)*pointerSize)) free.
+		type freeValueIfNeeded: (argumentsArray at:idx).
 	].
 
 
@@ -145,16 +148,33 @@ TFExternalAsyncCall >> prepareExecution [
 	self validateArguments.
 	
 	returnHolder := self allocateReturn.
-	returnHolder pinInMemory.
-	returnAddress := PointerUtils oopForObject: returnHolder.
-	
+	returnAddress := ExternalAddress null.
 	parameterArray := self allocateParameters.
-	parameterArray pinInMemory.
-	parameterAddress := parameterArray
-		ifNil: [ ExternalAddress null ]
-		ifNotNil: [ PointerUtils oopForObject: parameterArray ].
-		
-	index := self registerSemaphore
+	parameterAddress := ExternalAddress null.
+
+	index := self registerSemaphore.
+
+	self
+		primitivePrepareParameters: parameterArray
+		into: parameterAddress
+		prepareReturn: returnHolder
+		into: returnAddress
+]
+
+{ #category : #'private - primitives' }
+TFExternalAsyncCall >> primitivePrepareParameters: aParameterArray into: aParameterAddress prepareReturn: aReturnHodler into: aReturnAddress [
+
+	<primitive: 'primitivePrepareParametersForCall' module: 'PThreadedPlugin'>
+
+	^ self primitiveFailed	
+]
+
+{ #category : #'private - primitives' }
+TFExternalAsyncCall >> primitiveReleaseParameters: aParameterArrayAddress releaseReturn: aReturnAddress [	
+
+	<primitive: 'primitiveReleaseParametersForCall' module: 'PThreadedPlugin'>
+
+	^ self primitiveFailed	
 ]
 
 { #category : #'private - marshalling' }
