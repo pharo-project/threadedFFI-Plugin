@@ -6,6 +6,6 @@ set(PHARO_PLUGIN_DIR "pharo-vm/lib/")
 
 set(TEST_LIBRARY_DLL libTestLibrary.so) 
 
-set(DYLIB_EXT "*.so.*")
+set(DYLIB_EXT "*.so*")
 
 set(LIBFFI_FILES "${CMAKE_SOURCE_DIR}/build/libffi/install/lib/${DYLIB_EXT}")

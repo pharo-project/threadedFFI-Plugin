@@ -100,8 +100,7 @@ TFExternalAsyncCall >> executeOn: aRunner [
 	 This method contains some boilerplate code to allocate and release external 
 	 value holders for the arguments and the return value."
 
-	self prepareExecution.
-	^ [ self doExecuteOn: aRunner ]
+	^ [self prepareExecution. self doExecuteOn: aRunner ]
 		ensure: [ self cleanUp ]
 ]
 
