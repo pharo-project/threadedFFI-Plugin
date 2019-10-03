@@ -47,7 +47,7 @@ TFUFFIMarshallingInCallbacksTest >> call: aName type: aType value: aValue [
 { #category : #tests }
 TFUFFIMarshallingInCallbacksTest >> call: aName value: aValue [
 
-	^ self call: aName type: { aName } value: aValue
+	^ self call: aName type: { aName asSymbol } value: aValue
 ]
 
 { #category : #'ffi-calls' }
