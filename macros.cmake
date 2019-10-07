@@ -22,7 +22,12 @@ endmacro()
 
 macro(get_version VARNAME)
     get_git_describe(TMP_GIT_DESCRIBE)
-    string(SUBSTRING ${TMP_GIT_DESCRIBE} 1 -1 ${VARNAME})
+    get_commit_hash(TMP_GIT_COMMIT)
+    
+    string(REGEX MATCH "v([0-9]+\.[0-9]+\.[0-9]+)" TMP_VERSION ${TMP_GIT_DESCRIBE})
+    
+    set(${VARNAME} "${CMAKE_MATCH_1}")
+    
 endmacro()
 
 macro(get_commit_hash VARNAME)
