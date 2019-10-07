@@ -131,7 +131,7 @@ set(PLUGIN_SOURCES
 )
 
 addLibraryWithRPATH(${PLUGIN_NAME} SHARED ${PLUGIN_SOURCES})
-target_link_libraries(${PLUGIN_NAME} PUBLIC "ffi")
+target_link_libraries(${PLUGIN_NAME} "ffi")
 
 if(WIN)
     target_link_libraries(${PLUGIN_NAME} "pthread") 
