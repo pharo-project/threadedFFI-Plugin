@@ -81,9 +81,9 @@ if(OSX)
     add_custom_command(
       OUTPUT  ${LIBFFI_OUTPUT}
       DEPENDS build_libFFI
+      COMMAND install_name_tool -id "@executable_path/Plugins/libffi.7.dylib" "${CMAKE_SOURCE_DIR}/build/libffi/install/lib/libffi.7.dylib"
+      COMMAND install_name_tool -id "@executable_path/Plugins/libffi.dylib" "${CMAKE_SOURCE_DIR}/build/libffi/install/lib/libffi.dylib"
       COMMAND cp "${CMAKE_SOURCE_DIR}/build/libffi/install/lib/${DYLIB_EXT}" "${CMAKE_SOURCE_DIR}/build/bin/"
-      COMMAND install_name_tool -id "@executable_path/Plugins/libffi.7.dylib" libffi.7.dylib
-      COMMAND install_name_tool -id "@executable_path/Plugins/libffi.dylib" libffi.dylib
       WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/bin"
       COMMENT "Changing RPath of Libffi")
 else()
@@ -131,7 +131,7 @@ set(PLUGIN_SOURCES
 )
 
 addLibraryWithRPATH(${PLUGIN_NAME} SHARED ${PLUGIN_SOURCES})
-target_link_libraries(${PLUGIN_NAME} "ffi")
+target_link_libraries(${PLUGIN_NAME} PUBLIC "ffi")
 
 if(WIN)
     target_link_libraries(${PLUGIN_NAME} "pthread") 
