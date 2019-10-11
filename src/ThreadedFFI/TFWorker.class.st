@@ -24,7 +24,7 @@ Class {
 { #category : #accessing }
 TFWorker class >> default [
 
-	^ Default ifNil: [ Default := self named: 'default' ]
+	^ default ifNil: [ default := self named: 'default' ]
 ]
 
 { #category : #private }
@@ -45,6 +45,12 @@ TFWorker class >> named: aName [
 		name: aName;
 		autoRelease;
 		yourself
+]
+
+{ #category : #accessing }
+TFWorker class >> uniqueInstance [
+
+	^ self default
 ]
 
 { #category : #accessing }

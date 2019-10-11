@@ -49,6 +49,9 @@ TFCallbackInvocation >> execute [
 	
 	returnValue := callback frontendCallback valueWithArguments: self arguments.
 	
+	self isNull 
+		ifTrue: [ ^ self  ].
+	
 	callback returnType isVoid 
 		ifFalse: [ self writeReturnValue: returnValue ].
 

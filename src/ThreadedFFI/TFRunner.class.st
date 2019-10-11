@@ -4,10 +4,20 @@ Class {
 	#instVars : [
 		'callbackInvocationStack',
 		'stackProtect',
-		'exceptionHandler'
+		'exceptionHandler',
+		'returnSemaphore'
+	],
+	#classInstVars : [
+		'default'
 	],
 	#category : #'ThreadedFFI-Worker'
 }
+
+{ #category : #accessing }
+TFRunner class >> uniqueInstance [
+
+	^ default ifNil: [ default := self new ]
+]
 
 { #category : #errors }
 TFRunner >> cannotReturnCallbackFromOldSession: aCallbackInvocation [
@@ -31,6 +41,7 @@ TFRunner >> doInitialize [
 
 	callbackInvocationStack := Stack new.
 	stackProtect := Semaphore forMutualExclusion.
+	returnSemaphore := Semaphore new.
 ]
 
 { #category : #executing }
@@ -118,12 +129,21 @@ TFRunner >> returnCallback: aCallbackInvocation [
 	If so, it can return safely.
 	Otherwise, throw an exception as returning means a bug in your application.
 	The user must guarantee callbacks return in the correct order"
+
+	(callbackInvocationStack top == aCallbackInvocation)
+		ifFalse: [ "^ self cannotReturnCallbackInWrongOrder: aCallbackInvocation"
+			Stdio stdout << 'Return desordenado'; crlf; flush.
+			returnSemaphore wait.
+			^ self returnCallback: aCallbackInvocation ].
 	
 	stackProtect critical: [
 		callbackInvocationStack ifNil: [ 
 			^ self cannotReturnCallbackFromOldSession: aCallbackInvocation ].
-		(callbackInvocationStack top == aCallbackInvocation)
-			ifFalse: [ ^ self cannotReturnCallbackInWrongOrder: aCallbackInvocation ].
+
 		aCallbackInvocation returnExecution.
-		callbackInvocationStack pop ]
+		callbackInvocationStack pop.
+		
+		[returnSemaphore isNotEmpty] whileTrue: [
+			Stdio stdout << 'Signal'; crlf; flush.		
+			returnSemaphore signal] ]
 ]
