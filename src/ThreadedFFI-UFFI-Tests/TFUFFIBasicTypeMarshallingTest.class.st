@@ -25,7 +25,7 @@ TFUFFIBasicTypeMarshallingTest >> externalFunction: name ofType: type [
 
 	^ TFExternalFunction
 		name: name
-		moduleName: self ffiLibrary moduleName
+		moduleName: self ffiLibrary libraryName
 		definition: (TFFunctionDefinition
 			parameterTypes: {type. type}
 			returnType: type).
