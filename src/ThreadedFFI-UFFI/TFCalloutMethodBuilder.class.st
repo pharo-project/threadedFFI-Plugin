@@ -10,7 +10,7 @@ TFCalloutMethodBuilder >> createFFICalloutLiteralFromSpec: functionSpec [
 	
 	function := TFExternalFunction
 		name: functionSpec functionName
-		moduleName: self moduleName
+		moduleName: self libraryName
 		parameterTypes: (functionSpec arguments collect: #tfExternalTypeWithArity)
 		returnType: functionSpec returnType tfExternalTypeWithArity.
 				
