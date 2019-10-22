@@ -38,7 +38,8 @@ TFCalloutAPI class >> newCallbackBackendFor: aCallback [
 
 { #category : #tracing }
 TFCalloutAPI class >> resetTrace [
-
+	<script>
+	
 	TraceBlock := nil.
 	FFIMethodRegistry resetAll
 ]
