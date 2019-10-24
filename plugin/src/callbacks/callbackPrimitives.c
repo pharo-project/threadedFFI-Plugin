@@ -130,6 +130,13 @@ PrimitiveWithDepth(primitiveRegisterCallback, 3){
     writeAddress(callbackHandle, callback);
     checkFailed();
 
+    printf("primitiveRegisterCallback:\n");
+    printf("- handle: 0x%lx\n", callbackHandle);
+    printf("- paramArray: 0x%lx\n", paramArray);
+    printf("- runnerInstance: 0x%lx\n", runnerInstance);
+    printf("- callback: %p\n", callback);
+    fflush(stdout);
+
     primitiveEnd();
 }
 
@@ -139,6 +146,7 @@ PrimitiveWithDepth(primitiveRegisterCallback, 3){
  */
 PrimitiveWithDepth(primitiveCallbackReturn, 2) {
     CallbackInvocation *callbackInvocation;
+    Callback *callback;
     sqInt receiver, callbackInstance, runnerInstance;
     Runner *runner;
 
@@ -167,6 +175,11 @@ PrimitiveWithDepth(primitiveCallbackReturn, 2) {
         interpreterProxy->primitiveFail();
         return;
     }
+
+    printf("primitiveCallbackReturn:\n");
+    callback = callbackInvocation->callback;
+    printf("- callback: %p\n", callback);
+    fflush(stdout);
 
     // If the returning callback is not the last callback that entered, we cannot return
     // Otherwise this would produce a stack corruption (returning to an older callback erasing/overriding the stack of newer ones)

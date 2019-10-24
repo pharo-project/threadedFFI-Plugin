@@ -23,3 +23,16 @@ int reentringCallback(SIMPLE_CALLBACK fun, int base){
 
 	return fun(base);
 }
+
+int doubleCallToCallbacks(SIMPLE_CALLBACK fun1, SIMPLE_CALLBACK fun2, int base) {
+	int result;
+
+	printf("Entered doubleCalltoCallbacks\n");
+	fflush(stdout);
+
+	result = fun1(base);
+	result = fun2(result);
+	return result;
+}
+
+
