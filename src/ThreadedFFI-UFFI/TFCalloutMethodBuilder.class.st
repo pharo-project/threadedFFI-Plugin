@@ -10,7 +10,7 @@ TFCalloutMethodBuilder >> createFFICalloutLiteralFromSpec: functionSpec [
 	
 	function := TFExternalFunction
 		name: functionSpec functionName
-		moduleName: self moduleName
+		moduleName: self libraryName
 		parameterTypes: (functionSpec arguments collect: #tfExternalTypeWithArity)
 		returnType: functionSpec returnType tfExternalTypeWithArity.
 				
@@ -20,17 +20,24 @@ TFCalloutMethodBuilder >> createFFICalloutLiteralFromSpec: functionSpec [
 { #category : #private }
 TFCalloutMethodBuilder >> generateFFICallout: builder spec: functionSpec [
 	| properties |
+
 	"Copy the properties of the old method"
-	sender methodProperties
-		ifNotNil: [ properties := sender methodProperties copy.
-			properties method: nil.
-			builder properties: properties ].
+	sender methodProperties ifNotNil: [ 
+		properties := sender methodProperties copy.
+		properties method: nil.
+		builder properties: properties ].
+	
 	builder
 		numArgs: self method argumentNames size;
 		addTemps: (self method argumentNames copyWith: #result).
 
-	"Builds a method call"
-	
+	TFCalloutAPI isTracing ifTrue: [ 
+		TFCalloutAPI trace: sender. 
+		builder 
+			pushLiteral: TFCalloutAPI;
+			pushLiteral: sender;
+			send: #trace: ].
+
 	"Obtain the library to use"
 	builder 
 		pushReceiver;
