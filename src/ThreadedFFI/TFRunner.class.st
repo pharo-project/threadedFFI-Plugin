@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'callbackInvocationStack',
 		'stackProtect',
-		'exceptionHandler'
+		'exceptionHandler',
+		'callbackReturnSemaphore'
 	],
 	#category : #'ThreadedFFI-Worker'
 }
@@ -112,7 +113,7 @@ TFRunner >> release [
 ]
 
 { #category : #executing }
-TFRunner >> returnCallback: aCallbackInvocation [
+TFRunner >> returnCallback2: aCallbackInvocation [
 	"Entry point to return a callback invocation.
 	Check the callbackInvocation stack to see if the given invocation is the last one.
 	If so, it can return safely.
@@ -126,4 +127,33 @@ TFRunner >> returnCallback: aCallbackInvocation [
 			ifFalse: [ ^ self cannotReturnCallbackInWrongOrder: aCallbackInvocation ].
 		aCallbackInvocation returnExecution.
 		callbackInvocationStack pop ]
+]
+
+{ #category : #executing }
+TFRunner >> returnCallback: aCallbackInvocation [
+	"Entry point to return a callback invocation.
+	Check the callbackInvocation stack to see if the given invocation is the last one.
+	If so, it can return safely.
+	Otherwise, throw an exception as returning means a bug in your application.
+	The user must guarantee callbacks return in the correct order"
+	
+	callbackReturnSemaphore ifNil: [ 
+		callbackReturnSemaphore := Semaphore new ].
+
+	stackProtect critical: [
+		callbackInvocationStack ifNil: [ 
+			^ self cannotReturnCallbackFromOldSession: aCallbackInvocation ].
+		(callbackInvocationStack top == aCallbackInvocation) 
+			ifTrue: [ 
+				aCallbackInvocation returnExecution.
+				callbackInvocationStack pop.
+				[
+					[ callbackReturnSemaphore isEmpty ] 
+					whileFalse: [ callbackReturnSemaphore signal ]
+				] valueUnpreemptively.
+				^ self ] ].
+		
+	"failed"
+	callbackReturnSemaphore wait.
+	self returnCallback: aCallbackInvocation
 ]

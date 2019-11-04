@@ -4,8 +4,17 @@ Class {
 	#classVars : [
 		'MainThreadHandle'
 	],
+	#classInstVars : [
+		'uniqueInstance'
+	],
 	#category : #'ThreadedFFI-Worker'
 }
+
+{ #category : #accessing }
+TFMainThreadRunner class >> uniqueInstance [
+
+	^ uniqueInstance ifNil: [ uniqueInstance := self basicNew initialize ]
+]
 
 { #category : #private }
 TFMainThreadRunner >> doInitialize [
