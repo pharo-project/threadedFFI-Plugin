@@ -9,6 +9,24 @@ Class {
 	#category : #'ThreadedFFI-Base'
 }
 
+{ #category : #'class initialization' }
+TFPooledExternalAsyncCall class >> initialize [
+
+	SessionManager default
+		registerSystemClassNamed: self name
+		atPriority: 70.	
+		
+	self startUp: true
+]
+
+{ #category : #'system startup' }
+TFPooledExternalAsyncCall class >> shutDown: quitting [ 
+
+	quitting ifFalse: [ ^ self ].
+	"cleaning the callout execution before leaving"
+	TFPooledExternalAsyncCall allInstancesDo: #reset
+]
+
 { #category : #'private - semaphore' }
 TFPooledExternalAsyncCall >> deregisterSemaphore [
 ]
@@ -40,6 +58,12 @@ TFPooledExternalAsyncCall >> initialize [
 
 { #category : #'private - semaphore' }
 TFPooledExternalAsyncCall >> registerSemaphore [
+]
+
+{ #category : #accessing }
+TFPooledExternalAsyncCall >> reset [
+
+	self semaphore signal
 ]
 
 { #category : #accessing }

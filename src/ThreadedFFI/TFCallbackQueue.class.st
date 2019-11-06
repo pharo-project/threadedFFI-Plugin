@@ -30,18 +30,16 @@ TFCallbackQueue class >> initialize [
 { #category : #'instance creation' }
 TFCallbackQueue class >> shutDown: inANewImageSession [
 
-	inANewImageSession ifTrue:[
-		self uniqueInstance shutDown.
-		UniqueInstance := nil.
-	]
+	inANewImageSession ifFalse: [ ^ self ].
+	self uniqueInstance shutDown.
+	UniqueInstance := nil
 ]
 
 { #category : #'instance creation' }
 TFCallbackQueue class >> startUp: inANewImageSession [
 
-	inANewImageSession ifTrue:[
-		self uniqueInstance startUp.	
-	]
+	inANewImageSession ifFalse: [ ^ self ].
+	self uniqueInstance startUp
 ]
 
 { #category : #'instance creation' }
