@@ -23,11 +23,16 @@ TFPool class >> newProvider: aBlock size: aNumber [
 	yourself
 ]
 
+{ #category : #accessing }
+TFPool >> elements [
+
+	^ elements copy
+]
+
 { #category : #private }
 TFPool >> growBy: aNumber [
 
-	elements := elements, (Array new: aNumber).
-	self populate: aNumber
+	elements := elements, (self populate: (Array new: aNumber)).
 ]
 
 { #category : #accessing }
@@ -48,10 +53,9 @@ TFPool >> initializeProvider: aBlock size: aNumber [
 
 	self initialize.
 	provider := aBlock.
-	elements := Array new: aNumber.
 	initialSize := aNumber.
 	pointer := 1.
-	self populate: initialSize
+	elements := self populate: (Array new: initialSize)
 ]
 
 { #category : #testing }
@@ -67,10 +71,12 @@ TFPool >> isOverflown [
 ]
 
 { #category : #private }
-TFPool >> populate: aNumber [
+TFPool >> populate: anArray [
 
-	pointer to: (pointer + aNumber - 1) do: [ :index |
-		elements at: index put: provider value ]
+	1 to: anArray size do: [ :index |
+		anArray at: index put: provider value ].
+	
+	^ anArray
 ]
 
 { #category : #accessing }
