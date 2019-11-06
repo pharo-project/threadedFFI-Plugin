@@ -102,10 +102,14 @@ TFPool >> takeOne [
 	| element |
 
 	^ mutex critical: [ 
+		| index |
+		
 		self isOverflown
 			ifTrue: [ self growBy: self growRate ].
-		element := elements at: pointer.
-		elements at: pointer put: nil.
+		
+		index := pointer.
 		pointer := pointer + 1.
+		element := elements at: index.
+		elements at: index put: nil.
 		element ]
 ]
