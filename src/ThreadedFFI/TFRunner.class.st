@@ -33,9 +33,7 @@ TFRunner >> doInitialize [
 
 	callbackInvocationStack := Stack new.
 	stackProtect := Semaphore forMutualExclusion.
-	semaphorePool :=  TFPool 
-		newProvider: [ TFExternalSemaphore new ] 
-		size: self semaphorePoolSize
+	semaphorePool :=  nil
 ]
 
 { #category : #executing }
@@ -172,7 +170,10 @@ TFRunner >> returnCallback: aCallbackInvocation [
 { #category : #private }
 TFRunner >> semaphorePool [
 	
-	^ semaphorePool
+	^ semaphorePool ifNil: [ 
+		semaphorePool := TFPool
+			newProvider: [ TFExternalSemaphore new ] 
+			size: self semaphorePoolSize ]
 ]
 
 { #category : #private }
