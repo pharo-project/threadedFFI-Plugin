@@ -86,7 +86,9 @@ TFPool >> returnOne: anObject [
 		| index |
 		index := pointer - 1. 
 		index > 0 ifFalse: [ 
-			^ self error: 'Returning an object but pool is full' ]. 
+			"This can happen if a new session starts in middle of a call."
+			'Returning an object but pool is full' crTrace. 
+			^ self  ]. 
 		elements at: index put: anObject.
 		pointer := index ]
 ]
