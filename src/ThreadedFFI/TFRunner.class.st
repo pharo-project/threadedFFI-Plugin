@@ -33,7 +33,7 @@ TFRunner >> doInitialize [
 
 	callbackInvocationStack := Stack new.
 	stackProtect := Semaphore forMutualExclusion.
-	semaphorePool :=  nil
+	semaphorePool := self newSemaphorePool
 ]
 
 { #category : #executing }
@@ -103,6 +103,14 @@ TFRunner >> invokeFunction: aTFExternalFunction withArguments: aCollection [
 ]
 
 { #category : #private }
+TFRunner >> newSemaphorePool [
+
+	^ TFPool
+		newProvider: [ TFExternalSemaphore new ] 
+		size: self semaphorePoolSize
+]
+
+{ #category : #private }
 TFRunner >> primitivePerformWorkerCall: aTFExternalFunction
 		withArguments: argumentHolder
 		withReturnHolder: aReturnHolder
@@ -167,17 +175,14 @@ TFRunner >> returnCallback: aCallbackInvocation [
 	self returnCallback: aCallbackInvocation
 ]
 
-{ #category : #private }
+{ #category : #accessing }
 TFRunner >> semaphorePool [
 	
 	self ensureInitialized.
-	^ semaphorePool ifNil: [ 
-		semaphorePool := TFPool
-			newProvider: [ TFExternalSemaphore new ] 
-			size: self semaphorePoolSize ]
+	^ semaphorePool
 ]
 
-{ #category : #private }
+{ #category : #accessing }
 TFRunner >> semaphorePoolSize [
 
 	^ 10
