@@ -185,5 +185,5 @@ TFRunner >> semaphorePool [
 { #category : #accessing }
 TFRunner >> semaphorePoolSize [
 
-	^ 10
+	^ 5
 ]

@@ -79,6 +79,13 @@ TFPool >> populate: anArray [
 	^ anArray
 ]
 
+{ #category : #printing }
+TFPool >> printOn: stream [
+
+	super printOn: stream.
+	stream << '(' << self size printString << ' elements)'
+]
+
 { #category : #accessing }
 TFPool >> returnOne: anObject [
 
