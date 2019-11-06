@@ -159,10 +159,7 @@ TFRunner >> returnCallback: aCallbackInvocation [
 				 the stack is empty."
 				callbackInvocationStack ifEmpty: [ ^ self ].
 				callbackInvocationStack pop.
-				[
-					[ callbackReturnSemaphore isEmpty ] 
-					whileFalse: [ callbackReturnSemaphore signal ]
-				] valueUnpreemptively.
+				[ callbackReturnSemaphore signalAll ] valueUnpreemptively.
 				^ self ] ].
 		
 	"failed"
@@ -173,6 +170,7 @@ TFRunner >> returnCallback: aCallbackInvocation [
 { #category : #private }
 TFRunner >> semaphorePool [
 	
+	self ensureInitialized.
 	^ semaphorePool ifNil: [ 
 		semaphorePool := TFPool
 			newProvider: [ TFExternalSemaphore new ] 
