@@ -45,7 +45,7 @@ TFCallbackInvocation >> callbackData [
 
 { #category : #operations }
 TFCallbackInvocation >> execute [ 
-	|  returnValue |
+	| returnValue |
 	
 	returnValue := callback frontendCallback valueWithArguments: self arguments.
 	

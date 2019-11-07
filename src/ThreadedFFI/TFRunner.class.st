@@ -5,7 +5,8 @@ Class {
 		'callbackInvocationStack',
 		'stackProtect',
 		'exceptionHandler',
-		'callbackReturnSemaphore'
+		'callbackReturnSemaphore',
+		'semaphorePool'
 	],
 	#category : #'ThreadedFFI-Worker'
 }
@@ -32,6 +33,7 @@ TFRunner >> doInitialize [
 
 	callbackInvocationStack := Stack new.
 	stackProtect := Semaphore forMutualExclusion.
+	semaphorePool := self newSemaphorePool
 ]
 
 { #category : #executing }
@@ -77,9 +79,7 @@ TFRunner >> executeFunction: aTFExternalFunction withArguments: argumentHolder w
 		primitivePerformWorkerCall: aTFExternalFunction
 		withArguments: argumentHolder
 		withReturnHolder: aReturnHolder
-		usingSemaphore: anInteger.
-		
-
+		usingSemaphore: anInteger
 ]
 
 { #category : #errors }
@@ -100,6 +100,23 @@ TFRunner >> invokeFunction: aTFExternalFunction withArguments: aCollection [
 	^ aTFExternalFunction newCall
 		parameters: aCollection;
 		executeOn: self
+]
+
+{ #category : #private }
+TFRunner >> newSemaphorePool [
+
+	^ TFPool
+		newProvider: [ TFExternalSemaphore new ] 
+		size: self semaphorePoolSize
+]
+
+{ #category : #private }
+TFRunner >> primitivePerformWorkerCall: aTFExternalFunction
+		withArguments: argumentHolder
+		withReturnHolder: aReturnHolder
+		usingSemaphore: anInteger [
+		
+	^ self subclassResponsibility
 ]
 
 { #category : #executing }
@@ -146,14 +163,27 @@ TFRunner >> returnCallback: aCallbackInvocation [
 		(callbackInvocationStack top == aCallbackInvocation) 
 			ifTrue: [ 
 				aCallbackInvocation returnExecution.
+				"If we are starting a session and an execution was executed, it may happen that 
+				 the stack is empty."
+				callbackInvocationStack ifEmpty: [ ^ self ].
 				callbackInvocationStack pop.
-				[
-					[ callbackReturnSemaphore isEmpty ] 
-					whileFalse: [ callbackReturnSemaphore signal ]
-				] valueUnpreemptively.
+				[ callbackReturnSemaphore signalAll ] valueUnpreemptively.
 				^ self ] ].
 		
 	"failed"
 	callbackReturnSemaphore wait.
 	self returnCallback: aCallbackInvocation
+]
+
+{ #category : #accessing }
+TFRunner >> semaphorePool [
+	
+	self ensureInitialized.
+	^ semaphorePool
+]
+
+{ #category : #accessing }
+TFRunner >> semaphorePoolSize [
+
+	^ 5
 ]

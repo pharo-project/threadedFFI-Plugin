@@ -70,7 +70,7 @@ TFExternalAsyncCall >> cleanUp [
 { #category : #'private - semaphore' }
 TFExternalAsyncCall >> deregisterSemaphore [
 	
-	Smalltalk unregisterExternalObject: semaphore
+	Smalltalk unregisterExternalObject: self semaphore
 ]
 
 { #category : #operations }
@@ -80,12 +80,13 @@ TFExternalAsyncCall >> doExecuteOn: aRunner [
 		executeFunction: function
 		withArguments: parameterAddress
 		withReturnHolder: returnAddress
-		usingSemaphore: index.
+		usingSemaphore: self semaphoreIndex.
 	
 	"I check if the semaphore is already signaled, because doing it in this way 
 	is thousands of times faster than just executing the wait. 
 	I think is a bug in the VM"
-	semaphore isSignaled ifFalse: [ semaphore wait ].
+	self semaphore isSignaled 
+		ifFalse: [ self semaphore wait ].
 	
 	^ self readReturnValue: returnHolder
 ]
@@ -100,8 +101,11 @@ TFExternalAsyncCall >> executeOn: aRunner [
 	 This method contains some boilerplate code to allocate and release external 
 	 value holders for the arguments and the return value."
 
-	^ [self prepareExecution. self doExecuteOn: aRunner ]
-		ensure: [ self cleanUp ]
+	^ [
+			self prepareExecution.
+			self doExecuteOn: aRunner ]
+		ensure: [
+			self cleanUp ]
 ]
 
 { #category : #'private - allocation' }
@@ -151,7 +155,7 @@ TFExternalAsyncCall >> prepareExecution [
 	parameterArray := self allocateParameters.
 	parameterAddress := ExternalAddress null.
 
-	index := self registerSemaphore.
+	self registerSemaphore.
 
 	self
 		primitivePrepareParameters: parameterArray
@@ -186,12 +190,18 @@ TFExternalAsyncCall >> readReturnValue: aValueHolder [
 { #category : #'private - semaphore' }
 TFExternalAsyncCall >> registerSemaphore [
 	
-	^ Smalltalk registerExternalObject: semaphore
+	index := Smalltalk registerExternalObject: self semaphore
 ]
 
 { #category : #accessing }
 TFExternalAsyncCall >> semaphore [
+
 	^ semaphore
+]
+
+{ #category : #accessing }
+TFExternalAsyncCall >> semaphoreIndex [
+	^ index
 ]
 
 { #category : #'private - validation' }
