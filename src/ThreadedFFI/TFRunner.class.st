@@ -161,15 +161,15 @@ TFRunner >> returnCallback: aCallbackInvocation [
 		callbackInvocationStack ifNil: [ 
 			^ self cannotReturnCallbackFromOldSession: aCallbackInvocation ].
 		(callbackInvocationStack top == aCallbackInvocation) 
-			ifTrue: [ 
+			ifTrue: [
 				aCallbackInvocation returnExecution.
-				"If we are starting a session and an execution was executed, it may happen that 
-				 the stack is empty."
+				"If we are starting a session and an execution was executed, it 
+				 may happen that the stack is empty."
 				callbackInvocationStack ifEmpty: [ ^ self ].
 				callbackInvocationStack pop.
 				[ callbackReturnSemaphore signalAll ] valueUnpreemptively.
 				^ self ] ].
-		
+
 	"failed"
 	callbackReturnSemaphore wait.
 	self returnCallback: aCallbackInvocation
