@@ -22,7 +22,7 @@ getModuleName(void) {
 sqInt
 initialiseModule(void) {
     mainThreadWorker = worker_newSpawning(false);
-    interpreterProxy->scheduleInMainThread = runInMainThread;
+    interpreterProxy->scheduleInMainThread(runInMainThread);
     return 1;
 }
 
