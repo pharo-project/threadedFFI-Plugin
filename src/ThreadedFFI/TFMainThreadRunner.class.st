@@ -2,10 +2,8 @@ Class {
 	#name : #TFMainThreadRunner,
 	#superclass : #TFRunner,
 	#classVars : [
-		'MainThreadHandle'
-	],
-	#classInstVars : [
-		'uniqueInstance'
+		'MainThreadHandle',
+		'UniqueInstance'
 	],
 	#category : #'ThreadedFFI-Worker'
 }

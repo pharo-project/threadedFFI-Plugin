@@ -4,9 +4,7 @@ Class {
 	#instVars : [
 		'callbackInvocationStack',
 		'stackProtect',
-		'exceptionHandler',
-		'callbackReturnSemaphore',
-		'semaphorePool'
+		'exceptionHandler'
 	],
 	#category : #'ThreadedFFI-Worker'
 }
