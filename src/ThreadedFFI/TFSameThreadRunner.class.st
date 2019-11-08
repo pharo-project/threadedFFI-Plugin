@@ -1,8 +1,17 @@
 Class {
 	#name : #TFSameThreadRunner,
 	#superclass : #TFRunner,
+	#classInstVars : [
+		'uniqueInstance'
+	],
 	#category : #'ThreadedFFI-Worker'
 }
+
+{ #category : #accessing }
+TFSameThreadRunner class >> uniqueInstance [
+
+	^ uniqueInstance ifNil: [ uniqueInstance := self basicNew initialize ]
+]
 
 { #category : #executing }
 TFSameThreadRunner >> doInitialize [
