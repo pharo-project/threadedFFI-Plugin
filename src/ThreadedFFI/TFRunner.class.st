@@ -5,19 +5,11 @@ Class {
 		'callbackInvocationStack',
 		'stackProtect',
 		'exceptionHandler',
-		'returnSemaphore'
-	],
-	#classInstVars : [
-		'default'
+		'semaphorePool',
+		'callbackReturnSemaphore'
 	],
 	#category : #'ThreadedFFI-Worker'
 }
-
-{ #category : #accessing }
-TFRunner class >> uniqueInstance [
-
-	^ default ifNil: [ default := self new ]
-]
 
 { #category : #errors }
 TFRunner >> cannotReturnCallbackFromOldSession: aCallbackInvocation [
@@ -41,7 +33,7 @@ TFRunner >> doInitialize [
 
 	callbackInvocationStack := Stack new.
 	stackProtect := Semaphore forMutualExclusion.
-	returnSemaphore := Semaphore new.
+	semaphorePool := self newSemaphorePool
 ]
 
 { #category : #executing }
@@ -87,9 +79,7 @@ TFRunner >> executeFunction: aTFExternalFunction withArguments: argumentHolder w
 		primitivePerformWorkerCall: aTFExternalFunction
 		withArguments: argumentHolder
 		withReturnHolder: aReturnHolder
-		usingSemaphore: anInteger.
-		
-
+		usingSemaphore: anInteger
 ]
 
 { #category : #errors }
@@ -112,6 +102,23 @@ TFRunner >> invokeFunction: aTFExternalFunction withArguments: aCollection [
 		executeOn: self
 ]
 
+{ #category : #private }
+TFRunner >> newSemaphorePool [
+
+	^ TFPool
+		newProvider: [ TFExternalSemaphore new ] 
+		size: self semaphorePoolSize
+]
+
+{ #category : #private }
+TFRunner >> primitivePerformWorkerCall: aTFExternalFunction
+		withArguments: argumentHolder
+		withReturnHolder: aReturnHolder
+		usingSemaphore: anInteger [
+		
+	^ self subclassResponsibility
+]
+
 { #category : #executing }
 TFRunner >> release [ 
 	
@@ -130,20 +137,36 @@ TFRunner >> returnCallback: aCallbackInvocation [
 	Otherwise, throw an exception as returning means a bug in your application.
 	The user must guarantee callbacks return in the correct order"
 
-	(callbackInvocationStack top == aCallbackInvocation)
-		ifFalse: [ "^ self cannotReturnCallbackInWrongOrder: aCallbackInvocation"
-			Stdio stdout << 'Return desordenado'; crlf; flush.
-			returnSemaphore wait.
-			^ self returnCallback: aCallbackInvocation ].
-	
+	callbackReturnSemaphore ifNil: [ 
+		callbackReturnSemaphore := Semaphore new ].
+
 	stackProtect critical: [
 		callbackInvocationStack ifNil: [ 
 			^ self cannotReturnCallbackFromOldSession: aCallbackInvocation ].
+		(callbackInvocationStack top == aCallbackInvocation) 
+			ifTrue: [
+				aCallbackInvocation returnExecution.
+				"If we are starting a session and an execution was executed, it 
+				 may happen that the stack is empty."
+				callbackInvocationStack ifEmpty: [ ^ self ].
+				callbackInvocationStack pop.
+				[ callbackReturnSemaphore signalAll ] valueUnpreemptively.
+				^ self ] ].
 
-		aCallbackInvocation returnExecution.
-		callbackInvocationStack pop.
-		
-		[returnSemaphore isNotEmpty] whileTrue: [
-			Stdio stdout << 'Signal'; crlf; flush.		
-			returnSemaphore signal] ]
+	"failed"
+	callbackReturnSemaphore wait.
+	self returnCallback: aCallbackInvocation
+]
+
+{ #category : #accessing }
+TFRunner >> semaphorePool [
+	
+	self ensureInitialized.
+	^ semaphorePool
+]
+
+{ #category : #accessing }
+TFRunner >> semaphorePoolSize [
+
+	^ 5
 ]

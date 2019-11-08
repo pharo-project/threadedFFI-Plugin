@@ -122,7 +122,7 @@ TFExternalFunction >> moduleName: anObject [
 { #category : #operations }
 TFExternalFunction >> newCall [
 
-	^ TFExternalAsyncCall forFunction: self
+	^ TFPooledExternalAsyncCall forFunction: self
 ]
 
 { #category : #operations }
