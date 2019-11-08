@@ -1,20 +1,33 @@
 #include "PThreadedPlugin.h"
+#include "worker.h"
 
 /*** Variables ***/
 
 struct VirtualMachine* interpreterProxy;
 static const char *moduleName = "PThreadedPlugin * ThreadedFFI-Plugin-PGE.1 (:P)";
 
-const char * getModuleName(void){
-	return moduleName;
-}
+Worker *mainThreadWorker = NULL;
 
-sqInt initialiseModule(void){
+sqInt
+runInMainThread() {
+    worker_run(mainThreadWorker);
     return 1;
 }
 
-sqInt setInterpreter(struct VirtualMachine* anInterpreter)
-{
+const char *
+getModuleName(void) {
+	return moduleName;
+}
+
+sqInt
+initialiseModule(void) {
+    mainThreadWorker = worker_newSpawning(false);
+    interpreterProxy->scheduleInMainThread = runInMainThread;
+    return 1;
+}
+
+sqInt
+setInterpreter(struct VirtualMachine* anInterpreter) {
     sqInt ok;
 
 	interpreterProxy = anInterpreter;
