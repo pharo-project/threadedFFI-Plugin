@@ -60,9 +60,9 @@ TFCallbackInvocation >> execute [
 
 { #category : #private }
 TFCallbackInvocation >> primCallbackReturn [
-	<primitive: 'primitiveCallbackReturn' module: 'PThreadedPlugin'>
+	<primitive: 'primitiveCallbackReturn' module: 'PThreadedPlugin' error: ec>
 
-	^ self primitiveFailed
+	^ self primitiveFailed: ec
 ]
 
 { #category : #operations }
