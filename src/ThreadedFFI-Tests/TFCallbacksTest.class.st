@@ -40,6 +40,9 @@ TFCallbacksTest >> testCallbackFromOldSessionFailsReturn [
 	This test validates a surviving callback throws a meaningful exception when trying to return in this case."
 	
 	| smain s1 c1 |
+
+	true ifTrue: [ ^self skip ].
+
 	smain := Semaphore new.
 
 	s1 := Semaphore new.
@@ -65,6 +68,9 @@ TFCallbacksTest >> testCallbackFromOldSessionFailsReturn [
 TFCallbacksTest >> testCallbackNotRespectingLIFOOrderFailsReturn [
 
 	| smain s1 c1 s2 c2 |
+
+	true ifTrue: [ ^self skip ].
+
 	smain := Semaphore new.
 
 	s1 := Semaphore new.
