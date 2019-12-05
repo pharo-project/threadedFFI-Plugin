@@ -130,13 +130,6 @@ PrimitiveWithDepth(primitiveRegisterCallback, 3){
     writeAddress(callbackHandle, callback);
     checkFailed();
 
-    // printf("primitiveRegisterCallback:\n");
-    // printf("- handle: 0x%lx\n", callbackHandle);
-    // printf("- paramArray: 0x%lx\n", paramArray);
-    // printf("- runnerInstance: 0x%lx\n", runnerInstance);
-    // printf("- callback: %p\n", callback);
-    // fflush(stdout);
-
     primitiveEnd();
 }
 
@@ -171,8 +164,6 @@ PrimitiveWithDepth(primitiveCallbackReturn, 2) {
     checkFailed();
     
     if(!runner){
-        // fprintf(stderr, "No runner\n");
-        // fflush(stderr);
         interpreterProxy->primitiveFail();
         return;
     }
@@ -181,44 +172,25 @@ PrimitiveWithDepth(primitiveCallbackReturn, 2) {
     checkFailed();
     
     if(!callbackInvocation){
-        // fprintf(stderr, "No callbackInvocation\n");
-        // fflush(stderr);
         interpreterProxy->primitiveFail();
         return;
     }
 
     callback = callbackInvocation->callback;
-    // printf("primitiveCallbackReturn:\n");
-	// printf("- callbackInvocation: %p\n", callbackInvocation);
-    // printf("- callback: %p\n", callback);
-	// printf("- runner->callbackStack1: %p\n", runner->callbackStack);
-    // fflush(stdout);
 
     // If the returning callback is not the last callback that entered, we cannot return
     // Otherwise this would produce a stack corruption (returning to an older callback erasing/overriding the stack of newer ones)
     if (callbackInvocation != runner->callbackStack){
-        // fprintf(stderr, "callbackInvocation != runner->callbackStack(%p)\n",
-			// runner->callbackStack);
-        // fflush(stderr);
-		if (runner->callbackStack == NULL) {
-			// printf("- callbackStack isNull\n");
-        	interpreterProxy->primitiveFailForOSError(-1); }
-		else {
-			// printf("- callbackStack isNotNull\n");
-        	interpreterProxy->primitiveFailForOSError(-2); }
-		// fflush(stdout);
+		if (runner->callbackStack == NULL)
+        	interpreterProxy->primitiveFailForOSError(-1);
+		else
+        	interpreterProxy->primitiveFailForOSError(-2);
         return;
     }
     
     // If the callback was the last one, we need to pop it from the callback stack
     runner->callbackStack = runner->callbackStack->previous;
-	// printf("- runner->callbackStack2: %p\n", runner->callbackStack);
-	// fflush(stdout);
-
     runner->callbackExitFunction(runner, callbackInvocation);
-
-	// printf("primitiveCallbackReturn: done\n");
-	// fflush(stdout);
 
     primitiveEnd();
 }
