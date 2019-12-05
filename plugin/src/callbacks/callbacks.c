@@ -24,13 +24,19 @@ static void callbackFrontend(ffi_cif *cif, void *ret, void* args[], void* cbPtr)
     invocation.previous = callback->runner->callbackStack;
     callback->runner->callbackStack = &invocation;
     
-    printf("callbackFrontend: %p\n", callback);
-    fflush(stdout);
+    // printf("callbackFrontend: %p\n", callback);
+	// printf("- push runner->callbackStack %p -> %p\n",
+		// &invocation, invocation.previous);
+    // fflush(stdout);
 
     queue_add_pending_callback(&invocation);
 	
 	// Manage callouts while waiting this callback to return
 	callback->runner->callbackEnterFunction(callback->runner, &invocation);
+
+	// printf("callbackFrontEnd: %p\n", callback);
+	// printf("- out of scope: %p\n", &invocation);
+	// fflush(stdout);
 }
 
 Callback *callback_new(Runner* runner, ffi_type** parameters, sqInt count, ffi_type* returnType) {

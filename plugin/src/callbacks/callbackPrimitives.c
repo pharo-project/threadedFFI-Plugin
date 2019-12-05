@@ -130,18 +130,25 @@ PrimitiveWithDepth(primitiveRegisterCallback, 3){
     writeAddress(callbackHandle, callback);
     checkFailed();
 
-    printf("primitiveRegisterCallback:\n");
-    printf("- handle: 0x%lx\n", callbackHandle);
-    printf("- paramArray: 0x%lx\n", paramArray);
-    printf("- runnerInstance: 0x%lx\n", runnerInstance);
-    printf("- callback: %p\n", callback);
-    fflush(stdout);
+    // printf("primitiveRegisterCallback:\n");
+    // printf("- handle: 0x%lx\n", callbackHandle);
+    // printf("- paramArray: 0x%lx\n", paramArray);
+    // printf("- runnerInstance: 0x%lx\n", runnerInstance);
+    // printf("- callback: %p\n", callback);
+    // fflush(stdout);
 
     primitiveEnd();
 }
 
 /* primitiveWorkerCallbackReturn
- *   returns from a callback
+ *   Returns from a callback.
+ *
+ *   In addition to the generic primitive failure if the arguments are 
+ *   incorrect two specific errors will be returned:
+ *   - If the callback stack is empty: OS Error -1 will be returned
+ *     - This is indicative of the callback being carried across sessions.
+ *   - If the callback return is out of order: OS Error -2 will be returned
+ *
  *   receiver <TFCallbackInvocation>
  */
 PrimitiveWithDepth(primitiveCallbackReturn, 2) {
@@ -164,6 +171,8 @@ PrimitiveWithDepth(primitiveCallbackReturn, 2) {
     checkFailed();
     
     if(!runner){
+        // fprintf(stderr, "No runner\n");
+        // fflush(stderr);
         interpreterProxy->primitiveFail();
         return;
     }
@@ -172,25 +181,72 @@ PrimitiveWithDepth(primitiveCallbackReturn, 2) {
     checkFailed();
     
     if(!callbackInvocation){
+        // fprintf(stderr, "No callbackInvocation\n");
+        // fflush(stderr);
         interpreterProxy->primitiveFail();
         return;
     }
 
-    printf("primitiveCallbackReturn:\n");
     callback = callbackInvocation->callback;
-    printf("- callback: %p\n", callback);
-    fflush(stdout);
+    // printf("primitiveCallbackReturn:\n");
+	// printf("- callbackInvocation: %p\n", callbackInvocation);
+    // printf("- callback: %p\n", callback);
+	// printf("- runner->callbackStack1: %p\n", runner->callbackStack);
+    // fflush(stdout);
 
     // If the returning callback is not the last callback that entered, we cannot return
     // Otherwise this would produce a stack corruption (returning to an older callback erasing/overriding the stack of newer ones)
     if (callbackInvocation != runner->callbackStack){
-        interpreterProxy->primitiveFail();
+        // fprintf(stderr, "callbackInvocation != runner->callbackStack(%p)\n",
+			// runner->callbackStack);
+        // fflush(stderr);
+		if (runner->callbackStack == NULL) {
+			// printf("- callbackStack isNull\n");
+        	interpreterProxy->primitiveFailForOSError(-1); }
+		else {
+			// printf("- callbackStack isNotNull\n");
+        	interpreterProxy->primitiveFailForOSError(-2); }
+		// fflush(stdout);
         return;
     }
     
     // If the callback was the last one, we need to pop it from the callback stack
     runner->callbackStack = runner->callbackStack->previous;
+	// printf("- runner->callbackStack2: %p\n", runner->callbackStack);
+	// fflush(stdout);
+
     runner->callbackExitFunction(runner, callbackInvocation);
 
+	// printf("primitiveCallbackReturn: done\n");
+	// fflush(stdout);
+
     primitiveEnd();
+}
+
+
+/* primitiveCallbackStackSize
+ *   Answers the number of entries in the supplied runner's
+ *   callbackStack.
+ *
+ *   receiver <TFRunner>
+ */
+Primitive(primitiveCallbackStackSize){
+    Callback *callback;
+    Runner *runner;
+    CallbackInvocation *callbackStack;
+    sqInt receiver, size;
+
+    receiver = getReceiver();
+    checkFailed();
+    
+    runner = (Runner *)getHandler(receiver);
+    checkFailed();
+    
+	size = 0;
+	callbackStack = runner->callbackStack;
+	while (callbackStack != NULL) {
+		size++;
+		callbackStack = callbackStack->previous; }
+
+	primitiveEndReturnInteger(size);
 }
