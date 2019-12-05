@@ -134,11 +134,19 @@ PrimitiveWithDepth(primitiveRegisterCallback, 3){
 }
 
 /* primitiveWorkerCallbackReturn
- *   returns from a callback
+ *   Returns from a callback.
+ *
+ *   In addition to the generic primitive failure if the arguments are 
+ *   incorrect two specific errors will be returned:
+ *   - If the callback stack is empty: OS Error -1 will be returned
+ *     - This is indicative of the callback being carried across sessions.
+ *   - If the callback return is out of order: OS Error -2 will be returned
+ *
  *   receiver <TFCallbackInvocation>
  */
 PrimitiveWithDepth(primitiveCallbackReturn, 2) {
     CallbackInvocation *callbackInvocation;
+    Callback *callback;
     sqInt receiver, callbackInstance, runnerInstance;
     Runner *runner;
 
@@ -168,10 +176,15 @@ PrimitiveWithDepth(primitiveCallbackReturn, 2) {
         return;
     }
 
+    callback = callbackInvocation->callback;
+
     // If the returning callback is not the last callback that entered, we cannot return
     // Otherwise this would produce a stack corruption (returning to an older callback erasing/overriding the stack of newer ones)
     if (callbackInvocation != runner->callbackStack){
-        interpreterProxy->primitiveFail();
+		if (runner->callbackStack == NULL)
+        	interpreterProxy->primitiveFailForOSError(-1);
+		else
+        	interpreterProxy->primitiveFailForOSError(-2);
         return;
     }
     
@@ -180,4 +193,32 @@ PrimitiveWithDepth(primitiveCallbackReturn, 2) {
     runner->callbackExitFunction(runner, callbackInvocation);
 
     primitiveEnd();
+}
+
+
+/* primitiveCallbackStackSize
+ *   Answers the number of entries in the supplied runner's
+ *   callbackStack.
+ *
+ *   receiver <TFRunner>
+ */
+Primitive(primitiveCallbackStackSize){
+    Callback *callback;
+    Runner *runner;
+    CallbackInvocation *callbackStack;
+    sqInt receiver, size;
+
+    receiver = getReceiver();
+    checkFailed();
+    
+    runner = (Runner *)getHandler(receiver);
+    checkFailed();
+    
+	size = 0;
+	callbackStack = runner->callbackStack;
+	while (callbackStack != NULL) {
+		size++;
+		callbackStack = callbackStack->previous; }
+
+	primitiveEndReturnInteger(size);
 }
