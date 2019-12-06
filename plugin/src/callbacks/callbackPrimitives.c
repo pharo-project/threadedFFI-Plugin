@@ -133,7 +133,7 @@ PrimitiveWithDepth(primitiveRegisterCallback, 3){
     primitiveEnd();
 }
 
-/* primitiveWorkerCallbackReturn
+/* primitiveCallbackReturn
  *   Returns from a callback.
  *
  *   In addition to the generic primitive failure if the arguments are 
@@ -146,7 +146,6 @@ PrimitiveWithDepth(primitiveRegisterCallback, 3){
  */
 PrimitiveWithDepth(primitiveCallbackReturn, 2) {
     CallbackInvocation *callbackInvocation;
-    Callback *callback;
     sqInt receiver, callbackInstance, runnerInstance;
     Runner *runner;
 
@@ -175,8 +174,6 @@ PrimitiveWithDepth(primitiveCallbackReturn, 2) {
         interpreterProxy->primitiveFail();
         return;
     }
-
-    callback = callbackInvocation->callback;
 
     // If the returning callback is not the last callback that entered, we cannot return
     // Otherwise this would produce a stack corruption (returning to an older callback erasing/overriding the stack of newer ones)
