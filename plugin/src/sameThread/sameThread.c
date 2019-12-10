@@ -1,7 +1,7 @@
 #include "setjmp.h"
 #include "PThreadedPlugin.h"
 
-#include "vmCallback.h"
+#include "pharovm/vmCallback.h"
 
 /*
  * Define sigsetjmp and siglongjmp to be the most minimal setjmp/longjmp available on the platform.

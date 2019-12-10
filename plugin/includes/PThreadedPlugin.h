@@ -13,8 +13,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "config.h"
-#include "sqVirtualMachine.h"
+#include "pharovm/config.h"
+#include "pharovm/sqVirtualMachine.h"
 
 #include "callbacks.h"
 #include "platformSemaphore.h"

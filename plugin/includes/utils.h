@@ -1,7 +1,7 @@
 #ifndef __UTILS__
 #define __UTILS__
 
-#include "sqVirtualMachine.h"
+#include "pharovm/sqVirtualMachine.h"
 
 void *getHandler(sqInt anExternalObject);
 void setHandler(sqInt anExternalObject, void* value);

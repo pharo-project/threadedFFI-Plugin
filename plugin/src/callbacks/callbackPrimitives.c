@@ -59,9 +59,10 @@ PrimitiveWithDepth(primitiveUnregisterCallback, 1){
 /*
  * This primitive register a callback in libFFI.
  * This primitive generates the pointer to the function to be passed as the callback.
- * To do so, it generates all the structures expected by lib ffi.
+ * To do so, it generates all the structures expected by libFfi.
  *
- * It only uses the receiver.
+ * It uses two objects, the receiver and a optional parameter ByteString object.
+ *
  * The receiver is a TFCallback.
  *
  * It should at least have the following instance variables
@@ -71,6 +72,9 @@ PrimitiveWithDepth(primitiveUnregisterCallback, 1){
  * 2: parameterHandlers
  * 3: returnTypeHandler
  * 4: runner
+ *
+ * The parameter is a ByteString that will be stored in the internal callback structure as a way of debugging.
+ * The parameter can be nil.
  */
 
 PrimitiveWithDepth(primitiveRegisterCallback, 3){

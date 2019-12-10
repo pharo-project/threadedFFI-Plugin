@@ -50,14 +50,14 @@ set(LIBRARY_OUTPUT_PATH "build/bin")
 #
 make_directory("build/vmIncludes")
 add_custom_command(
-  OUTPUT build/vmIncludes/include/interp.h 
+  OUTPUT build/vmIncludes/include/pharovm/interp.h 
   COMMAND wget ${HEADER_URL}
   COMMAND unzip PharoVM-*-include.zip
   WORKING_DIRECTORY "build/vmIncludes"
   COMMENT "Downloading Pharo VM Headers")
 
 add_custom_target("vmIncludes"
-  DEPENDS build/vmIncludes/include/interp.h
+  DEPENDS build/vmIncludes/include/pharovm/interp.h
   COMMENT "Obtaining Pharo VM Headers")
 
 #
@@ -139,7 +139,7 @@ endif(WIN)
 
 add_dependencies(${PLUGIN_NAME} vmIncludes libFFI)
 
-link_directories(BEFORE "build/libffi/install/lib")
+link_directories(BEFORE "${CMAKE_CURRENT_BINARY_DIR}/build/libffi/install/lib")
 
 target_compile_options(${PLUGIN_NAME} PUBLIC "-g")
 
@@ -179,12 +179,12 @@ add_custom_command(
     COMMAND wget -O - "get.pharo.org/64/80+vmHeadlessLatest" | bash
     COMMAND cp "${CMAKE_CURRENT_BINARY_DIR}/build/bin/${DYLIB_EXT}" ${PHARO_PLUGIN_DIR}
     COMMAND cp "${CMAKE_CURRENT_BINARY_DIR}/build/bin/${TEST_LIBRARY_DLL}" .
-    COMMAND ./pharo Pharo.image metacello install "tonel://../../src" BaselineOfThreadedFFI
+    COMMAND ./pharo Pharo.image metacello install "tonel://${CMAKE_CURRENT_SOURCE_DIR}/src" BaselineOfThreadedFFI
     
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build/test"
     COMMENT "Creating Test Image")
 
-add_custom_target("prepare-tests" ALL
+add_custom_target("prepare-tests"
     DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/build/test/Pharo.image"
     COMMENT "Preparing Tests")
 

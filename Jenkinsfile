@@ -38,7 +38,7 @@ def runBuild(platform){
 		if(isWindows()){
 			runInCygwin "cmake ."
       	  	runInCygwin "make install"
-      	  	runInCygwin "make test"
+      	  	runInCygwin "make prepare-tests test"
       	  	runInCygwin "make package"
     	}else{
 			cmakeBuild generator: "Unix Makefiles", sourceDir: ".", installation: "InSearchPath"
