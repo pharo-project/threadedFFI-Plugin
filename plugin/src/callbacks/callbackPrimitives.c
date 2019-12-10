@@ -88,9 +88,18 @@ PrimitiveWithDepth(primitiveRegisterCallback, 3){
     ffi_type **parameters;
     sqInt receiver;
     ffi_type *returnType;
+    sqInt debugString;
 
     receiver = getReceiver();
     checkFailed();
+
+    //As the parameter is optional, the primitive invocation can came without it
+    if(interpreterProxy->methodArgumentCount() == 1){
+    	debugString = interpreterProxy->stackObjectValue(0);
+    	checkFailed();
+    }else{
+    	debugString = interpreterProxy->nilObject();
+    }
 
     callbackHandle = getAttributeOf(receiver, 1);
     checkFailed();
@@ -127,6 +136,13 @@ PrimitiveWithDepth(primitiveRegisterCallback, 3){
 
     callback = callback_new(runner, parameters, count, returnType);
     checkFailed();
+
+    if(debugString == interpreterProxy->nilObject()){
+    	callback->userData = NULL;
+    }else{
+    	callback->userData = malloc(strlen(readString(debugString)) + 1);
+    	strcpy(callback->userData, readString(debugString));
+    }
 
     setHandler(receiver, callback->functionAddress);
     checkFailed();
