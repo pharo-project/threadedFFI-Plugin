@@ -93,12 +93,12 @@ TFCallback >> register [
 	
 	self validateTypes.
 	self runner ensureInitialized.
-	self registerCallback.
+	self registerCallback: frontendCallback tfPrintString.
 	TFCallbackQueue uniqueInstance registerCallback: self.
 ]
 
 { #category : #registering }
-TFCallback >> registerCallback [
+TFCallback >> registerCallback: debugString [
 
 	<primitive: 'primitiveRegisterCallback' module: 'PThreadedPlugin'>
 	^ self primitiveFailed 
