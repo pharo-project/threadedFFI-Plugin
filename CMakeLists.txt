@@ -74,28 +74,28 @@ ExternalProject_Add(build_libFFI
 
     GIT_REPOSITORY "https://github.com/libffi/libffi.git"
     GIT_TAG "v3.3-rc0"
-    CONFIGURE_COMMAND "./autogen.sh" COMMAND ./configure "--target=${LIBFFI_TARGET}" "--disable-docs" "--prefix=${CMAKE_SOURCE_DIR}/build/libffi/install" "CC=${CMAKE_C_COMPILER}" "CXX=${CMAKE_C_COMPILER}"
+    CONFIGURE_COMMAND "./autogen.sh" COMMAND ./configure "--target=${LIBFFI_TARGET}" "--disable-docs" "--prefix=${CMAKE_CURRENT_BINARY_DIR}/build/libffi/install" "CC=${CMAKE_C_COMPILER}" "CXX=${CMAKE_C_COMPILER}"
 )
 
 if(OSX)
     add_custom_command(
       OUTPUT  ${LIBFFI_OUTPUT}
       DEPENDS build_libFFI
-      COMMAND install_name_tool -id "@executable_path/Plugins/libffi.7.dylib" "${CMAKE_SOURCE_DIR}/build/libffi/install/lib/libffi.7.dylib"
-      COMMAND install_name_tool -id "@executable_path/Plugins/libffi.dylib" "${CMAKE_SOURCE_DIR}/build/libffi/install/lib/libffi.dylib"
-      COMMAND cp "${CMAKE_SOURCE_DIR}/build/libffi/install/lib/${DYLIB_EXT}" "${CMAKE_SOURCE_DIR}/build/bin/"
-      WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/bin"
+      COMMAND install_name_tool -id "@executable_path/Plugins/libffi.7.dylib" "${CMAKE_CURRENT_BINARY_DIR}/build/libffi/install/lib/libffi.7.dylib"
+      COMMAND install_name_tool -id "@executable_path/Plugins/libffi.dylib" "${CMAKE_CURRENT_BINARY_DIR}/build/libffi/install/lib/libffi.dylib"
+      COMMAND cp "${CMAKE_CURRENT_BINARY_DIR}/build/libffi/install/lib/${DYLIB_EXT}" "${CMAKE_CURRENT_BINARY_DIR}/build/bin/"
+      WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build/bin"
       COMMENT "Changing RPath of Libffi")
 else()
     add_custom_command(
       OUTPUT  ${LIBFFI_OUTPUT}
       DEPENDS build_libFFI
-      COMMAND cp "${LIBFFI_FILES}" "${CMAKE_SOURCE_DIR}/build/bin/"
-      WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/bin"
+      COMMAND cp "${LIBFFI_FILES}" "${CMAKE_CURRENT_BINARY_DIR}/build/bin/"
+      WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build/bin"
       COMMENT "Copying of Libffi")
 endif()
 
-link_directories("${CMAKE_SOURCE_DIR}/build/libffi/install/lib")
+link_directories("${CMAKE_CURRENT_BINARY_DIR}/build/libffi/install/lib")
 
 add_custom_target(libFFI DEPENDS "${LIBFFI_OUTPUT}")
 
@@ -144,8 +144,8 @@ link_directories(BEFORE "build/libffi/install/lib")
 target_compile_options(${PLUGIN_NAME} PUBLIC "-g")
 
 target_include_directories(${PLUGIN_NAME} PRIVATE "plugin/includes" )
-target_include_directories(${PLUGIN_NAME} PRIVATE "build/vmIncludes/include")
-target_include_directories(${PLUGIN_NAME} PRIVATE "build/libffi/install/include/" )
+target_include_directories(${PLUGIN_NAME} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/build/vmIncludes/include")
+target_include_directories(${PLUGIN_NAME} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/build/libffi/install/include/" )
 
 #
 # Definition of the Test Library
@@ -170,22 +170,22 @@ target_include_directories(${TEST_LIBRARY} PRIVATE "testLibrary/includes" )
 # Preparing tests
 # 
 
-make_directory("${CMAKE_SOURCE_DIR}/build/test")
+make_directory("${CMAKE_CURRENT_BINARY_DIR}/build/test")
 
 add_custom_command(
-    OUTPUT "${CMAKE_SOURCE_DIR}/build/test/Pharo.image"
+    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/build/test/Pharo.image"
     DEPENDS ${TEST_LIBRARY} ${PLUGIN_NAME}
   
     COMMAND wget -O - "get.pharo.org/64/80+vmHeadlessLatest" | bash
-    COMMAND cp "${CMAKE_SOURCE_DIR}/build/bin/${DYLIB_EXT}" ${PHARO_PLUGIN_DIR}
-    COMMAND cp "${CMAKE_SOURCE_DIR}/build/bin/${TEST_LIBRARY_DLL}" .
+    COMMAND cp "${CMAKE_CURRENT_BINARY_DIR}/build/bin/${DYLIB_EXT}" ${PHARO_PLUGIN_DIR}
+    COMMAND cp "${CMAKE_CURRENT_BINARY_DIR}/build/bin/${TEST_LIBRARY_DLL}" .
     COMMAND ./pharo Pharo.image metacello install "tonel://../../src" BaselineOfThreadedFFI
     
-    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/test"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build/test"
     COMMENT "Creating Test Image")
 
 add_custom_target("prepare-tests" ALL
-    DEPENDS "${CMAKE_SOURCE_DIR}/build/test/Pharo.image"
+    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/build/test/Pharo.image"
     COMMENT "Preparing Tests")
 
 
@@ -198,20 +198,20 @@ enable_testing()
 add_test(
     NAME "UnifiedFFI-Tests"
     COMMAND ./pharo Pharo.image test --junit-xml-output --fail-on-failure "UnifiedFFI-Tests"
-    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/test")
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build/test")
 
 add_test(
     NAME "ThreadedFFI-UFFI-Tests"
     COMMAND ./pharo Pharo.image test --junit-xml-output --fail-on-failure "ThreadedFFI-UFFI-Tests"
-    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build/test")
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build/test")
 
 #
 # Packaging Setup 
 #
-set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/build/dist")
+set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/build/dist")
 
 install(
-      DIRECTORY "${CMAKE_SOURCE_DIR}/build/bin/"
+      DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build/bin/"
       USE_SOURCE_PERMISSIONS
       DESTINATION "./"
       USE_SOURCE_PERMISSIONS FILES_MATCHING PATTERN *)
@@ -227,7 +227,7 @@ set(CPACK_PACKAGE_VERSION_PATCH "${VERSION_PATCH}")
 set(CPACK_PACKAGE_VENDOR "Pharo")
 set(CPACK_PACKAGE_HOMEPAGE_URL "https://pharo.org")
 set(CPACK_PACKAGE_FILE_NAME "PThreadedFFI-${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}-${FULL_PLATFORM_NAME}")
-set(CPACK_PACKAGE_DIRECTORY "${CMAKE_SOURCE_DIR}/build/packages")
+set(CPACK_PACKAGE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build/packages")
 set(CPACK_PACKAGE_CHECKSUM "SHA1")
 set(CPACK_GENERATOR "ZIP")
 set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY FALSE)
