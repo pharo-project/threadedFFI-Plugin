@@ -20,6 +20,16 @@ macro(addLibraryWithRPATH NAME)
     set_target_properties(${NAME} PROPERTIES INSTALL_NAME_DIR "@executable_path/Plugins")
 endmacro()
 
+macro(get_version VARNAME)
+    get_git_describe(TMP_GIT_DESCRIBE)
+    get_commit_hash(TMP_GIT_COMMIT)
+    
+    string(REGEX MATCH "v([0-9]+\.[0-9]+\.[0-9]+)" TMP_VERSION ${TMP_GIT_DESCRIBE})
+    
+    set(${VARNAME} "${CMAKE_MATCH_1}")
+    
+endmacro()
+
 macro(get_commit_hash VARNAME)
     execute_process(
         COMMAND git log -1 --format=%h
@@ -30,7 +40,7 @@ endmacro()
 
 macro(get_git_describe VARNAME)
     execute_process(
-        COMMAND git describe --always
+        COMMAND git describe --always --tags
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         OUTPUT_VARIABLE ${VARNAME}
         OUTPUT_STRIP_TRAILING_WHITESPACE)
