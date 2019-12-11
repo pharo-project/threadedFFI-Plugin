@@ -12,10 +12,11 @@ BaselineOfThreadedFFI >> baseline: spec [
 
 		spec postLoadDoIt: #reset.
 
+		spec 
+			baseline: #ThreadedFFIMigration
+				with: [ spec repository: 'github://feenkcom/threadedFFI-Plugin' ].
+
 		spec
-			"ThreadedFFI and ThreadedFFIMigration are interdependent,
-			but ThreadedFFI uses ThreadedFFIMigration during the load"
-			package: 'ThreadedFFIMigration';
 			package: 'ThreadedFFI' with: [ spec requires: #('ThreadedFFIMigration') ];
 			package: 'ThreadedFFI-UFFI' with: [ spec requires: #('ThreadedFFI') ];
 			package: 'ThreadedFFI-Tests' with: [ spec requires: #('ThreadedFFI') ];

@@ -18,8 +18,8 @@ Class {
 	#name : #ThreadedFFIMigration,
 	#superclass : #Object,
 	#classVars : [
-		'DisableThreadedFFI',
-		'ThreadedFFIAvailable'
+		'ThreadedFFIAvailable',
+		'ThreadedFFIEnabled'
 	],
 	#category : #ThreadedFFIMigration
 }
@@ -29,7 +29,7 @@ ThreadedFFIMigration class >> disableThreadedFFI [
 	"Set the flag forcing Threaded FFI to be disabled"
 	<script>
 
-	DisableThreadedFFI := true.
+	ThreadedFFIEnabled := false.
 ]
 
 { #category : #managing }
@@ -37,7 +37,7 @@ ThreadedFFIMigration class >> enableThreadedFFI [
 	"Clear the flag forcing Threaded FFI to be disabled"
 	<script>
 
-	DisableThreadedFFI := false.
+	ThreadedFFIEnabled := true.
 ]
 
 { #category : #private }
@@ -60,6 +60,7 @@ ThreadedFFIMigration class >> getThreadedFFIAvailable [
 { #category : #'class initialization' }
 ThreadedFFIMigration class >> initialize [ 
 
+	self disableThreadedFFI.
 	SessionManager default
 		registerSystemClassNamed: self name
 		atPriority: 20
@@ -89,8 +90,6 @@ ThreadedFFIMigration class >> startUp: resuming [
 ThreadedFFIMigration class >> threadedFFIAvailable [
 	"Answer a boolean indicating whether to use Threaded FFI"
 
-	"If true, DisableThreadedFFI forces Threaded FFI to be NOT used.
-	Allow for nil value (= false)"
-	DisableThreadedFFI == true ifTrue: [ ^false ].
-	^ThreadedFFIAvailable ifNil: [ ThreadedFFIAvailable := self getThreadedFFIAvailable ]
+	^ThreadedFFIEnabled and: [ ThreadedFFIAvailable 
+		ifNil: [ ThreadedFFIAvailable := self getThreadedFFIAvailable ] ]
 ]
