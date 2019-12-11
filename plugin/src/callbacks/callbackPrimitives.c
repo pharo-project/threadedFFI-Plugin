@@ -219,3 +219,40 @@ Primitive(primitiveCallbackStackSize){
 
 	primitiveEndReturnInteger(size);
 }
+
+
+/* primitivePrintAllStacks
+ *   Print all the active processes on stdout.
+ *
+ *   
+ */
+Primitive(primitivePrintAllStacks){
+
+	printAllStacks();
+
+	primitiveEndReturnInteger(0);
+}
+
+
+
+/* primitivePrintCallStack
+ *   Print the active process on stdout.
+ *
+ *   
+ */
+Primitive(primitivePrintCallStack){
+
+	printCallStack();
+
+	primitiveEndReturnInteger(0);
+}
+
+
+/* primitiveGtTFFIversion
+ *   Answer a version number to allow checks that
+ *   the Gt version of the library is being used.
+ */
+Primitive(primitiveGtTFFIversion){
+
+	primitiveEndReturnInteger(0x0010001);
+}
