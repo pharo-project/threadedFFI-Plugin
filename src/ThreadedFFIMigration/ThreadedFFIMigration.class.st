@@ -46,15 +46,18 @@ ThreadedFFIMigration class >> getThreadedFFIAvailable [
 
 	| result ba |
 
-	result := [ 
+	"Use a Gt specific version for now to ensure we have the Gt version 
+	of libPThreadedPlugin.so"
+	"result := [ 
 		ba := #[1 2 3].
 		ba pinInMemory.
 		PointerUtils oopForObject: ba.
 		ba unpinInMemory.
 		true ]
 			on: Error 
-			do: [ false ].
-	^result
+			do: [ false ]."
+	result := self primitiveGtTFFIversion.
+	^result > 16r10000
 ]
 
 { #category : #'class initialization' }
@@ -64,6 +67,14 @@ ThreadedFFIMigration class >> initialize [
 	SessionManager default
 		registerSystemClassNamed: self name
 		atPriority: 20
+]
+
+{ #category : #accessing }
+ThreadedFFIMigration class >> primitiveGtTFFIversion [
+
+	<primitive: 'primitiveGtTFFIversion' module: 'PThreadedPlugin' error: ec>
+	ec = #'not found' ifTrue: [ ^0 ].
+	self primitiveFailed: ec
 ]
 
 { #category : #initialization }
