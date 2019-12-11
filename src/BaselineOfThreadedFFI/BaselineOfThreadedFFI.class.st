@@ -14,6 +14,8 @@ BaselineOfThreadedFFI >> baseline: spec [
 
 		spec
 			package: 'ThreadedFFI';
+			"ThreadedFFI and ThreadedFFIMigration are interdependent"
+			package: 'ThreadedFFIMigration' with: [ spec requires: #('ThreadedFFI') ];
 			package: 'ThreadedFFI-UFFI' with: [ spec requires: #('ThreadedFFI') ];
 			package: 'ThreadedFFI-Tests' with: [ spec requires: #('ThreadedFFI') ];
 			package: 'ThreadedFFI-UFFI-Overrides' with: [ spec requires: #('ThreadedFFI-UFFI') ];
