@@ -8,3 +8,5 @@ set(TEST_LIBRARY_DLL libTestLibrary.dylib)
 
 set(DYLIB_EXT "*.dylib")
 
+# In Esteban's machine this is needed. Maybe for all?
+set(LIBFFI_EXTRA_PARAMETERS "CFLAGS=-I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include")

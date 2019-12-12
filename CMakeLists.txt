@@ -73,8 +73,14 @@ ExternalProject_Add(build_libFFI
     UPDATE_COMMAND ""
 
     GIT_REPOSITORY "https://github.com/libffi/libffi.git"
-    GIT_TAG "v3.3-rc0"
-    CONFIGURE_COMMAND "./autogen.sh" COMMAND ./configure "--target=${LIBFFI_TARGET}" "--disable-docs" "--prefix=${CMAKE_CURRENT_BINARY_DIR}/build/libffi/install" "CC=${CMAKE_C_COMPILER}" "CXX=${CMAKE_C_COMPILER}"
+    GIT_TAG "v3.3"
+    CONFIGURE_COMMAND "./autogen.sh" COMMAND ./configure
+		"--target=${LIBFFI_TARGET}"
+		"--disable-docs"
+		"--prefix=${CMAKE_CURRENT_BINARY_DIR}/build/libffi/install"
+		"${LIBFFI_EXTRA_PARAMETERS}"
+		"CC=${CMAKE_C_COMPILER}"
+		"CXX=${CMAKE_C_COMPILER}"
 )
 
 if(OSX)
