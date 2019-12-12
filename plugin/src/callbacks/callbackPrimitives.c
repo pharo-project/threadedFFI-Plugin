@@ -226,13 +226,14 @@ Primitive(primitiveCallbackStackSize){
  *
  *   
  */
+/**********************************
 Primitive(primitivePrintAllStacks){
 
 	printAllStacks();
 
 	primitiveEndReturnInteger(0);
 }
-
+**********************************/
 
 
 /* primitivePrintCallStack
@@ -240,12 +241,14 @@ Primitive(primitivePrintAllStacks){
  *
  *   
  */
+/**********************************
 Primitive(primitivePrintCallStack){
 
 	printCallStack();
 
 	primitiveEndReturnInteger(0);
 }
+**********************************/
 
 
 /* primitiveGtTFFIversion
