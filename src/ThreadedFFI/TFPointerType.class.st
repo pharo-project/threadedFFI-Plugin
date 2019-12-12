@@ -16,10 +16,10 @@ TFPointerType >> readValue: anExternalAddress offset: offset [
 	^ anExternalAddress pointerAt: offset
 ]
 
-{ #category : #writing }
+{ #category : #writting }
 TFPointerType >> write: anExternalAddress into: targetAddress [
+	| address |
 
-	| address bytes |
 
 	(anExternalAddress isKindOf: Bitmap) ifTrue: [  
 		anExternalAddress pinInMemory.
@@ -27,13 +27,6 @@ TFPointerType >> write: anExternalAddress into: targetAddress [
 		targetAddress pointerAt: 1 put: address.
 		^ self.
 	].
-
-	(anExternalAddress isKindOf: String) ifTrue: [ 
-		bytes := anExternalAddress utf8Encoded.
-		bytes pinInMemory.
-		address := PointerUtils oopForObject: bytes.
-		targetAddress pointerAt: 1 put: address.
-		^self ].
 
 	(anExternalAddress isKindOf: ByteArray)
 		ifTrue: [ address := anExternalAddress ]
