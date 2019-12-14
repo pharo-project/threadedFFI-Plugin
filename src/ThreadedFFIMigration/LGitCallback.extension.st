@@ -16,8 +16,3 @@ LGitCallback >> ffiLibraryName [
 LGitCallback class >> ffiLibraryName [
 	^ LGitLibrary
 ]
-
-{ #category : #'*ThreadedFFIMigration' }
-LGitCallback class >> null [
-	^ ExternalAddress null
-]
