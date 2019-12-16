@@ -1,6 +1,6 @@
 Extension { #name : #TFBasicType }
 
-{ #category : #'*ThreadedFFIMigration' }
+{ #category : #'*ThreadedFFI-UFFI' }
 TFBasicType >> tfExternalTypeWithArity [
 
 	^ self

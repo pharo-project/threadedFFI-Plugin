@@ -26,6 +26,16 @@ TFCalloutAPI class >> isTracing [
 	^ TraceBlock notNil
 ]
 
+{ #category : #'as yet unclassified' }
+TFCalloutAPI class >> newCallbackBackendFor: aCallback [
+
+	^ TFCallback
+		forCallback: aCallback
+		parameters: (aCallback arguments collect: #tfExternalTypeWithArity) asArray
+		returnType: aCallback returnType tfExternalTypeWithArity
+		runner: aCallback ffiLibrary uniqueInstance runner
+]
+
 { #category : #tracing }
 TFCalloutAPI class >> resetTrace [
 	<script>
