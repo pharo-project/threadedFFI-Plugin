@@ -20,5 +20,5 @@ LGitLibrary >> runner [
 LGitLibrary >> safeCalloutAPIClass [
 	^ ThreadedFFIMigration threadedFFIAvailable
 		ifTrue: [ TFLGitSafeFFICalloutAPI ]
-		ifFalse: [ super calloutAPIClass ]
+		ifFalse: [ LGitSafeFFICalloutAPI ]
 ]
