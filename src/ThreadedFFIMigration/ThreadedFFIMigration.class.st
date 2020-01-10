@@ -3,16 +3,77 @@ ThreadedFFIMigration provides a number of methods to allow code to be written th
 
 It is expected that once the migration to Threaded FFI is complete, automatic re-write rules using the deprecation framework will be introduced to remove all references to ThreadedFFIMigration, which will then be removed.
 
+Threaded FFI can be enabled and disabled by sending  the messages #enableThreadedFFI and #disableThreadedFFI.
 
-Public API and Key Messages
+""""Requirements""""
 
-- threadedFFIAvailable   answer a boolean indicating whether the threaded FFI functionality is currently available.
+To enable Threaded FFI:
+
+1. A headless VM with the appropriate plugin must be used.
+
+[[[
+	ThreadedFFIMigration getThreadedFFIAvailable
+]]]
+
+will answer a boolean indicating if the current VM supports Threaded FFI.
+
+Note that as of January 2020 this is a custom Gtoolkit version of the plugin that fixes thread synchronisation issues in the Pharo version of the plugin.  See *https://github.com/pharo-project/threadedFFI-Plugin/pull/17* for more information.
+
+
+2. The ThreadedFFIMigration enabled flag must be true.
+
+This can be enabled or disabled with: 
+
+[[[ 
+	ThreadedFFI enableThreadedFFI.
+]]]
+
+and 
+
+[[[ 
+	ThreadedFFI disableThreadedFFI.
+]]]
+
+The overall status of threaded TFFI can be checked with: 
+
+[[[ 
+	ThreadedFFI threadedFFIAvailable.
+]]]
+
+
+""""WARNING:""""
+
+Alien callbacks and Threaded FFI callbacks may not be used together within the same session (due to different stack management strategies).
+
+To switch between enabled and disabled modes changing the flag must be the last thing done before saving the image and quitting.
+
+A safe way to do this from the Unix command line is: 
+
+[[[language=bash
+gtoolkit Pharo.image eval --save --quit ""ThreadedFFIMigration enableThreadedFFI."" 
+]]]
+
+and 
+
+[[[language=bash
+gtoolkit Pharo.image eval --save --quit ""ThreadedFFIMigration disableThreadedFFI."" 
+]]]
+
+If Pharo is being configured as part of a script, the enable / disable commands must be the last step before saving the image and quitting.
+
+
+!!Public API and Key Messages
+
+- ==threadedFFIAvailable==   answer a boolean indicating whether the threaded FFI functionality is currently available.
+- ==disableThreadedFFI==		disable the use of Threaded FFI even if the VM supports it.
+- ==enableThreadedFFI== 		enable the use of Threaded FFI if the VM supports it.
 
  
-Internal Representation and Key Implementation Points.
+!!!Internal Representation and Key Implementation Points.
 
 
-    Implementation Points
+!!Implementation Points
+
 "
 Class {
 	#name : #ThreadedFFIMigration,
@@ -44,7 +105,7 @@ ThreadedFFIMigration class >> enableThreadedFFI [
 ThreadedFFIMigration class >> getThreadedFFIAvailable [
 	"Determine whether threaded ffi is available and set the flag"
 
-	| result ba |
+	| result |
 
 	"Use a Gt specific version for now to ensure we have the Gt version 
 	of libPThreadedPlugin.so"
