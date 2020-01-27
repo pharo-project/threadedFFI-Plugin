@@ -24,8 +24,9 @@ WorkerTask *worker_task_new(void *externalFunction, ffi_cif *cif, void *paramete
     return task;
 }
 
-WorkerTask *worker_task_new_callback() {
+WorkerTask *worker_task_new_callback(CallbackInvocation* invocation) {
     WorkerTask *task = malloc(sizeof(WorkerTask));
+    task->callbackSemaphore = invocation->payload;
     
     task->type = CALLBACK_RETURN;
     return task;

@@ -24,6 +24,8 @@ static void callbackFrontend(ffi_cif *cif, void *ret, void* args[], void* cbPtr)
     invocation.previous = callback->runner->callbackStack;
     callback->runner->callbackStack = &invocation;
     
+    callback->runner->callbackPrepareInvocation(callback->runner, &invocation);
+
     queue_add_pending_callback(&invocation);
 	
 	// Manage callouts while waiting this callback to return

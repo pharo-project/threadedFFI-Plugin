@@ -164,6 +164,8 @@ set(TEST_LIBRARY_SOURCES
 )
 
 addLibraryWithRPATH(${TEST_LIBRARY} SHARED ${TEST_LIBRARY_SOURCES})
+target_compile_options(${TEST_LIBRARY} PUBLIC "-g")
+
 target_include_directories(${TEST_LIBRARY} PRIVATE "${CMAKE_SOURCE_DIR}/testLibrary/includes" )
 
 # 
