@@ -7,7 +7,7 @@ Class {
 { #category : #accessing }
 TFBooleanType >> basicType [
 	
-	^ TFBasicType ushort
+	^ TFBasicType uint8
 ]
 
 { #category : #'reading-writing' }

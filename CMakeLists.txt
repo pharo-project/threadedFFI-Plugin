@@ -33,8 +33,8 @@ else()
 endif()
 
 set(VERSION_MAJOR 1)
-set(VERSION_MINOR 1)
-set(VERSION_PATCH 2)
+set(VERSION_MINOR 2)
+set(VERSION_PATCH 0)
 
 check_type_size("void*" SIZEOF_VOID_P)
 
@@ -42,22 +42,22 @@ get_commit_hash(GIT_COMMIT_HASH)
 get_git_describe(GIT_DESCRIBE)
 get_git_date(GIT_COMMIT_DATE)
 
-set(EXECUTABLE_OUTPUT_PATH "build/bin")
-set(LIBRARY_OUTPUT_PATH "build/bin")
+set(EXECUTABLE_OUTPUT_PATH "${CMAKE_CURRENT_BINARY_DIR}/build/bin")
+set(LIBRARY_OUTPUT_PATH "${CMAKE_CURRENT_BINARY_DIR}/build/bin")
 
 #
 # Creates a custom target to downloand VM headers
 #
 make_directory("build/vmIncludes")
 add_custom_command(
-  OUTPUT build/vmIncludes/include/pharovm/interp.h 
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/build/vmIncludes/include/interp.h 
   COMMAND wget ${HEADER_URL}
   COMMAND unzip PharoVM-*-include.zip
-  WORKING_DIRECTORY "build/vmIncludes"
+  WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build/vmIncludes"
   COMMENT "Downloading Pharo VM Headers")
 
 add_custom_target("vmIncludes"
-  DEPENDS build/vmIncludes/include/pharovm/interp.h
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/build/vmIncludes/include/interp.h
   COMMENT "Obtaining Pharo VM Headers")
 
 #
@@ -65,22 +65,16 @@ add_custom_target("vmIncludes"
 #
 
 ExternalProject_Add(build_libFFI
-    PREFIX "build/libffi"
-    SOURCE_DIR "build/libffi/src"
-    STAMP_DIR "build/libffi/stamp"
-    BINARY_DIR "build/libffi/src"
+    PREFIX "${CMAKE_CURRENT_BINARY_DIR}/build/libffi"
+    SOURCE_DIR "${CMAKE_CURRENT_BINARY_DIR}/build/libffi/src"
+    STAMP_DIR "${CMAKE_CURRENT_BINARY_DIR}/build/libffi/stamp"
+    BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/build/libffi/src"
 
     UPDATE_COMMAND ""
 
     GIT_REPOSITORY "https://github.com/libffi/libffi.git"
     GIT_TAG "v3.3"
-    CONFIGURE_COMMAND "./autogen.sh" COMMAND ./configure
-		"--target=${LIBFFI_TARGET}"
-		"--disable-docs"
-		"--prefix=${CMAKE_CURRENT_BINARY_DIR}/build/libffi/install"
-		"${LIBFFI_EXTRA_PARAMETERS}"
-		"CC=${CMAKE_C_COMPILER}"
-		"CXX=${CMAKE_C_COMPILER}"
+    CONFIGURE_COMMAND "./autogen.sh" COMMAND ./configure "--target=${LIBFFI_TARGET}" "--disable-docs" "--prefix=${CMAKE_CURRENT_BINARY_DIR}/build/libffi/install" "CC=${CMAKE_C_COMPILER}" "CXX=${CMAKE_C_COMPILER}"
 )
 
 if(OSX)
@@ -149,7 +143,7 @@ link_directories(BEFORE "${CMAKE_CURRENT_BINARY_DIR}/build/libffi/install/lib")
 
 target_compile_options(${PLUGIN_NAME} PUBLIC "-g")
 
-target_include_directories(${PLUGIN_NAME} PRIVATE "plugin/includes" )
+target_include_directories(${PLUGIN_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/plugin/includes" )
 target_include_directories(${PLUGIN_NAME} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/build/vmIncludes/include")
 target_include_directories(${PLUGIN_NAME} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/build/libffi/install/include/" )
 
@@ -170,7 +164,9 @@ set(TEST_LIBRARY_SOURCES
 )
 
 addLibraryWithRPATH(${TEST_LIBRARY} SHARED ${TEST_LIBRARY_SOURCES})
-target_include_directories(${TEST_LIBRARY} PRIVATE "testLibrary/includes" )
+target_compile_options(${TEST_LIBRARY} PUBLIC "-g")
+
+target_include_directories(${TEST_LIBRARY} PRIVATE "${CMAKE_SOURCE_DIR}/testLibrary/includes" )
 
 # 
 # Preparing tests
@@ -179,19 +175,19 @@ target_include_directories(${TEST_LIBRARY} PRIVATE "testLibrary/includes" )
 make_directory("${CMAKE_CURRENT_BINARY_DIR}/build/test")
 
 add_custom_command(
-    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/build/test/Pharo.image"
+    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/build/test"
     DEPENDS ${TEST_LIBRARY} ${PLUGIN_NAME}
   
     COMMAND wget -O - "get.pharo.org/64/80+vmHeadlessLatest" | bash
     COMMAND cp "${CMAKE_CURRENT_BINARY_DIR}/build/bin/${DYLIB_EXT}" ${PHARO_PLUGIN_DIR}
     COMMAND cp "${CMAKE_CURRENT_BINARY_DIR}/build/bin/${TEST_LIBRARY_DLL}" .
-    COMMAND ./pharo Pharo.image metacello install "tonel://${CMAKE_CURRENT_SOURCE_DIR}/src" BaselineOfThreadedFFI
+    COMMAND ./pharo Pharo.image metacello install "tonel://${CMAKE_CURRENT_SOURCE_DIR_TO_OUT}/src" BaselineOfThreadedFFI
     
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build/test"
     COMMENT "Creating Test Image")
 
-add_custom_target("prepare-tests"
-    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/build/test/Pharo.image"
+add_custom_target("prepare-tests" ALL
+    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/build/test"
     COMMENT "Preparing Tests")
 
 

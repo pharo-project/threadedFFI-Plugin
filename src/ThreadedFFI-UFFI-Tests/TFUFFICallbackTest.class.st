@@ -5,9 +5,21 @@ Class {
 }
 
 { #category : #tests }
+TFUFFICallbackTest >> callbackFromAnotherThread: callback [
+
+	^ self ffiCall: #(void callbackFromAnotherThread(void* callback))
+]
+
+{ #category : #tests }
 TFUFFICallbackTest >> callbackInALoop: callback [
 
 	^ self ffiCall: #(int callbackInALoop(void* callback))
+]
+
+{ #category : #tests }
+TFUFFICallbackTest >> getValue [
+
+	^ self ffiCall: #(int getValue())
 ]
 
 { #category : #tests }
@@ -137,5 +149,24 @@ TFUFFICallbackTest >> testCallbackWithErrorHanlded [
 		definition: definition.
 
 	UIManager nonInteractiveDuring: [self assert: (runner invokeFunction: fun withArguments: {1}) equals: -1]
+
+]
+
+{ #category : #tests }
+TFUFFICallbackTest >> testCallbacksInOtherThread [
+
+	| callback semaphore|
+
+	"Using same thread runner with callbacks from other threads produce a segmentation fault"
+	ffiLibrary = TFTestLibraryUsingSameThreadRunner ifTrue: [ self skip ].
+
+	semaphore := Semaphore new.
+
+	callback := self newCallbackWithSignature: #(int (int a)) block: [ :a | semaphore signal. a + 1 ].
+	self callbackFromAnotherThread: callback.
+	semaphore wait.
+	
+	1 second wait.
+	self assert: self getValue equals: 43	
 
 ]
