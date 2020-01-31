@@ -1,0 +1,107 @@
+name: Continuous integration
+on: [push, pull_request]
+
+jobs:
+    build-unixes:
+        name: Build Unixes
+        runs-on: ${{ matrix.os }}
+        strategy:
+            matrix:
+                os: [ubuntu-18.04, macos-latest]
+        env:
+            CC: gcc
+            CXX: g++
+        steps:
+            - name: Install dependencies
+              if: matrix.os == 'macos-latest'
+              run: brew install gcc autoconf automake libtool
+
+            - uses: actions/checkout@v1
+
+            - name: CMake configuration
+              run: cmake .
+
+            - name: make
+              run: make
+            - name: make install
+              run: make install
+
+            - name: Package artifacts
+              run: |
+                make package
+                mkdir -p artifacts
+                cp -f build/packages/*.zip build/packages/*.sha1 artifacts
+            - name: Upload artifacts
+              uses: actions/upload-artifact@v1
+              with:
+                  name: build-artifacts
+                  path: artifacts
+
+            - name: Run tests
+              continue-on-error: true
+              run: |
+                make test
+                mkdir -p test-results
+                cp -f build/test/*.xml test-results
+            - name: Upload test results
+              continue-on-error: true
+              uses: actions/upload-artifact@v1
+              with:
+                  name: test-results
+                  path: test-results
+
+    build-windows-cygwin:
+        name: Build Windows Cygwin
+        runs-on: windows-2016
+        steps:
+            - uses: actions/checkout@v1
+
+            - name: Install Cygwin
+              run: .\scripts\installCygwin.ps1 "setup-x86_64.exe" x86_64
+
+            - name: Cygwin test
+              run: |
+                echo Testing cygwin
+                x86_64-w64-mingw32-gcc --version
+                x86_64-w64-mingw32-g++ --version
+                cmake --version
+              shell: pwsh.exe -File .\scripts\runScriptInCygwinBash.ps1 {0}
+
+            - name: CMake configuration
+              run: cmake .
+              shell: pwsh.exe -File .\scripts\runScriptInCygwinBash.ps1 {0}
+
+            - name: make
+              run: make
+              shell: pwsh.exe -File .\scripts\runScriptInCygwinBash.ps1 {0}
+            - name: make install
+              run: make install
+              shell: pwsh.exe -File .\scripts\runScriptInCygwinBash.ps1 {0}
+
+            - name: Package artifacts
+              run: |
+                make package
+                mkdir -p artifacts
+                cp -f build/packages/*.zip build/packages/*.sha1 artifacts
+              shell: pwsh.exe -File .\scripts\runScriptInCygwinBash.ps1 {0}
+
+            - name: Upload artifacts
+              uses: actions/upload-artifact@v1
+              with:
+                  name: build-artifacts
+                  path: artifacts
+
+            - name: Run tests
+              continue-on-error: true
+              run: |
+                make test
+                mkdir -p test-results
+                cp -f build/test/*.xml test-results
+              shell: pwsh.exe -File .\scripts\runScriptInCygwinBash.ps1 {0}
+
+            - name: Upload test results
+              continue-on-error: true
+              uses: actions/upload-artifact@v1
+              with:
+                  name: test-results
+                  path: test-results
