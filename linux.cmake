@@ -1,5 +1,7 @@
-set(VM_URL 		"https://ci.inria.fr/pharo-ci-jenkins2/job/pharo-vm/job/idle/17/artifact/build/build/packages/PharoVM-8.3.0-63efa85-linux64-bin.zip")
-set(HEADER_URL 	"https://ci.inria.fr/pharo-ci-jenkins2/job/pharo-vm/job/idle/17/artifact/build/build/packages/PharoVM-8.3.0-63efa85-linux64-include.zip") 
+set(BASE_URL 	"https://ci.inria.fr/pharo-ci-jenkins2/job/pharo-vm/job/idle/18/artifact/build/build/packages/PharoVM-8.3.0-4dc0de8-linux64")
+set(VM_URL 		"${BASE_URL}-bin.zip")
+set(HEADER_URL 	"${BASE_URL}-include.zip")
+ 
 set(LIBFFI_TARGET "x86_64-pc-linux-gnu")
 
 set(LIBFFI_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/build/bin/libffi.so" "${CMAKE_CURRENT_BINARY_DIR}/build/bin/libffi.7.so")
