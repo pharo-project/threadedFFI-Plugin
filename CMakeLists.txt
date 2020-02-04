@@ -189,7 +189,7 @@ add_custom_command(
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build/test"
     COMMENT "Creating Test Image")
 
-add_custom_target("prepare-tests" ALL
+add_custom_target("prepare-tests"
     DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/build/test"
     COMMENT "Preparing Tests")
 
