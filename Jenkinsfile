@@ -43,7 +43,7 @@ def runBuild(platform){
     	}else{
 			cmakeBuild generator: "Unix Makefiles", sourceDir: ".", installation: "InSearchPath"
 			shell "make install"
-			shell "make test"
+			shell "make prepare-tests test"
 			shell "make package"
     	}
 		
