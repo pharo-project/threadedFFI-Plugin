@@ -178,7 +178,10 @@ add_custom_command(
     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/build/test"
     DEPENDS ${TEST_LIBRARY} ${PLUGIN_NAME}
   
-    COMMAND wget -O - "get.pharo.org/64/80+vmHeadlessLatest" | bash
+    COMMAND wget -O - "get.pharo.org/64/90+vmHeadlessLatest" | bash
+	COMMAND rm -rf "${CMAKE_CURRENT_BINARY_DIR}/build/test/pharo-vm/*"
+	COMMAND wget "${VM_URL}"
+	COMMAND unzip "PharoVM-*-bin.zip" -d "${CMAKE_CURRENT_BINARY_DIR}/build/test/pharo-vm/"
     COMMAND cp "${CMAKE_CURRENT_BINARY_DIR}/build/bin/${DYLIB_EXT}" ${PHARO_PLUGIN_DIR}
     COMMAND cp "${CMAKE_CURRENT_BINARY_DIR}/build/bin/${TEST_LIBRARY_DLL}" .
     COMMAND ./pharo Pharo.image metacello install "tonel://${CMAKE_CURRENT_SOURCE_DIR_TO_OUT}/src" BaselineOfThreadedFFI
