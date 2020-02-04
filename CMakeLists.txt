@@ -50,14 +50,14 @@ set(LIBRARY_OUTPUT_PATH "${CMAKE_CURRENT_BINARY_DIR}/build/bin")
 #
 make_directory("build/vmIncludes")
 add_custom_command(
-  OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/build/vmIncludes/include/interp.h" 
+  OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/build/vmIncludes/include/pharovm/pharo.h" 
   COMMAND wget ${HEADER_URL}
   COMMAND unzip PharoVM-*-include.zip
   WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build/vmIncludes"
   COMMENT "Downloading Pharo VM Headers")
 
-add_custom_target("vmIncludes"
-  DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/build/vmIncludes/include/interp.h"
+add_custom_target(vmIncludes
+  DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/build/vmIncludes/include/pharovm/pharo.h"
   COMMENT "Obtaining Pharo VM Headers")
 
 #
