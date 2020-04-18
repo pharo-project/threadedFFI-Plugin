@@ -99,18 +99,19 @@ TFCallbackQueue >> initializeQueue [
 
 { #category : #private }
 TFCallbackQueue >> lookupCallback: anExternalAddress [
+	"#registerCallback: and #lookupCallback: are protected by a mutex because I need to prevent 
+	 the execution of a collection grow while performing the lookup (this will move the elements 
+	 and may cause the lookup to fail).
+	 Still, I am keeping a second lookup to ensure if a movement was done, I have another oportunity 
+	 to find the callback (just in case, I was not able to verify is actually needed)."
 
 	^ mutex critical: [ 
 		callbacksByAddress 
 			at: anExternalAddress 
 			ifAbsent: [ 
-				Stdio stdout << 'NOT FOUND: ' << anExternalAddress printString; lf.
-				Stdio stdout << callbacksByAddress printString; lf.
 				callbacksByAddress 
 					at: anExternalAddress
-					ifAbsent: [ 
-						Stdio stdout << 'STILL NOT FOUND'; lf.
-						nil ] ] ]
+					ifAbsent: [ nil ] ] ]
 ]
 
 { #category : #private }
@@ -140,6 +141,9 @@ TFCallbackQueue >> primitiveInitializeQueueWith: anInteger [
 
 { #category : #operations }
 TFCallbackQueue >> registerCallback: aCallback [
+	"#registerCallback: and #lookupCallback: are protected by a mutex because I need to prevent 
+	 the execution of a collection grow while performing the lookup (this will move the elements 
+	 and may cause the lookup to fail)."
 
 	mutex critical: [ 
 		callbacksByAddress 
