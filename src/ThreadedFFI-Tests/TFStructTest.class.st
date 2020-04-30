@@ -59,6 +59,33 @@ TFStructTest >> testPointStructSize [
 ]
 
 { #category : #tests }
+TFStructTest >> testReadStruct [
+
+	| pointType fun aPoint pointHandle readedPoint |
+	
+	pointType := TFStructType 
+		forClass: TFPointTestStruct 
+		withMembers: { 
+			TFBasicType sint. 
+			TFBasicType sint }.
+	
+	fun := TFExternalFunction
+		name: 'newPoint' moduleName: self libraryPath
+		parameterTypes:	{TFBasicType sint. TFBasicType sint}
+		returnType: pointType.
+		
+	aPoint := runner invokeFunction: fun withArguments: #(1 5).
+	
+	pointHandle := aPoint getHandle.
+	readedPoint := (pointType readValue: pointHandle copy).
+	
+	self deny: aPoint equals:readedPoint .
+	self assert: aPoint x equals: readedPoint x.
+	self assert: aPoint y equals: readedPoint y.
+	
+]
+
+{ #category : #tests }
 TFStructTest >> testReturnsAnStruct [
 	| pointType fun aPoint |
 	
@@ -77,4 +104,34 @@ TFStructTest >> testReturnsAnStruct [
 
 	self assert: aPoint x equals: 1.
 	self assert: aPoint y equals: 5.	
+]
+
+{ #category : #tests }
+TFStructTest >> testWriteStruct [
+	| pointType fun aPoint pointHandle otherPoint |
+	pointType := TFStructType
+		forClass: TFPointTestStruct
+		withMembers:
+			{TFBasicType sint.
+			TFBasicType sint}.
+	fun := TFExternalFunction
+		name: 'newPoint'
+		moduleName: self libraryPath
+		parameterTypes:
+			{TFBasicType sint.
+			TFBasicType sint}
+		returnType: pointType.
+	aPoint := runner invokeFunction: fun withArguments: #(1 5).
+	
+	
+	pointHandle := aPoint getHandle.
+	otherPoint := aPoint deepCopy. 
+	otherPoint x: 3.
+	otherPoint y: 1.
+
+	self deny: aPoint x equals: otherPoint x.
+	self deny: aPoint y equals: otherPoint y.
+	pointType write: otherPoint into: pointHandle.
+	self assert: aPoint x equals: otherPoint x.
+	self assert: aPoint y equals: otherPoint y
 ]
