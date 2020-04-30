@@ -7,9 +7,10 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'semaphore',
-		'callbacks',
+		'callbacksByAddress',
 		'pendingQueue',
-		'callbackProcess'
+		'callbackProcess',
+		'mutex'
 	],
 	#classVars : [
 		'UniqueInstance'
@@ -54,7 +55,10 @@ TFCallbackQueue >> executeCallback: aCallbackInvocation [
 	aCallbackInvocation ifNil: [ ^self ].
 	aCallbackInvocation getHandle isNull ifTrue: [ ^self ].
 	
-	aCallbackInvocation callback: (self lookupCallback: aCallbackInvocation callbackData).
+	aCallbackInvocation callback: ((self lookupCallback: aCallbackInvocation callbackData) 
+		ifNil: [
+			Stdio stdout << 'INV: ' << aCallbackInvocation getHandle printString; lf.
+			self error: 'Callback not found.' ]).
 	aCallbackInvocation runner executeCallback: aCallbackInvocation
 ]
 
@@ -77,13 +81,14 @@ TFCallbackQueue >> forkCallbackProcess [
 TFCallbackQueue >> initialize [
 	super initialize.
 	
+	mutex := Mutex new.
 	semaphore := Semaphore new.
-	callbacks := WeakSet new.
+	callbacksByAddress := WeakValueDictionary new.
 	pendingQueue := OrderedCollection new.
 	self forkCallbackProcess
 ]
 
-{ #category : #initializing }
+{ #category : #initialization }
 TFCallbackQueue >> initializeQueue [
 	
 	| semaphoreIndex |
@@ -94,9 +99,19 @@ TFCallbackQueue >> initializeQueue [
 
 { #category : #private }
 TFCallbackQueue >> lookupCallback: anExternalAddress [
+	"#registerCallback: and #lookupCallback: are protected by a mutex because I need to prevent 
+	 the execution of a collection grow while performing the lookup (this will move the elements 
+	 and may cause the lookup to fail).
+	 Still, I am keeping a second lookup to ensure if a movement was done, I have another oportunity 
+	 to find the callback (just in case, I was not able to verify is actually needed)."
 
-	^ callbacks detect: [ :each | 
-		each callbackData = anExternalAddress ]
+	^ mutex critical: [ 
+		callbacksByAddress 
+			at: anExternalAddress 
+			ifAbsent: [ 
+				callbacksByAddress 
+					at: anExternalAddress
+					ifAbsent: [ nil ] ] ]
 ]
 
 { #category : #private }
@@ -126,17 +141,22 @@ TFCallbackQueue >> primitiveInitializeQueueWith: anInteger [
 
 { #category : #operations }
 TFCallbackQueue >> registerCallback: aCallback [
+	"#registerCallback: and #lookupCallback: are protected by a mutex because I need to prevent 
+	 the execution of a collection grow while performing the lookup (this will move the elements 
+	 and may cause the lookup to fail)."
 
-	callbacks add: aCallback
+	mutex critical: [ 
+		callbacksByAddress 
+			at: aCallback callbackData 
+			put: aCallback ]
 ]
 
 { #category : #'system startup' }
 TFCallbackQueue >> shutDown [
 
 	self terminateProcess.
-	callbacks removeAll.
-	pendingQueue removeAll.
-	
+	callbacksByAddress removeAll.
+	pendingQueue removeAll
 ]
 
 { #category : #'system startup' }
