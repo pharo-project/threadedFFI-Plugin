@@ -23,6 +23,7 @@ struct _Runner {
 
 struct _Callback {
     Runner* runner;
+    void* userData; // This pointer is useful to store debug information
     ffi_closure *closure;
     ffi_cif cif;
     void *functionAddress;

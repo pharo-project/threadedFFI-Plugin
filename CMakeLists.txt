@@ -33,7 +33,7 @@ else()
 endif()
 
 set(VERSION_MAJOR 1)
-set(VERSION_MINOR 2)
+set(VERSION_MINOR 3)
 set(VERSION_PATCH 0)
 
 check_type_size("void*" SIZEOF_VOID_P)
@@ -50,14 +50,14 @@ set(LIBRARY_OUTPUT_PATH "${CMAKE_CURRENT_BINARY_DIR}/build/bin")
 #
 make_directory("build/vmIncludes")
 add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/build/vmIncludes/include/interp.h 
+  OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/build/vmIncludes/include/pharovm/pharo.h" 
   COMMAND wget ${HEADER_URL}
   COMMAND unzip PharoVM-*-include.zip
   WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build/vmIncludes"
   COMMENT "Downloading Pharo VM Headers")
 
-add_custom_target("vmIncludes"
-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/build/vmIncludes/include/interp.h
+add_custom_target(vmIncludes
+  DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/build/vmIncludes/include/pharovm/pharo.h"
   COMMENT "Obtaining Pharo VM Headers")
 
 #
@@ -73,7 +73,7 @@ ExternalProject_Add(build_libFFI
     UPDATE_COMMAND ""
 
     GIT_REPOSITORY "https://github.com/libffi/libffi.git"
-    GIT_TAG "v3.3-rc0"
+    GIT_TAG "v3.3"
     CONFIGURE_COMMAND "./autogen.sh" COMMAND ./configure "--target=${LIBFFI_TARGET}" "--disable-docs" "--prefix=${CMAKE_CURRENT_BINARY_DIR}/build/libffi/install" "CC=${CMAKE_C_COMPILER}" "CXX=${CMAKE_C_COMPILER}"
 )
 
@@ -164,6 +164,7 @@ set(TEST_LIBRARY_SOURCES
 )
 
 addLibraryWithRPATH(${TEST_LIBRARY} SHARED ${TEST_LIBRARY_SOURCES})
+add_dependencies(${TEST_LIBRARY} ${PLUGIN_NAME} vmIncludes libFFI)
 target_compile_options(${TEST_LIBRARY} PUBLIC "-g")
 
 target_include_directories(${TEST_LIBRARY} PRIVATE "${CMAKE_SOURCE_DIR}/testLibrary/includes" )
@@ -175,10 +176,13 @@ target_include_directories(${TEST_LIBRARY} PRIVATE "${CMAKE_SOURCE_DIR}/testLibr
 make_directory("${CMAKE_CURRENT_BINARY_DIR}/build/test")
 
 add_custom_command(
-    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/build/test"
-    DEPENDS ${TEST_LIBRARY} ${PLUGIN_NAME}
+    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/build/test/Pharo.image"
+    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/build/bin/${DYLIB_EXT}" "${CMAKE_CURRENT_BINARY_DIR}/build/bin/${TEST_LIBRARY_DLL}"
   
-    COMMAND wget -O - "get.pharo.org/64/80+vmHeadlessLatest" | bash
+    COMMAND wget -O - "get.pharo.org/64/90+vmHeadlessLatest" | bash
+	COMMAND rm -rf "${CMAKE_CURRENT_BINARY_DIR}/build/test/pharo-vm/*"
+	COMMAND wget "${VM_URL}"
+	COMMAND unzip "PharoVM-*-bin.zip" -d "${CMAKE_CURRENT_BINARY_DIR}/build/test/pharo-vm/"
     COMMAND cp "${CMAKE_CURRENT_BINARY_DIR}/build/bin/${DYLIB_EXT}" ${PHARO_PLUGIN_DIR}
     COMMAND cp "${CMAKE_CURRENT_BINARY_DIR}/build/bin/${TEST_LIBRARY_DLL}" .
     COMMAND ./pharo Pharo.image metacello install "tonel://${CMAKE_CURRENT_SOURCE_DIR_TO_OUT}/src" BaselineOfThreadedFFI
@@ -186,8 +190,8 @@ add_custom_command(
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build/test"
     COMMENT "Creating Test Image")
 
-add_custom_target("prepare-tests" ALL
-    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/build/test"
+add_custom_target("prepare-tests"
+    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/build/test/Pharo.image"
     COMMENT "Preparing Tests")
 
 

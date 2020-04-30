@@ -71,6 +71,11 @@ Callback *callback_new(Runner* runner, ffi_type** parameters, sqInt count, ffi_t
 void callback_release(Callback *callback){
 	ffi_closure_free(callback->closure);
 	free(callback->parameterTypes);
+
+	if(callback->userData){
+		free(callback->userData);
+	}
+
 	free(callback);
 }
 

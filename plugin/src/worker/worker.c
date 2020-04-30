@@ -26,10 +26,7 @@ struct __Worker {
     struct __Worker *next;
 };
 
-void *worker_run(void *worker);
 WorkerTask *worker_next_call(Worker *worker);
-
-
 
 void worker_enter_callback(Runner* runner, CallbackInvocation* invocation){
 

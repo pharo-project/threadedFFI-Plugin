@@ -1,4 +1,8 @@
-set(HEADER_URL "https://ci.inria.fr/pharo-ci-jenkins2/job/pharo-vm/job/headless/94/artifact/build/build/packages/PharoVM-8.1.0-02626ece-win64-include.zip") 
+set(BASE_URL 	"http://files.pharo.org/vm/pharo-spur64-headless/win")
+set(URL_NAME	"PharoVM-8.4.0-fecd9814-win64")
+set(VM_URL 		"${BASE_URL}/${URL_NAME}-bin.zip")
+set(HEADER_URL 	"${BASE_URL}/include/${URL_NAME}-include.zip")
+ 
 set(LIBFFI_TARGET "x86_64-unknown-cygwin")
 
 set(LIBFFI_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/build/libffi/install/bin/ffi-7.dll")

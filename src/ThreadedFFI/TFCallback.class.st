@@ -93,12 +93,19 @@ TFCallback >> register [
 	
 	self validateTypes.
 	self runner ensureInitialized.
-	self registerCallback.
+	self registerCallback: frontendCallback tfPrintString.
 	TFCallbackQueue uniqueInstance registerCallback: self.
 ]
 
 { #category : #registering }
 TFCallback >> registerCallback [
+	"TODO: This is still here to allow updating. We need to remove it soon!"
+	<primitive: 'primitiveRegisterCallback' module: 'PThreadedPlugin'>
+	^ self primitiveFailed 
+]
+
+{ #category : #registering }
+TFCallback >> registerCallback: debugString [
 
 	<primitive: 'primitiveRegisterCallback' module: 'PThreadedPlugin'>
 	^ self primitiveFailed 

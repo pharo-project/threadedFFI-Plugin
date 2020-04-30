@@ -1,6 +1,6 @@
 #include "pharoSemaphore.h"
 
-#include "sqVirtualMachine.h"
+#include "pharovm/sqVirtualMachine.h"
 #include <stdio.h>
 #include <stdlib.h>
 

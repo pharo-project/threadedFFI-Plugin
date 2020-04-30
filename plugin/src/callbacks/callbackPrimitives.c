@@ -59,9 +59,10 @@ PrimitiveWithDepth(primitiveUnregisterCallback, 1){
 /*
  * This primitive register a callback in libFFI.
  * This primitive generates the pointer to the function to be passed as the callback.
- * To do so, it generates all the structures expected by lib ffi.
+ * To do so, it generates all the structures expected by libFfi.
  *
- * It only uses the receiver.
+ * It uses two objects, the receiver and a optional parameter ByteString object.
+ *
  * The receiver is a TFCallback.
  *
  * It should at least have the following instance variables
@@ -71,6 +72,9 @@ PrimitiveWithDepth(primitiveUnregisterCallback, 1){
  * 2: parameterHandlers
  * 3: returnTypeHandler
  * 4: runner
+ *
+ * The parameter is a ByteString that will be stored in the internal callback structure as a way of debugging.
+ * The parameter can be nil.
  */
 
 PrimitiveWithDepth(primitiveRegisterCallback, 3){
@@ -84,9 +88,18 @@ PrimitiveWithDepth(primitiveRegisterCallback, 3){
     ffi_type **parameters;
     sqInt receiver;
     ffi_type *returnType;
+    sqInt debugString;
 
     receiver = getReceiver();
     checkFailed();
+
+    //As the parameter is optional, the primitive invocation can came without it
+    if(interpreterProxy->methodArgumentCount() == 1){
+    	debugString = interpreterProxy->stackObjectValue(0);
+    	checkFailed();
+    }else{
+    	debugString = interpreterProxy->nilObject();
+    }
 
     callbackHandle = getAttributeOf(receiver, 1);
     checkFailed();
@@ -123,6 +136,13 @@ PrimitiveWithDepth(primitiveRegisterCallback, 3){
 
     callback = callback_new(runner, parameters, count, returnType);
     checkFailed();
+
+    if(debugString == interpreterProxy->nilObject()){
+    	callback->userData = NULL;
+    }else{
+    	callback->userData = malloc(strlen(readString(debugString)) + 1);
+    	strcpy(callback->userData, readString(debugString));
+    }
 
     setHandler(receiver, callback->functionAddress);
     checkFailed();
