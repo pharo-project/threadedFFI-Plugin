@@ -39,18 +39,18 @@ TFCallbackSameProcessRunStrategy >> doExecuteCallback: aCallbackInvocation on: a
 	aTFRunner handleExceptionDuring: [ aCallbackInvocation execute ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'callback execution' }
 TFCallbackSameProcessRunStrategy >> executeCallback: aCallbackInvocation on: aTFRunner [
 
-	| process newContext |
+	| process newContext methodToUse |
 	process := self callbackProcess.
+	methodToUse := self class >> #doExecuteCallback:on:.
 	
 	process suspend.
-	newContext := Context newForMethod: UndefinedObject >> #m.
-	newContext 
-		setSender: process suspendedContext 
+	newContext := Context 
+		sender: process suspendedContext 
 		receiver: self 
-		method: self class >> #doExecuteCallback:on:
+		method: methodToUse
 		arguments: {aCallbackInvocation. aTFRunner}.
 
 	process suspendedContext: newContext.
