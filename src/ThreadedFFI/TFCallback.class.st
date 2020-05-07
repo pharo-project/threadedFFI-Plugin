@@ -8,7 +8,8 @@ Class {
 		'runner',
 		'parameterTypes',
 		'returnType',
-		'frontendCallback'
+		'frontendCallback',
+		'runStrategy'
 	],
 	#category : #'ThreadedFFI-Callbacks'
 }
@@ -126,6 +127,16 @@ TFCallback >> returnType [
 { #category : #accessing }
 TFCallback >> returnType: anObject [
 	returnType := anObject
+]
+
+{ #category : #accessing }
+TFCallback >> runStrategy [
+	^ runStrategy ifNil: [ TFCallbackForkRunStrategy new ]
+]
+
+{ #category : #accessing }
+TFCallback >> runStrategy: anObject [
+	runStrategy := anObject
 ]
 
 { #category : #accessing }

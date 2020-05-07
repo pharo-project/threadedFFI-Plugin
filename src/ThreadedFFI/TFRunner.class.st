@@ -66,8 +66,8 @@ TFRunner >> executeCallback: aCallbackInvocation [
 	  => no callbacks should finish while this method runs."
 
 	stackProtect critical: [ callbackInvocationStack push: aCallbackInvocation ].
-	[ self handleExceptionDuring: [ aCallbackInvocation execute ] ]
-		forkAt: Processor highIOPriority - 1
+	aCallbackInvocation callback runStrategy executeCallback: aCallbackInvocation on: self.
+
 ]
 
 { #category : #executing }
@@ -140,19 +140,23 @@ TFRunner >> returnCallback: aCallbackInvocation [
 	callbackReturnSemaphore ifNil: [ 
 		callbackReturnSemaphore := Semaphore new ].
 
+	aCallbackInvocation isNull 
+		ifTrue: [ ^ self ].
+
+	callbackInvocationStack isEmptyOrNil ifTrue: [ 
+		^ self cannotReturnCallbackFromOldSession: aCallbackInvocation].
+
 	stackProtect critical: [
-		callbackInvocationStack ifNil: [ 
-			^ self cannotReturnCallbackFromOldSession: aCallbackInvocation ].
 		(callbackInvocationStack top == aCallbackInvocation) 
 			ifTrue: [
-				aCallbackInvocation returnExecution.
-				"If we are starting a session and an execution was executed, it 
-				 may happen that the stack is empty."
-				callbackInvocationStack ifEmpty: [ ^ self ].
-				callbackInvocationStack pop.
-				[ callbackReturnSemaphore signalAll ] valueUnpreemptively.
-				^ self ] ].
-
+				aCallbackInvocation returnExecution
+					ifTrue: [
+						"If we are starting a session and an execution was executed, it 
+						 may happen that the stack is empty."
+						callbackInvocationStack ifEmpty: [ ^ self ].
+						callbackInvocationStack pop.
+						[ callbackReturnSemaphore signalAll ] valueUnpreemptively.
+						^ self ]] ].
 	"failed"
 	callbackReturnSemaphore wait.
 	self returnCallback: aCallbackInvocation

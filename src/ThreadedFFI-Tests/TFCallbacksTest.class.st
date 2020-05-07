@@ -64,8 +64,10 @@ TFCallbacksTest >> testCallbackFromOldSessionFailsReturn [
 { #category : #tests }
 TFCallbacksTest >> testCallbackNotRespectingLIFOOrderFailsReturn [
 
-	| smain s1 c1 s2 c2 |
+	| smain s1 c1 s2 c2 returned |
 	smain := Semaphore new.
+
+	returned := false.
 
 	s1 := Semaphore new.
 	c1 := self newTestCallbackDoing: [ smain signal. s1 wait ].
@@ -73,7 +75,7 @@ TFCallbacksTest >> testCallbackNotRespectingLIFOOrderFailsReturn [
 	s2 := Semaphore new.
 	c2 := self newTestCallbackDoing: [ smain signal. s2 wait ].
 	
-	[ self callCallback: c1 ] fork.
+	[ self callCallback: c1. returned := true ] fork.
 	[ self callCallback: c2 ] fork.
 
 	"wait until both callbacks arrive"
@@ -81,14 +83,16 @@ TFCallbacksTest >> testCallbackNotRespectingLIFOOrderFailsReturn [
 	
 	"make callback 1 to finish while callback 2 is suspended"
 	s1 signal.
+	"Wait until C1 tries to return"
+	100 milliSecond wait.
+	"It should not return until C2 returns"
+	self deny: returned.
+	"Signal s2 to make c2 return"
+	s2 signal.	
+	"Wait until C1 tries to return"
+	100 milliSecond wait.
 
-	runner exceptionHandler wait.
-
-	self assert: runner exceptionHandler lastException class equals: TFIncorrectOrderCallbackReturn.
-	self assert: runner exceptionHandler lastException callback equals: c1.
-	self
-		assert: (runner exceptionHandler lastException previousCallbacks collect: #callback as: Array)
-		equals: { c2 }.
+	self assert: returned.
 ]
 
 { #category : #tests }
@@ -114,6 +118,37 @@ TFCallbacksTest >> testReentrantCalloutsDuringCallback [
 		parameters: { TFBasicType sint. } 
 		returnType: TFBasicType sint
 		runner: runner.
+
+	returnValue := runner invokeFunction: fun withArguments: {callback getHandle. 0}.
+	self assert: returnValue equals: 7
+]
+
+{ #category : #tests }
+TFCallbacksTest >> testReentrantCalloutsDuringCallbackUsingSameProcessForCallbacks [
+
+	| callback fun returnValue |
+	"Avoid running this test before the image side support handles this case.
+	Otherwise both the UI thread and the callback management thread will get blocked in a deadlock."
+	"true ifTrue: [ ^ self skip ]."
+	
+	fun := TFExternalFunction
+		name: 'singleCallToCallback'
+		moduleName: self libraryPath
+		definition: (TFFunctionDefinition
+			parameterTypes: {TFBasicType pointer. TFBasicType sint}
+			returnType: TFBasicType sint).
+
+	callback := TFCallback 
+		forCallback: [ :times | 
+			times = 7
+				ifTrue: [ times ]
+				ifFalse: [ 
+					runner invokeFunction: fun withArguments: {callback getHandle. times + 1} ] ] 
+		parameters: { TFBasicType sint. } 
+		returnType: TFBasicType sint
+		runner: runner.
+
+	callback runStrategy: TFCallbackSameProcessRunStrategy uniqueInstance.
 
 	returnValue := runner invokeFunction: fun withArguments: {callback getHandle. 0}.
 	self assert: returnValue equals: 7
