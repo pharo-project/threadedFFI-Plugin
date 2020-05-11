@@ -31,6 +31,16 @@ make package
 ```
 The build results can be found in `build/packages/*`
 
+#### Compilation in OS X Catalina and Newer
+
+Since some changes in the compilation toolchain of XCode, it is needed to give some hints to the build of libFFI. 
+LibFFI is built during the building of the plugin.
+To run the build correctly, the environment variable CPATH should be set: 
+
+```
+export CPATH=`xcrun --show-sdk-path`/usr/include
+```
+
 ### Running the tests
 
 Running the tests requires an external library with defined functions and types.
