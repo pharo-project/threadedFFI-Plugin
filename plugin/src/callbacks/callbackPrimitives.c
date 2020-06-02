@@ -22,6 +22,24 @@ PrimitiveWithDepth(primitiveReadNextCallback, 1){
     primitiveEndReturn(externalAddress);
 }
 
+PrimitiveWithDepth(primitiveGetCallbackInvocationUserData, 2){
+	CallbackInvocation *callbackInvocation;
+
+    sqInt receiver = getReceiver();
+    checkFailed();
+
+    callbackInvocation = (CallbackInvocation *)getHandler(receiver);
+    checkFailed();
+
+	sqInt returnValue = interpreterProxy->stringForCString((char*)callbackInvocation->callback->userData);
+	if(!returnValue){
+		interpreterProxy->primitiveFailFor(PrimErrNoMemory);
+		return;
+	}
+
+	primitiveEndReturn(returnValue);
+}
+
 /*
  * Initialize the callback queue with the semaphore index
  *
