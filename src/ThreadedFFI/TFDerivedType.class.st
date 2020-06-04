@@ -3,6 +3,7 @@ Class {
 	#superclass : #Object,
 	#classVars : [
 		'BOOLEAN',
+		'BOOLEAN32',
 		'OOP',
 		'STRING'
 	],
@@ -13,6 +14,12 @@ Class {
 TFDerivedType class >> boolean [
 	
 	^ BOOLEAN ifNil: [ BOOLEAN := TFBooleanType new ]
+]
+
+{ #category : #accessing }
+TFDerivedType class >> boolean32 [
+	
+	^ BOOLEAN32 ifNil: [ BOOLEAN32 := TFBoolean32Type new ]
 ]
 
 { #category : #accessing }
