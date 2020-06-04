@@ -1,3 +1,6 @@
+"
+I define the TFFI type for FFIBoolean32
+"
 Class {
 	#name : #TFBoolean32Type,
 	#superclass : #TFBooleanType,
