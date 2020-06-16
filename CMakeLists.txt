@@ -63,6 +63,7 @@ add_custom_target(vmIncludes
 #
 # LibFFI
 #
+if(NOT SKIP_LIBFFI)
 
 ExternalProject_Add(build_libFFI
     PREFIX "${CMAKE_CURRENT_BINARY_DIR}/build/libffi"
@@ -99,6 +100,8 @@ link_directories("${CMAKE_CURRENT_BINARY_DIR}/build/libffi/install/lib")
 
 add_custom_target(libFFI DEPENDS "${LIBFFI_OUTPUT}")
 
+endif()
+
 #
 # Definition of the Plugin
 #
@@ -130,16 +133,23 @@ set(PLUGIN_SOURCES
     plugin/src/worker/workerTask.c
 )
 
-addLibraryWithRPATH(${PLUGIN_NAME} SHARED ${PLUGIN_SOURCES})
+if(NOT WITHOUT_RPATH)
+	addLibraryWithRPATH(${PLUGIN_NAME} SHARED ${PLUGIN_SOURCES})
+else()
+	add_library(${PLUGIN_NAME} SHARED ${PLUGIN_SOURCES})
+endif()
 target_link_libraries(${PLUGIN_NAME} "ffi")
 
 if(WIN)
     target_link_libraries(${PLUGIN_NAME} "pthread") 
 endif(WIN)
 
+if(NOT SKIP_LIBFFI)
 add_dependencies(${PLUGIN_NAME} vmIncludes libFFI)
-
 link_directories(BEFORE "${CMAKE_CURRENT_BINARY_DIR}/build/libffi/install/lib")
+else()
+add_dependencies(${PLUGIN_NAME} vmIncludes)
+endif()
 
 target_compile_options(${PLUGIN_NAME} PUBLIC "-g")
 
@@ -163,9 +173,17 @@ set(TEST_LIBRARY_SOURCES
     testLibrary/src/structures.c
 )
 
-addLibraryWithRPATH(${TEST_LIBRARY} SHARED ${TEST_LIBRARY_SOURCES})
+if(NOT WITHOUT_RPATH)
+	addLibraryWithRPATH(${TEST_LIBRARY} SHARED ${TEST_LIBRARY_SOURCES})
+else()
+	add_library(${TEST_LIBRARY} SHARED ${TEST_LIBRARY_SOURCES})
+endif()
+if(NOT SKIP_LIBFFI)
 add_dependencies(${TEST_LIBRARY} ${PLUGIN_NAME} vmIncludes libFFI)
 target_compile_options(${TEST_LIBRARY} PUBLIC "-g")
+else()
+add_dependencies(${TEST_LIBRARY} ${PLUGIN_NAME} vmIncludes)
+endif()
 
 target_include_directories(${TEST_LIBRARY} PRIVATE "${CMAKE_SOURCE_DIR}/testLibrary/includes" )
 
