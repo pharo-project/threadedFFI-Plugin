@@ -103,8 +103,6 @@ Primitive(primitiveGetSameThreadRunnerAddress) {
     writeAddress(externalAddress, &sameThreadRunner);
     checkFailed();
 
-    interpreterProxy->ptDisableCogIt(primitiveSameThreadCallout);
-
     primitiveEndReturn(externalAddress);
 }
 
