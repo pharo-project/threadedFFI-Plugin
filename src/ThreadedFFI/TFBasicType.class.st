@@ -35,7 +35,8 @@ Class {
 	#superclass : #TFAbstractType,
 	#instVars : [
 		'typeName',
-		'typeCode'
+		'typeCode',
+		'byteSize'
 	],
 	#classVars : [
 		'DOUBLE',
@@ -269,6 +270,13 @@ TFBasicType >> basicType [
 	^ self
 ]
 
+{ #category : #size }
+TFBasicType >> byteSize [
+	
+	self validate.
+	^ byteSize ifNil: [ self primitiveByteSize ]
+]
+
 { #category : #writing }
 TFBasicType >> freeValueIfNeeded: aValue [ 
 	
@@ -335,5 +343,7 @@ TFBasicType >> typeName: anObject [
 { #category : #validating }
 TFBasicType >> validate [ 
 	
-	self isValid ifFalse: [ self primFillType ]
+	self isValid ifTrue: [ ^ self ].
+	self primFillType.
+	byteSize := self primitiveByteSize
 ]

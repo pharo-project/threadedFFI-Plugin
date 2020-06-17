@@ -39,8 +39,7 @@ TFExternalAsyncCall >> allocateParameters [
 	paramArray := Array new: arguments size.
 	
 	function definition parameterTypes withIndexDo: [ :type :idx | |holder|
-		holder := ByteArray new: type byteSize.
-		holder pinInMemory.
+		holder := ByteArray newPinned: type byteSize.
 		type write: (arguments at: idx) into: holder.
 		paramArray at: idx put: holder.
 	].
@@ -51,9 +50,8 @@ TFExternalAsyncCall >> allocateParameters [
 { #category : #'private - allocation' }
 TFExternalAsyncCall >> allocateReturn [
 
-	^ (ByteArray new: function definition returnType byteSize)
-		pinInMemory;
-		yourself
+	^ ByteArray newPinned: function definition returnType byteSize
+
 ]
 
 { #category : #operations }

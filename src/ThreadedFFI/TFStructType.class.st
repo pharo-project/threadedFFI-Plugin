@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'members',
 		'offsets',
-		'targetClass'
+		'targetClass',
+		'byteSize'
 	],
 	#category : #'ThreadedFFI-Types'
 }
@@ -28,6 +29,13 @@ TFStructType class >> forClass: aClass withMembers: aCollectionOfMembers [
 		targetClass: aClass;
 		autoRelease;
 		yourself
+]
+
+{ #category : #size }
+TFStructType >> byteSize [ 
+	
+	self validate.
+	^ byteSize ifNil: [ self primitiveByteSize ]
 ]
 
 { #category : #utils }
@@ -120,6 +128,8 @@ TFStructType >> validate [
 	offsets := Array new: members size.
 	
 	self primitiveInitializeStructType.
+	
+	byteSize := self primitiveByteSize	
 ]
 
 { #category : #writing }

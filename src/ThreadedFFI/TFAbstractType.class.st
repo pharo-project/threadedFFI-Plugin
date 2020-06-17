@@ -6,8 +6,8 @@ Class {
 
 { #category : #size }
 TFAbstractType >> byteSize [
-	self validate.
-	^ self primitiveByteSize
+	
+	^ self subclassResponsibility
 ]
 
 { #category : #accessing }
@@ -31,6 +31,12 @@ TFAbstractType >> readValue: anExternalAddress [
 { #category : #reading }
 TFAbstractType >> readValue: anExternalAddress offset: offset [
 
+	^ self subclassResponsibility
+]
+
+{ #category : #private }
+TFAbstractType >> validate [
+	
 	^ self subclassResponsibility
 ]
 
