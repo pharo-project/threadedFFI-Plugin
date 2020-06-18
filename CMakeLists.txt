@@ -133,11 +133,7 @@ set(PLUGIN_SOURCES
     plugin/src/worker/workerTask.c
 )
 
-if(NOT WITHOUT_RPATH)
-	addLibraryWithRPATH(${PLUGIN_NAME} SHARED ${PLUGIN_SOURCES})
-else()
-	add_library(${PLUGIN_NAME} SHARED ${PLUGIN_SOURCES})
-endif()
+addLibraryWithRPATH(${PLUGIN_NAME} SHARED ${PLUGIN_SOURCES})
 target_link_libraries(${PLUGIN_NAME} "ffi")
 
 if(WIN)
@@ -173,11 +169,7 @@ set(TEST_LIBRARY_SOURCES
     testLibrary/src/structures.c
 )
 
-if(NOT WITHOUT_RPATH)
-	addLibraryWithRPATH(${TEST_LIBRARY} SHARED ${TEST_LIBRARY_SOURCES})
-else()
-	add_library(${TEST_LIBRARY} SHARED ${TEST_LIBRARY_SOURCES})
-endif()
+addLibraryWithRPATH(${TEST_LIBRARY} SHARED ${TEST_LIBRARY_SOURCES})
 if(NOT SKIP_LIBFFI)
 add_dependencies(${TEST_LIBRARY} ${PLUGIN_NAME} vmIncludes libFFI)
 target_compile_options(${TEST_LIBRARY} PUBLIC "-g")
