@@ -67,6 +67,8 @@ TFCallbacksTest >> testCallbackNotRespectingLIFOOrderFailsReturn [
 	| smain s1 c1 s2 c2 returned |
 	smain := Semaphore new.
 
+	true ifTrue: [ 	^ self skip ].
+
 	returned := false.
 
 	s1 := Semaphore new.
