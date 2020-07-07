@@ -15,7 +15,7 @@ TFCallbackInvocation >> arguments [
 	argumentsAddress := self argumentsAddress.
 	
 	^ parameterTypes withIndexCollect: [ :type :idx |
-		type readValue: (argumentsAddress pointerAt: 1 + ((idx - 1) * Smalltalk wordSize)) ]
+		type callbackReadValue: (argumentsAddress pointerAt: 1 + ((idx - 1) * Smalltalk wordSize)) ]
 ]
 
 { #category : #accessing }
@@ -40,7 +40,7 @@ TFCallbackInvocation >> callback: aTFCallback [
 { #category : #accessing }
 TFCallbackInvocation >> callbackData [
 
-	^ TFBasicType pointer readValue: handle
+	^ TFBasicType pointer callbackReadValue: handle
 ]
 
 { #category : #operations }
@@ -95,6 +95,6 @@ TFCallbackInvocation >> runner [
 TFCallbackInvocation >> writeReturnValue: aValue [
 
 	self callback returnType 
-		write: aValue 
+		callbackWrite: aValue 
 		into: self returnHolder
 ]

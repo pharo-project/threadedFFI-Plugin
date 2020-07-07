@@ -14,12 +14,10 @@ Behavior >> basicNewPinned [
 Behavior >> basicNewPinned: requestedSize [
 
 	<primitive: 599 error: ec>
-	
-	self primitiveFailed.
-	
-"	^ (self basicNew: requestedSize)
-			pinInMemory;
-			yourself"
+
+	^ (self basicNew: requestedSize)
+		pinInMemory;
+		yourself
 ]
 
 { #category : #'*ThreadedFFI-UFFI' }

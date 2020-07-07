@@ -36,6 +36,44 @@ TFStringType >> basicType [
 ]
 
 { #category : #writting }
+TFStringType >> callbackReadValue: anExternalAddress [
+
+	^ (self readValue: anExternalAddress) readStringUTF8
+]
+
+{ #category : #marshalling }
+TFStringType >> emitFreeIfNeededOfIndex: argIndex argumentsArrayTempName: argumentsArrayTempName withBuilder: anIRBuilder [
+
+	"I will send the message #freeValueIfNeeded: to myself with the argument from the argumentArray at the position passed as parameter.
+	It is important that I do not leave nothing in the stack"
+
+	anIRBuilder pushLiteral: self.
+	anIRBuilder pushTemp: argumentsArrayTempName.
+	anIRBuilder pushLiteral: argIndex.
+	anIRBuilder send: #at:.
+	anIRBuilder send: #freeValueIfNeeded:.
+	anIRBuilder popTop
+]
+
+{ #category : #marshalling }
+TFStringType >> emitMarshallFromPrimitive: anIRBuilder [ 
+
+	anIRBuilder send: #readStringUTF8
+]
+
+{ #category : #marshalling }
+TFStringType >> emitMarshallToPrimitive: anIRBuilder [ 
+
+	anIRBuilder addTemp: #__marshall_temp.
+	anIRBuilder storeTemp: #__marshall_temp.
+	anIRBuilder popTop.
+	anIRBuilder pushLiteral: self.
+	anIRBuilder pushTemp: #__marshall_temp.
+	anIRBuilder send: #prepareStringForMarshalling:
+
+]
+
+{ #category : #writting }
 TFStringType >> freeValueIfNeeded: aCHeapValueHolder [
 	
 	| pointer |
@@ -49,9 +87,17 @@ TFStringType >> freeValueIfNeeded: aCHeapValueHolder [
 ]
 
 { #category : #writting }
+TFStringType >> prepareStringForMarshalling: aStringOrExternalAddress [
+
+	^ aStringOrExternalAddress isString
+		ifTrue: [ self allocateString: aStringOrExternalAddress ]
+		ifFalse: [ aStringOrExternalAddress ]
+]
+
+{ #category : #writting }
 TFStringType >> readValue: anExternalAddress [
 
-	^ (self basicType readValue: anExternalAddress) readStringUTF8
+	^ self basicType readValue: anExternalAddress
 ]
 
 { #category : #writting }
@@ -59,7 +105,7 @@ TFStringType >> write: aStringOrExternalAddress into: targetAddress [
 
 	"If the argument is a aString I have to allocate it and later free it"
 	| anAddress |
-	anAddress := aStringOrExternalAddress isString ifTrue: [ self allocateString: aStringOrExternalAddress ] ifFalse: [ aStringOrExternalAddress ].
+	anAddress := self prepareStringForMarshalling: aStringOrExternalAddress.
 	
 	self basicType
 		write: anAddress

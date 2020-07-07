@@ -83,6 +83,7 @@ TFExternalAsyncCall >> doExecuteOn: aRunner [
 	"I check if the semaphore is already signaled, because doing it in this way 
 	is thousands of times faster than just executing the wait. 
 	I think is a bug in the VM"
+	
 	self semaphore isSignaled 
 		ifFalse: [ self semaphore wait ].
 	

@@ -46,6 +46,23 @@ TFDerivedType >> byteSize [
 	^ self basicType byteSize
 ]
 
+{ #category : #'reading-writing' }
+TFDerivedType >> callbackReadValue: anExternalAddress [
+	
+	^ self readValue: anExternalAddress 
+]
+
+{ #category : #'reading-writing' }
+TFDerivedType >> callbackWrite: anObject into: anExternalAddress [
+	
+	self write: anObject into: anExternalAddress
+]
+
+{ #category : #marshalling }
+TFDerivedType >> emitFreeIfNeededOfIndex: argIndex argumentsArrayTempName: argumentsArrayTempName withBuilder: anIRBuilder [
+
+]
+
 { #category : #freeing }
 TFDerivedType >> freeValueIfNeeded: aCHeapValueHolder [ 
 	

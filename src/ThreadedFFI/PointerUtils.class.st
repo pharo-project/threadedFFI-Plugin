@@ -7,7 +7,7 @@ Class {
 { #category : #private }
 PointerUtils class >> objectForOop: anAddressAsInteger [
 
-	^ self primObjectForOop: anAddressAsInteger
+	^ self primObjectForOop: anAddressAsInteger asInteger
 ]
 
 { #category : #private }

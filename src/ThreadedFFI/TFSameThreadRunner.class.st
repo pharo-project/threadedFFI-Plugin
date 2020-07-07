@@ -20,6 +20,12 @@ TFSameThreadRunner >> doInitialize [
 	handle := self primitiveGetRunnerAddress.
 ]
 
+{ #category : #executing }
+TFSameThreadRunner >> invokeFunction: aTFExternalFunction withArguments: aCollection [ 
+
+	^ (	TFSameThreadCall forFunction: aTFExternalFunction) executeOn: self withArguments: aCollection
+]
+
 { #category : #private }
 TFSameThreadRunner >> primitiveGetRunnerAddress [
 

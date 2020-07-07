@@ -10,6 +10,12 @@ Class {
 	#category : #'ThreadedFFI-Types'
 }
 
+{ #category : #marshalling }
+TFPointerType >> emitMarshallToPrimitive: builder [
+	
+	builder send: #tfPointerAddress
+]
+
 { #category : #reading }
 TFPointerType >> readValue: anExternalAddress offset: offset [
 

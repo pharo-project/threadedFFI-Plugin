@@ -38,12 +38,29 @@ TFStructType >> byteSize [
 	^ byteSize ifNil: [ self primitiveByteSize ]
 ]
 
+{ #category : #writing }
+TFStructType >> callbackWrite: aNumber into: anExternalAddress [
+
+	self write: aNumber getHandle into: anExternalAddress
+]
+
 { #category : #utils }
 TFStructType >> copyFrom: from to: to size: size [ 
 	"Copy from the from an externalAdress or a ByteArray or to a ByteArray or an External Address"
 
 	<primitive: 'primitiveCopyFromTo' module: 'PThreadedPlugin'>
 	self primitiveFail 
+]
+
+{ #category : #marshalling }
+TFStructType >> emitFreeIfNeededOfIndex: anInteger argumentsArrayTempName: aString withBuilder: anIRBuilder [ 
+
+]
+
+{ #category : #marshalling }
+TFStructType >> emitMarshallToPrimitive: anIRBuilder [ 
+
+	anIRBuilder send: #getHandle
 ]
 
 { #category : #primitives }
@@ -98,10 +115,10 @@ TFStructType >> primitiveInitializeStructType [
 { #category : #reading }
 TFStructType >> readReturnValue: anExternalAddress [
 	
-	| newStruct |
-	newStruct := targetClass fromHandle: (ByteArray new: (self byteSize)).
-	self copyFrom: anExternalAddress to: newStruct getHandle size: self byteSize.
-	^ newStruct
+	| newHandle |
+	newHandle := ByteArray new: self byteSize.
+	self copyFrom: anExternalAddress to: newHandle size: self byteSize.
+	^ newHandle
 ]
 
 { #category : #reading }
@@ -135,5 +152,5 @@ TFStructType >> validate [
 { #category : #writing }
 TFStructType >> write: anExternalStructure into: anExternalAddress [
 
-	self copyFrom: anExternalStructure getHandle to: anExternalAddress size: self byteSize
+	self copyFrom: anExternalStructure to: anExternalAddress size: self byteSize
 ]

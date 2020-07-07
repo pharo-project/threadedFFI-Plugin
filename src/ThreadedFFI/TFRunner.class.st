@@ -95,9 +95,9 @@ TFRunner >> invokeFunction: aTFExternalFunction [
 ]
 
 { #category : #executing }
-TFRunner >> invokeFunction: aTFExternalFunction withArguments: aCollection [ 
+TFRunner >> invokeFunction: aTFExternalFunction withArguments: aCollection [
 
-	^ aTFExternalFunction newCall
+	^ (TFPooledExternalAsyncCall forFunction: aTFExternalFunction)
 		parameters: aCollection;
 		executeOn: self
 ]

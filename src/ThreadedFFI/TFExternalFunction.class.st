@@ -120,12 +120,6 @@ TFExternalFunction >> moduleName: anObject [
 ]
 
 { #category : #operations }
-TFExternalFunction >> newCall [
-
-	^ TFPooledExternalAsyncCall forFunction: self
-]
-
-{ #category : #operations }
 TFExternalFunction >> validate [
 	definition validate.
 	handle isNull

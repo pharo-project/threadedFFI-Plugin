@@ -20,7 +20,7 @@ TFBasicTypeSizeTest >> externalFunction: name [
 		moduleName: self libraryPath
 		definition: (TFFunctionDefinition
 			parameterTypes: {}
-			returnType: TFBasicType uint)
+			returnType: TFBasicType sizeT)
 
 ]
 

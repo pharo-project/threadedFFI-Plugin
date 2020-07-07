@@ -10,6 +10,18 @@ TFAbstractType >> byteSize [
 	^ self subclassResponsibility
 ]
 
+{ #category : #reading }
+TFAbstractType >> callbackReadValue: anExternalAddress [
+
+	^ self readValue: anExternalAddress offset: 1
+]
+
+{ #category : #writing }
+TFAbstractType >> callbackWrite: aNumber into: anExternalAddress [
+
+	self write: aNumber into: anExternalAddress
+]
+
 { #category : #accessing }
 TFAbstractType >> isValid [ 
 
