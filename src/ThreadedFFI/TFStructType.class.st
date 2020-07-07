@@ -58,6 +58,18 @@ TFStructType >> emitFreeIfNeededOfIndex: anInteger argumentsArrayTempName: aStri
 ]
 
 { #category : #marshalling }
+TFStructType >> emitMarshallFromPrimitive: anIRBuilder [ 
+	
+	anIRBuilder addTemp: #__structHandler.
+	anIRBuilder storeTemp: #__structHandler.
+	anIRBuilder popTop.
+	anIRBuilder pushLiteral: targetClass.
+	anIRBuilder pushTemp: #__structHandler.
+	anIRBuilder send: #fromHandle:
+	
+]
+
+{ #category : #marshalling }
 TFStructType >> emitMarshallToPrimitive: anIRBuilder [ 
 
 	anIRBuilder send: #getHandle
