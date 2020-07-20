@@ -21,6 +21,12 @@ Metacello new
 
 If you're missing the plugin, update your headless VM or compile one from sources.
 
+### Using with UFFI
+
+This new FFI implementation is fully compatible with UFFI. 
+It implements a new UFFI backend that can be used as an alternative to the one implemented using SqueakFFI plugin. 
+To use it please refer to [this page](./usingWithFFI.md).
+
 ### Compiling the plugin from sources
 
 ```bash
