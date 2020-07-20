@@ -25,7 +25,7 @@ If you're missing the plugin, update your headless VM or compile one from source
 
 This new FFI implementation is fully compatible with UFFI. 
 It implements a new UFFI backend that can be used as an alternative to the one implemented using SqueakFFI plugin. 
-To use it please refer to [this page](./usingWithFFI.md).
+To use it please refer to [this page](https://github.com/pharo-project/threadedFFI-Plugin/wiki/Using-with-UFFI).
 
 ### Compiling the plugin from sources
 
