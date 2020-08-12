@@ -29,7 +29,7 @@ TFSameThreadRunner >> invokeFunction: aTFExternalFunction withArguments: aCollec
 { #category : #private }
 TFSameThreadRunner >> primitiveGetRunnerAddress [
 
-	<primitive: 'primitiveGetSameThreadRunnerAddress' module: 'PThreadedPlugin'>
+	<primitive: 'primitiveGetSameThreadRunnerAddress'>
 
 	self primitiveFailed 	
 ]
@@ -37,7 +37,7 @@ TFSameThreadRunner >> primitiveGetRunnerAddress [
 { #category : #private }
 TFSameThreadRunner >> primitivePerformWorkerCall: aTFExternalFunction withArguments: argumentHolder withReturnHolder: aReturnHolder usingSemaphore: anInteger [ 
 
-	<primitive: 'primitiveSameThreadCallout' module: 'PThreadedPlugin'>
+	<primitive: 'primitiveSameThreadCallout'>
 
 	self primitiveFailed 	
 ]

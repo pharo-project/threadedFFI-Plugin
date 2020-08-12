@@ -60,7 +60,7 @@ TFCallbackInvocation >> execute [
 
 { #category : #private }
 TFCallbackInvocation >> primCallbackReturn [
-	<primitive: 'primitiveCallbackReturn' module: 'PThreadedPlugin'>
+	<primitive: 'primitiveCallbackReturn'>
 
 	"It returns true if the callback can return, and false if the order is not correct and should
  	retry later"

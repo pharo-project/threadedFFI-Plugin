@@ -70,18 +70,6 @@ TFRunner >> executeCallback: aCallbackInvocation [
 
 ]
 
-{ #category : #executing }
-TFRunner >> executeFunction: aTFExternalFunction withArguments: argumentHolder withReturnHolder: aReturnHolder usingSemaphore: anInteger [
-
-	self ensureInitialized.
-
-	self
-		primitivePerformWorkerCall: aTFExternalFunction
-		withArguments: argumentHolder
-		withReturnHolder: aReturnHolder
-		usingSemaphore: anInteger
-]
-
 { #category : #errors }
 TFRunner >> handleExceptionDuring: aBlock [
 

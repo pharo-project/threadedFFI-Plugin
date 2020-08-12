@@ -27,7 +27,7 @@ TFMainThreadRunner >> doInitialize [
 { #category : #private }
 TFMainThreadRunner >> primitivePerformWorkerCall: aTFExternalFunction withArguments: argumentHolder withReturnHolder: aReturnHolder usingSemaphore: anInteger [ 
 	
-	<primitive: 'primitivePerformWorkerCall' module: 'PThreadedPlugin'>
+	<primitive: 'primitivePerformWorkerCall'>
 
 	^ self primitiveFailed 
 ]

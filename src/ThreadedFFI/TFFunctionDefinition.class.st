@@ -57,7 +57,7 @@ TFFunctionDefinition >> parameterTypes: anObject [
 { #category : #primitives }
 TFFunctionDefinition >> primDefineFunctionWith: parameterHandlers returnType: returnTypeHandler [ 
 	
-	<primitive: 'primitiveDefineFunction' module: 'PThreadedPlugin' error: ec>
+	<primitive: 'primitiveDefineFunction' error: ec>
 
 	^ self primitiveFailed	
 ]
@@ -65,7 +65,7 @@ TFFunctionDefinition >> primDefineFunctionWith: parameterHandlers returnType: re
 { #category : #primitives }
 TFFunctionDefinition >> primFreeDefinition [
 	
-	<primitive: 'primitiveFreeDefinition' module: 'PThreadedPlugin'>
+	<primitive: 'primitiveFreeDefinition'>
 
 	^ self primitiveFailed	
 ]

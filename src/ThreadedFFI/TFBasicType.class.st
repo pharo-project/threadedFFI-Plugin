@@ -325,14 +325,14 @@ TFBasicType >> isVoid [
 
 { #category : #primitives }
 TFBasicType >> primFillType [
-	<primitive: 'primitiveFillBasicType' module: 'PThreadedPlugin'>
+	<primitive: 'primitiveFillBasicType'>
 
 	^ self primitiveFailed	
 ]
 
 { #category : #primitives }
 TFBasicType >> primitiveByteSize [
-	<primitive: 'primitiveTypeByteSize' module: 'PThreadedPlugin'>
+	<primitive: 'primitiveTypeByteSize'>
 
 	^ self primitiveFailed	
 ]

@@ -48,7 +48,7 @@ TFStructType >> callbackWrite: aNumber into: anExternalAddress [
 TFStructType >> copyFrom: from to: to size: size [ 
 	"Copy from the from an externalAdress or a ByteArray or to a ByteArray or an External Address"
 
-	<primitive: 'primitiveCopyFromTo' module: 'PThreadedPlugin'>
+	<primitive: 'primitiveCopyFromTo'>
 	self primitiveFail 
 ]
 
@@ -77,7 +77,7 @@ TFStructType >> emitMarshallToPrimitive: anIRBuilder [
 
 { #category : #primitives }
 TFStructType >> free [
-	<primitive: 'primitiveFreeStruct' module: 'PThreadedPlugin'>
+	<primitive: 'primitiveFreeStruct'>
 
 	^ self primitiveFailed	
 ]
@@ -112,14 +112,14 @@ TFStructType >> offsets [
 
 { #category : #primitives }
 TFStructType >> primitiveByteSize [
-	<primitive: 'primitiveStructByteSize' module: 'PThreadedPlugin'>
+	<primitive: 'primitiveStructByteSize'>
 
 	^ self primitiveFailed	
 ]
 
 { #category : #primitives }
 TFStructType >> primitiveInitializeStructType [
-	<primitive: 'primitiveInitializeStructType' module: 'PThreadedPlugin'>
+	<primitive: 'primitiveInitializeStructType'>
 
 	^ self primitiveFailed	
 ]

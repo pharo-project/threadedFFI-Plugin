@@ -1,29 +1,29 @@
 Class {
-	#name : #BenchTFFIPlugin,
+	#name : #BenchTFFISameThread,
 	#superclass : #Object,
 	#category : #'ThreadedFFI-UFFI-Tests-Benchs'
 }
 
 { #category : #accessing }
-BenchTFFIPlugin >> calloutAPIClass [ 
+BenchTFFISameThread >> calloutAPIClass [ 
 
 	^ TFCalloutAPI
 ]
 
 { #category : #'as yet unclassified' }
-BenchTFFIPlugin >> doCallWith: aFloat another: aDouble [
+BenchTFFISameThread >> doCallWith: aFloat another: aDouble [
 
 	^ self ffiCall: #(float sumAFloatAndADouble(float aFloat, double aDouble))
 ]
 
 { #category : #accessing }
-BenchTFFIPlugin >> ffiLibrary [
+BenchTFFISameThread >> ffiLibrary [
 
 	^ TFTestLibraryUsingSameThreadRunner uniqueInstance
 ]
 
 { #category : #'as yet unclassified' }
-BenchTFFIPlugin >> runCall [
+BenchTFFISameThread >> runCall [
 
 	| return | 
 

@@ -126,7 +126,7 @@ TFCallbackQueue >> nextPendingCallback [
 
 { #category : #'private primitives' }
 TFCallbackQueue >> primNextPendingCallback [
-	<primitive: 'primitiveReadNextCallback' module: 'PThreadedPlugin'>
+	<primitive: 'primitiveReadNextCallback'>
 
 	^ self primitiveFailed
 ]
@@ -134,7 +134,7 @@ TFCallbackQueue >> primNextPendingCallback [
 { #category : #primitives }
 TFCallbackQueue >> primitiveInitializeQueueWith: anInteger [ 
 
-	<primitive: 'primitiveInitilizeCallbacks' module: 'PThreadedPlugin'>
+	<primitive: 'primitiveInitilizeCallbacks'>
 
 	^ self primitiveFailed 
 ]
