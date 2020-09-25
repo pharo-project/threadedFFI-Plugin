@@ -33,8 +33,8 @@ else()
 endif()
 
 set(VERSION_MAJOR 1)
-set(VERSION_MINOR 3)
-set(VERSION_PATCH 1)
+set(VERSION_MINOR 4)
+set(VERSION_PATCH 0)
 
 check_type_size("void*" SIZEOF_VOID_P)
 
