@@ -12,7 +12,7 @@ def shell(params){
 }
 
 def runInCygwin(command){
-    def c = """#!c:\\cygwin64\\bin\\bash --login
+    def c = """#!c:\\tools\\cygwin\\bin\\bash --login
     cd `cygpath \"$WORKSPACE\"`
     set -ex
     ${command}
@@ -38,8 +38,7 @@ def runBuild(platform){
 		if(isWindows()){
 			runInCygwin "cmake ."
       	  	runInCygwin "make install"
-      	  	runInCygwin "make prepare-tests test"
-      	  	runInCygwin "make package"
+g      	  	runInCygwin "make package"
     	}else{
 			cmakeBuild generator: "Unix Makefiles", sourceDir: ".", installation: "InSearchPath"
 			shell "make install"
