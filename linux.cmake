@@ -1,5 +1,5 @@
 set(BASE_URL 	"http://files.pharo.org/vm/pharo-spur64-headless/linux")
-set(URL_NAME	"PharoVM-8.4.0-fecd981-linux64")
+set(URL_NAME	"PharoVM-8.5.0-3cf4aab-linux64")
 set(VM_URL 		"${BASE_URL}/${URL_NAME}-bin.zip")
 set(HEADER_URL 	"${BASE_URL}/include/${URL_NAME}-include.zip")
 
