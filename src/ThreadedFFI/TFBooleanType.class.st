@@ -44,7 +44,9 @@ TFBooleanType >> readValue: anExternalAddress [
 ]
 
 { #category : #'reading-writing' }
-TFBooleanType >> write: aSmallInteger into: aCollection [ 
+TFBooleanType >> write: aBoolean into: aCollection [ 
 	
-	self basicType write: aSmallInteger into: aCollection
+	self basicType 
+		write: aBoolean asBit 
+		into: aCollection
 ]
