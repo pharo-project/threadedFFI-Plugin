@@ -15,7 +15,6 @@ Class {
 
 { #category : #writting }
 TFStringType >> allocateString: aString [
-	
 	| anExternalAddress |
 	
 	anExternalAddress := (ExternalAddress fromString: aString utf8Encoded).
@@ -75,23 +74,24 @@ TFStringType >> emitMarshallToPrimitive: anIRBuilder [
 
 { #category : #writting }
 TFStringType >> freeValueIfNeeded: aCHeapValueHolder [
-	
 	| pointer |
+
+	aCHeapValueHolder isNull ifTrue: [ ^ self ].
 	pointer := aCHeapValueHolder pointerAt: 1.
-	
-	(self allocatedStrings includes: pointer) ifTrue: [ 
-		self allocatedStrings remove: pointer.
-		pointer isNull ifFalse: [ 
-			pointer free ] ]
-	
+	(self allocatedStrings includes: pointer) ifFalse: [ ^ self ].
+	self allocatedStrings remove: pointer.
+	pointer isNull ifFalse: [ 
+		pointer free ]
 ]
 
 { #category : #writting }
 TFStringType >> prepareStringForMarshalling: aStringOrExternalAddress [
 
 	^ aStringOrExternalAddress isString
-		ifTrue: [ self allocateString: aStringOrExternalAddress ]
-		ifFalse: [ aStringOrExternalAddress ]
+		ifTrue: [ 
+			self allocateString: aStringOrExternalAddress ]
+		ifFalse: [ 
+			aStringOrExternalAddress ifNil: [ ExternalAddress null ] ]
 ]
 
 { #category : #writting }
