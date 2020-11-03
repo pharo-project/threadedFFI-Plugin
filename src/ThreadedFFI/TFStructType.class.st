@@ -31,11 +31,23 @@ TFStructType class >> forClass: aClass withMembers: aCollectionOfMembers [
 		yourself
 ]
 
+{ #category : #types }
+TFStructType >> basicType [
+
+	^ self
+]
+
 { #category : #size }
 TFStructType >> byteSize [ 
 	
 	self validate.
 	^ byteSize ifNil: [ self primitiveByteSize ]
+]
+
+{ #category : #reading }
+TFStructType >> callbackReadValue: anExternalAddress [
+
+	^ targetClass fromHandle: anExternalAddress.
 ]
 
 { #category : #writing }
@@ -93,6 +105,21 @@ TFStructType >> isVoid [
 	^ false
 ]
 
+{ #category : #marshalling }
+TFStructType >> marshallFromPrimitive: aValue [
+	
+	(aValue isKindOf: targetClass) 
+		ifTrue: [ ^ aValue ].
+
+	^ targetClass fromHandle: aValue
+]
+
+{ #category : #marshalling }
+TFStructType >> marshallToPrimitive: aValue [ 
+
+	^ aValue getHandle
+]
+
 { #category : #accessing }
 TFStructType >> members [
 	^ members
@@ -134,8 +161,12 @@ TFStructType >> readReturnValue: anExternalAddress [
 ]
 
 { #category : #reading }
-TFStructType >> readValue: anExternalAddress offset: anInteger [ 
-	self shouldBeImplemented.
+TFStructType >> readValue: anExternalAddress offset: offset [ 
+
+	| address |
+
+	address := anExternalAddress pointerAt: offset.
+	^ targetClass fromHandle: address.
 ]
 
 { #category : #accessing }

@@ -45,9 +45,14 @@ TFCallbackInvocation >> callbackData [
 
 { #category : #operations }
 TFCallbackInvocation >> execute [ 
-	|  returnValue |
-	
-	returnValue := callback frontendCallback valueWithArguments: self arguments.
+	|  returnValue transformedArguments |
+
+	transformedArguments := [ self arguments 
+			with: callback parameterTypes 
+			collect: [:anArgument :aType | aType marshallFromPrimitive: anArgument]] 
+		on: Exception fork: [:e | e debug ] return: [ self arguments ].
+
+	returnValue := callback returnType marshallToPrimitive: (callback frontendCallback valueWithArguments: transformedArguments).
 	
 	self isNull 
 		ifTrue: [ ^ self  ].

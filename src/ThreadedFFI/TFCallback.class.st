@@ -77,6 +77,26 @@ TFCallback >> initialize [
 	parameterHandlers := #()
 ]
 
+{ #category : #invoking }
+TFCallback >> invokeAsFunctionWithArguments: aCollection [ 
+	
+	| definition function preparedArguments |
+
+	definition := TFFunctionDefinition
+		parameterTypes: self parameterTypes
+		returnType: self returnType.
+
+	function := TFExternalFunction 
+		fromAddress: self getHandle 
+		definition: definition.
+
+	preparedArguments := aCollection 
+		with: self parameterTypes 
+		collect: [ :anArgument :aType | aType marshallToPrimitive: anArgument ].
+
+	^ self returnType marshallFromPrimitive: (self runner invokeFunction: function withArguments: preparedArguments)
+]
+
 { #category : #accessing }
 TFCallback >> parameterTypes [
 	^ parameterTypes

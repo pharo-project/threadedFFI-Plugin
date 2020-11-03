@@ -323,6 +323,20 @@ TFBasicType >> isVoid [
 	^ typeName = #void
 ]
 
+{ #category : #marshalling }
+TFBasicType >> marshallFromPrimitive: aValue [
+	
+	^ aValue
+	
+]
+
+{ #category : #marshalling }
+TFBasicType >> marshallToPrimitive: aValue [
+	
+	^ aValue
+	
+]
+
 { #category : #primitives }
 TFBasicType >> primFillType [
 	<primitive: 'primitiveFillBasicType'>

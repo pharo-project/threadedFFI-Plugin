@@ -86,6 +86,13 @@ TFStringType >> freeValueIfNeeded: aCHeapValueHolder [
 	
 ]
 
+{ #category : #marshalling }
+TFStringType >> marshallToPrimitive: aValue [
+	
+	^ self prepareStringForMarshalling: aValue
+	
+]
+
 { #category : #writting }
 TFStringType >> prepareStringForMarshalling: aStringOrExternalAddress [
 

@@ -9,5 +9,5 @@ FFILibrary >> callbackRunningStrategy [
 { #category : #'*ThreadedFFI-UFFI' }
 FFILibrary >> runner [ 
 	
-	^ TFWorker default
+	^ TFSameThreadRunner uniqueInstance  
 ]

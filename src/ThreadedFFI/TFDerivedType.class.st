@@ -81,6 +81,20 @@ TFDerivedType >> isVoid [
 	^ self basicType isVoid
 ]
 
+{ #category : #marshalling }
+TFDerivedType >> marshallFromPrimitive: aValue [
+	
+	^ aValue
+	
+]
+
+{ #category : #marshalling }
+TFDerivedType >> marshallToPrimitive: aValue [
+	
+	^ aValue
+	
+]
+
 { #category : #'reading-writing' }
 TFDerivedType >> readReturnValue: anExternalAddress [
 
