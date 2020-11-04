@@ -73,7 +73,7 @@ TFStructTest >> testReturnsAnStruct [
 		parameterTypes:	{TFBasicType sint. TFBasicType sint}
 		returnType: pointType.
 		
-	aPoint := runner invokeFunction: fun withArguments: #(1 5).
+	aPoint := TFPointTestStruct fromHandle: (runner invokeFunction: fun withArguments: #(1 5)).
 
 	self assert: aPoint x equals: 1.
 	self assert: aPoint y equals: 5.	

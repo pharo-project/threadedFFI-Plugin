@@ -31,38 +31,9 @@ TFExternalAsyncCall class >> forFunction: aTFExternalFunction [
 		yourself
 ]
 
-{ #category : #'private - allocation' }
-TFExternalAsyncCall >> allocateParameters [
-	| paramArray |
-	
-	arguments ifEmpty: [ ^ nil ].
-	paramArray := Array new: arguments size.
-	
-	function definition parameterTypes withIndexDo: [ :type :idx | |holder|
-		holder := ByteArray newPinned: type byteSize.
-		type write: (arguments at: idx) into: holder.
-		paramArray at: idx put: holder.
-	].
-
-	^ paramArray.
-]
-
-{ #category : #'private - allocation' }
-TFExternalAsyncCall >> allocateReturn [
-
-	^ ByteArray newPinned: function definition returnType byteSize
-
-]
-
 { #category : #operations }
 TFExternalAsyncCall >> cleanUp [
 	self deregisterSemaphore.
-	
-	self 
-		primitiveReleaseParameters: parameterAddress
-	 	releaseReturn: returnHolder.	
-	
-	^ self freeArguments: parameterArray
 ]
 
 { #category : #'private - semaphore' }
@@ -74,19 +45,21 @@ TFExternalAsyncCall >> deregisterSemaphore [
 { #category : #operations }
 TFExternalAsyncCall >> doExecuteOn: aRunner [
 	
-	aRunner
+	| aTaskAddress | 
+	
+	aTaskAddress := aRunner
 		executeFunction: function
-		withArguments: parameterAddress
-		withReturnHolder: returnAddress
+		withArguments: parameterArray
 		usingSemaphore: self semaphoreIndex.
 	
 	"I check if the semaphore is already signaled, because doing it in this way 
 	is thousands of times faster than just executing the wait. 
 	I think is a bug in the VM"
+	
 	self semaphore isSignaled 
 		ifFalse: [ self semaphore wait ].
 	
-	^ self readReturnValue: returnHolder
+	^ aRunner readReturnValueFromTask: aTaskAddress
 ]
 
 { #category : #operations }
@@ -104,18 +77,6 @@ TFExternalAsyncCall >> executeOn: aRunner [
 			self doExecuteOn: aRunner ]
 		ensure: [
 			self cleanUp ]
-]
-
-{ #category : #'private - allocation' }
-TFExternalAsyncCall >> freeArguments: argumentsArray [
-	
-	argumentsArray ifNil: [ ^ self ].
-
-	function definition parameterTypes withIndexDo: [ :type :idx |
-		type freeValueIfNeeded: (argumentsArray at:idx).
-	].
-
-
 ]
 
 { #category : #accessing }
@@ -146,43 +107,11 @@ TFExternalAsyncCall >> parameters: anObject [
 { #category : #operations }
 TFExternalAsyncCall >> prepareExecution [
 	self validateFunction.
-	self validateArguments.
-	
-	returnHolder := self allocateReturn.
-	returnAddress := ExternalAddress null.
-	parameterArray := self allocateParameters.
-	parameterAddress := ExternalAddress null.
+
+	parameterArray := arguments asArray.
 
 	self registerSemaphore.
 
-	self
-		primitivePrepareParameters: parameterArray
-		into: parameterAddress
-		prepareReturn: returnHolder
-		into: returnAddress
-]
-
-{ #category : #'private - primitives' }
-TFExternalAsyncCall >> primitivePrepareParameters: aParameterArray into: aParameterAddress prepareReturn: aReturnHodler into: aReturnAddress [
-
-	<primitive: 'primitivePrepareParametersForCall' module: 'PThreadedPlugin'>
-
-	^ self primitiveFailed	
-]
-
-{ #category : #'private - primitives' }
-TFExternalAsyncCall >> primitiveReleaseParameters: aParameterArrayAddress releaseReturn: aReturnAddress [	
-
-	<primitive: 'primitiveReleaseParametersForCall' module: 'PThreadedPlugin'>
-
-	^ self primitiveFailed	
-]
-
-{ #category : #'private - marshalling' }
-TFExternalAsyncCall >> readReturnValue: aValueHolder [
-
-	function definition returnType isVoid ifTrue: [ ^ nil ].
-	^ function definition returnType readReturnValue: aValueHolder
 ]
 
 { #category : #'private - semaphore' }
@@ -200,13 +129,6 @@ TFExternalAsyncCall >> semaphore [
 { #category : #accessing }
 TFExternalAsyncCall >> semaphoreIndex [
 	^ index
-]
-
-{ #category : #'private - validation' }
-TFExternalAsyncCall >> validateArguments [
-	
-	function definition parameterTypes size = arguments size
-		ifFalse: [ self error: 'The number of parameters does not match the expected ones' ].
 ]
 
 { #category : #'private - validation' }

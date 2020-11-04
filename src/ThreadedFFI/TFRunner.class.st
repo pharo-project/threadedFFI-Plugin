@@ -70,18 +70,6 @@ TFRunner >> executeCallback: aCallbackInvocation [
 
 ]
 
-{ #category : #executing }
-TFRunner >> executeFunction: aTFExternalFunction withArguments: argumentHolder withReturnHolder: aReturnHolder usingSemaphore: anInteger [
-
-	self ensureInitialized.
-
-	self
-		primitivePerformWorkerCall: aTFExternalFunction
-		withArguments: argumentHolder
-		withReturnHolder: aReturnHolder
-		usingSemaphore: anInteger
-]
-
 { #category : #errors }
 TFRunner >> handleExceptionDuring: aBlock [
 
@@ -95,9 +83,9 @@ TFRunner >> invokeFunction: aTFExternalFunction [
 ]
 
 { #category : #executing }
-TFRunner >> invokeFunction: aTFExternalFunction withArguments: aCollection [ 
+TFRunner >> invokeFunction: aTFExternalFunction withArguments: aCollection [
 
-	^ aTFExternalFunction newCall
+	^ (TFPooledExternalAsyncCall forFunction: aTFExternalFunction)
 		parameters: aCollection;
 		executeOn: self
 ]

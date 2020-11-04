@@ -31,7 +31,7 @@ TFUFFIStructuresTest >> passingLongStructByReference: st b: b c: c d: d [
 { #category : #'as yet unclassified' }
 TFUFFIStructuresTest >> passingNestedStructByCopy: st a: a y: y [
  
-	^ self ffiCall: #(int passingNestedStruct(TFNestedTestStruct st, uint8 a, double y))
+	^ self ffiCall: #(int passingNestedStruct(TFNestedTestStruct st, char a, double y))
 ]
 
 { #category : #'as yet unclassified' }

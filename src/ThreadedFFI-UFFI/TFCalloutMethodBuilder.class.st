@@ -19,9 +19,10 @@ TFCalloutMethodBuilder >> createFFICalloutLiteralFromSpec: functionSpec [
 
 { #category : #private }
 TFCalloutMethodBuilder >> generateFFICallout: builder spec: functionSpec [
-	| properties |
+	| properties ffiLibrary |
 
 	"Copy the properties of the old method"
+
 	sender methodProperties ifNotNil: [ 
 		properties := sender methodProperties copy.
 		properties method: nil.
@@ -39,25 +40,43 @@ TFCalloutMethodBuilder >> generateFFICallout: builder spec: functionSpec [
 			send: #trace: ].
 
 	"Obtain the library to use"
-	builder 
-		pushReceiver;
-		send: #ffiLibrary;
-		send: #uniqueInstance.
-		
-	"Obtain the runner to use."
-	builder send: #runner.
+	ffiLibrary := library ifNil: [sender receiver ffiLibrary].	
+	ffiLibrary := ffiLibrary isClass 
+		ifFalse: [ ffiLibrary asFFILibrary ]
+		ifTrue: [ ffiLibrary uniqueInstance ].
 	
+	builder 
+		pushLiteral: (ffiLibrary uniqueInstance runner).
+			
 	"save ffi call as literal"
 	builder pushLiteral: (self createFFICalloutLiteralFromSpec: functionSpec).
 	"iterate arguments in order (in the function) to create the function call"
-	functionSpec arguments do: [ :each | each emitArgument: builder context: sender inCallout: self requestor ].
+	
+	functionSpec arguments 
+		do: [ :each | 
+			each emitArgument: builder context: sender inCallout: self requestor.
+			each resolvedType tfExternalTypeWithArity emitMarshallToPrimitive: builder ].
+	
 	"create the array"
 	builder pushConsArray: functionSpec arguments size.
+	builder addTemp: #argumentsArray.
+	builder storeTemp: #argumentsArray.
+	
 	"send call and store into result"
 	builder send: #invokeFunction:withArguments:.
+
+	functionSpec arguments withIndexDo: [ :each :index| 
+		each emitReturnArgument: builder context: sender.
+		each resolvedType tfExternalTypeWithArity 
+			emitFreeIfNeededOfIndex: index
+			argumentsArrayTempName: #argumentsArray
+			withBuilder: builder  ].
 	
-	functionSpec arguments do: [ :each | each emitReturnArgument: builder context: sender ].
-	"convert in case return type needs it. And return reseult"
+	"Additional marshall in the case of TFFI"	
+	functionSpec returnType resolvedType tfExternalTypeWithArity emitMarshallFromPrimitive: builder.
+
+	"convert in case return type needs it. And return reseult"	
+	
 	^ functionSpec returnType
 		emitReturn: builder
 		resultTempVar: #result

@@ -109,16 +109,16 @@ TFCallbacksTest >> testReentrantCalloutsDuringCallback [
 		name: 'singleCallToCallback'
 		moduleName: self libraryPath
 		definition: (TFFunctionDefinition
-			parameterTypes: {TFBasicType pointer. TFBasicType sint}
-			returnType: TFBasicType sint).
+			parameterTypes: {TFBasicType pointer. TFBasicType sint32}
+			returnType: TFBasicType sint32).
 
 	callback := TFCallback 
 		forCallback: [ :times | 
 			times = 7
 				ifTrue: [ times ]
 				ifFalse: [ runner invokeFunction: fun withArguments: {callback getHandle. times + 1} ] ] 
-		parameters: { TFBasicType sint. } 
-		returnType: TFBasicType sint
+		parameters: { TFBasicType sint32. } 
+		returnType: TFBasicType sint32
 		runner: runner.
 
 	returnValue := runner invokeFunction: fun withArguments: {callback getHandle. 0}.

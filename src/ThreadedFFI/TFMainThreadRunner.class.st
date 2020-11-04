@@ -24,12 +24,26 @@ TFMainThreadRunner >> doInitialize [
 	handle := MainThreadHandle
 ]
 
+{ #category : #executing }
+TFMainThreadRunner >> executeFunction: aTFExternalFunction withArguments: arguments usingSemaphore: anInteger [ 
+	<primitive: 'primitiveWorkerCallout' error: ec>
+	
+	self primitiveFailed 
+]
+
 { #category : #private }
 TFMainThreadRunner >> primitivePerformWorkerCall: aTFExternalFunction withArguments: argumentHolder withReturnHolder: aReturnHolder usingSemaphore: anInteger [ 
 	
-	<primitive: 'primitivePerformWorkerCall' module: 'PThreadedPlugin'>
+	<primitive: 'primitivePerformWorkerCall'>
 
 	^ self primitiveFailed 
+]
+
+{ #category : #executing }
+TFMainThreadRunner >> readReturnValueFromTask: anExternalAddress [
+	<primitive: 'primitiveWorkerExtractReturnValue' error: ec>
+
+	self primitiveFailed
 ]
 
 { #category : #private }

@@ -36,7 +36,7 @@ TFCallback class >> forCallback: aCallback parameters: parameterTypes returnType
 
 { #category : #'private primitives' }
 TFCallback class >> primUnregister: callbackHandle [
-	<primitive: 'primitiveUnregisterCallback' module: 'PThreadedPlugin'>
+	<primitive: 'primitiveUnregisterCallback'>
 
 	^ self primitiveFailed
 ]
@@ -77,6 +77,26 @@ TFCallback >> initialize [
 	parameterHandlers := #()
 ]
 
+{ #category : #invoking }
+TFCallback >> invokeAsFunctionWithArguments: aCollection [ 
+	
+	| definition function preparedArguments |
+
+	definition := TFFunctionDefinition
+		parameterTypes: self parameterTypes
+		returnType: self returnType.
+
+	function := TFExternalFunction 
+		fromAddress: self getHandle 
+		definition: definition.
+
+	preparedArguments := aCollection 
+		with: self parameterTypes 
+		collect: [ :anArgument :aType | aType marshallToPrimitive: anArgument ].
+
+	^ self returnType marshallFromPrimitive: (self runner invokeFunction: function withArguments: preparedArguments)
+]
+
 { #category : #accessing }
 TFCallback >> parameterTypes [
 	^ parameterTypes
@@ -101,14 +121,14 @@ TFCallback >> register [
 { #category : #registering }
 TFCallback >> registerCallback [
 	"TODO: This is still here to allow updating. We need to remove it soon!"
-	<primitive: 'primitiveRegisterCallback' module: 'PThreadedPlugin'>
+	<primitive: 'primitiveRegisterCallback'>
 	^ self primitiveFailed 
 ]
 
 { #category : #registering }
 TFCallback >> registerCallback: debugString [
 
-	<primitive: 'primitiveRegisterCallback' module: 'PThreadedPlugin'>
+	<primitive: 'primitiveRegisterCallback'>
 	^ self primitiveFailed 
 ]
 

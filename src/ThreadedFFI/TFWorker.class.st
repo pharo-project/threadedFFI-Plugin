@@ -54,6 +54,14 @@ TFWorker >> doInitialize [
 	self primitiveCreateWorker
 ]
 
+{ #category : #executing }
+TFWorker >> executeFunction: aTFExternalFunction withArguments: arguments usingSemaphore: anInteger [ 
+	
+	<primitive: 'primitiveWorkerCallout' error: ec>
+	
+	self primitiveFailed 
+]
+
 { #category : #accessing }
 TFWorker >> name [
 
@@ -69,15 +77,7 @@ TFWorker >> name: aName [
 { #category : #private }
 TFWorker >> primitiveCreateWorker [
 
-	<primitive: 'primitiveCreateWorker' module: 'PThreadedPlugin'>
-
-	^ self primitiveFailed 
-]
-
-{ #category : #private }
-TFWorker >> primitivePerformWorkerCall: aTFExternalFunction withArguments: argumentHolder withReturnHolder: aReturnHolder usingSemaphore: anInteger [ 
-	
-	<primitive: 'primitivePerformWorkerCall' module: 'PThreadedPlugin'>
+	<primitive: 'primitiveCreateWorker'>
 
 	^ self primitiveFailed 
 ]
@@ -85,9 +85,17 @@ TFWorker >> primitivePerformWorkerCall: aTFExternalFunction withArguments: argum
 { #category : #private }
 TFWorker >> primitiveReleaseWorker [
 
-	<primitive: 'primitiveReleaseWorker' module: 'PThreadedPlugin'>
+	<primitive: 'primitiveReleaseWorker'>
 
 	^ self primitiveFailed 
+]
+
+{ #category : #executing }
+TFWorker >> readReturnValueFromTask: anExternalAddress [
+
+	<primitive: 'primitiveWorkerExtractReturnValue' error: ec>
+
+	self primitiveFailed
 ]
 
 { #category : #accessing }

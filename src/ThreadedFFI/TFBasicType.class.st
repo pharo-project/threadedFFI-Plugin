@@ -87,8 +87,8 @@ TFBasicType class >> createBasicTypes [
 			"Aliased types, these depends of the architecture"
 			POINTER := self newPointerTypeName: #pointer code: 12.
 
-			UCHAR := self newIntTypeName: #uchar code: 13 signed: false.
-			SCHAR := self newIntTypeName: #schar code: 14 signed: true.
+			UCHAR := self newCharTypeName: #uchar code: 13 signed: false.
+			SCHAR := self newCharTypeName: #schar code: 14 signed: true.
 			
 			USHORT := self newIntTypeName: #ushort code: 15 signed: false.
 			SSHORT := self newIntTypeName: #sshort code: 16 signed: true.
@@ -116,6 +116,16 @@ TFBasicType class >> initialize [
 	
 	Types := self createBasicTypes.
 	TypeMap := (Types collect: [ :t | t typeName -> t ]) asDictionary.
+]
+
+{ #category : #'instance creation' }
+TFBasicType class >> newCharTypeName: aName code: aCode signed: signed [
+	
+	^ TFCharType new 
+		typeName: aName;
+		typeCode: aCode;
+		signed: signed;
+		yourself
 ]
 
 { #category : #'instance creation' }
@@ -200,6 +210,14 @@ TFBasicType class >> sint8 [
 ]
 
 { #category : #accessing }
+TFBasicType class >> sizeT [
+
+	^ Smalltalk wordSize = 8
+		ifTrue: [ self uint64 ]
+		ifFalse: [ self uint32 ]
+]
+
+{ #category : #accessing }
 TFBasicType class >> slong [
 	^SLONG
 ]
@@ -277,6 +295,22 @@ TFBasicType >> byteSize [
 	^ byteSize ifNil: [ self primitiveByteSize ]
 ]
 
+{ #category : #marshalling }
+TFBasicType >> emitFreeIfNeededOfIndex: argIndex argumentsArrayTempName: argumentsArrayTempName withBuilder: anIRBuilder [ 	
+]
+
+{ #category : #marshalling }
+TFBasicType >> emitMarshallFromPrimitive: aBuilder [
+
+	
+]
+
+{ #category : #marshalling }
+TFBasicType >> emitMarshallToPrimitive: builder [
+	
+	"Nothing to do in this case"
+]
+
 { #category : #writing }
 TFBasicType >> freeValueIfNeeded: aValue [ 
 	
@@ -289,16 +323,30 @@ TFBasicType >> isVoid [
 	^ typeName = #void
 ]
 
+{ #category : #marshalling }
+TFBasicType >> marshallFromPrimitive: aValue [
+	
+	^ aValue
+	
+]
+
+{ #category : #marshalling }
+TFBasicType >> marshallToPrimitive: aValue [
+	
+	^ aValue
+	
+]
+
 { #category : #primitives }
 TFBasicType >> primFillType [
-	<primitive: 'primitiveFillBasicType' module: 'PThreadedPlugin'>
+	<primitive: 'primitiveFillBasicType'>
 
 	^ self primitiveFailed	
 ]
 
 { #category : #primitives }
 TFBasicType >> primitiveByteSize [
-	<primitive: 'primitiveTypeByteSize' module: 'PThreadedPlugin'>
+	<primitive: 'primitiveTypeByteSize'>
 
 	^ self primitiveFailed	
 ]

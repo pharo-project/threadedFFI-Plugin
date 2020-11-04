@@ -20,10 +20,16 @@ TFSameThreadRunner >> doInitialize [
 	handle := self primitiveGetRunnerAddress.
 ]
 
+{ #category : #executing }
+TFSameThreadRunner >> invokeFunction: aTFExternalFunction withArguments: aCollection [ 
+
+	^ (	TFSameThreadCall forFunction: aTFExternalFunction) executeOn: self withArguments: aCollection
+]
+
 { #category : #private }
 TFSameThreadRunner >> primitiveGetRunnerAddress [
 
-	<primitive: 'primitiveGetSameThreadRunnerAddress' module: 'PThreadedPlugin'>
+	<primitive: 'primitiveGetSameThreadRunnerAddress'>
 
 	self primitiveFailed 	
 ]
@@ -31,7 +37,7 @@ TFSameThreadRunner >> primitiveGetRunnerAddress [
 { #category : #private }
 TFSameThreadRunner >> primitivePerformWorkerCall: aTFExternalFunction withArguments: argumentHolder withReturnHolder: aReturnHolder usingSemaphore: anInteger [ 
 
-	<primitive: 'primitiveSameThreadCallout' module: 'PThreadedPlugin'>
+	<primitive: 'primitiveSameThreadCallout'>
 
 	self primitiveFailed 	
 ]
