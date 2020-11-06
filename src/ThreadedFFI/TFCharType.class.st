@@ -5,12 +5,6 @@ Class {
 }
 
 { #category : #marshalling }
-TFCharType >> emitMarshallToPrimitive: builder [
-	
-	builder send: #asInteger
-]
-
-{ #category : #marshalling }
 TFCharType >> marshallFromPrimitive: aValue [
 	
 	^ aValue asCharacter

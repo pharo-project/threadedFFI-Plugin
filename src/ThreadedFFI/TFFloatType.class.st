@@ -11,6 +11,12 @@ Class {
 }
 
 { #category : #reading }
+TFFloatType >> emitMarshallToPrimitive: builder [
+	
+	builder send: #asFloat
+]
+
+{ #category : #reading }
 TFFloatType >> readValue: anExternalAddress offset: offset [
 
 	^ anExternalAddress floatAt: offset

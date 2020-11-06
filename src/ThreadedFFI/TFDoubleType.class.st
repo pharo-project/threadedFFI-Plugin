@@ -10,6 +10,12 @@ Class {
 	#category : #'ThreadedFFI-Types'
 }
 
+{ #category : #writing }
+TFDoubleType >> emitMarshallToPrimitive: builder [
+	
+	builder send: #asFloat
+]
+
 { #category : #reading }
 TFDoubleType >> readValue: anExternalAddress offset: offset [
 	

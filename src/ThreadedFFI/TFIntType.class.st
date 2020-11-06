@@ -13,6 +13,12 @@ Class {
 	#category : #'ThreadedFFI-Types'
 }
 
+{ #category : #marshalling }
+TFIntType >> emitMarshallToPrimitive: builder [
+	
+	builder send: #asInteger
+]
+
 { #category : #reading }
 TFIntType >> readValue: anExternalAddress offset: offset [
 	
