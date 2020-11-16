@@ -158,7 +158,7 @@ TFUFFICallbackTest >> testCallbacksInOtherThread [
 	| callback semaphore|
 
 	"Using same thread runner with callbacks from other threads produce a segmentation fault"
-	ffiLibrary = TFTestLibraryUsingSameThreadRunner ifTrue: [ self skip ].
+	ffiLibrary = TFTestLibraryUsingSameThreadRunner ifTrue: [ ^ self skip ].
 
 	semaphore := Semaphore new.
 
