@@ -11,6 +11,12 @@ TFUFFIMarshallingInCallbacksTest class >> isAbstract [
 ]
 
 { #category : #tests }
+TFUFFIMarshallingInCallbacksTest >> assertCharType: name [
+
+	self assertType: name value: $A
+]
+
+{ #category : #tests }
 TFUFFIMarshallingInCallbacksTest >> assertSignedIntType: name [
 
 	self assertType: name value: -65

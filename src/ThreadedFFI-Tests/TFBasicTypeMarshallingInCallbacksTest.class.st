@@ -5,6 +5,14 @@ Class {
 }
 
 { #category : #tests }
+TFBasicTypeMarshallingInCallbacksTest >> assertCharType: aType named: name [
+
+	| callbackGotValue |
+	callbackGotValue := self call: name type: aType value: $A asInteger.
+	self assert: callbackGotValue equals: $A.
+]
+
+{ #category : #tests }
 TFBasicTypeMarshallingInCallbacksTest >> assertIntType: aType named: name value: aValue [
 
 	| callbackGotValue |
@@ -47,6 +55,12 @@ TFBasicTypeMarshallingInCallbacksTest >> call: typeName type: type value: aValue
 ]
 
 { #category : #tests }
+TFBasicTypeMarshallingInCallbacksTest >> testChar [
+
+	self assertCharType: TFBasicType schar named: 'char'
+]
+
+{ #category : #tests }
 TFBasicTypeMarshallingInCallbacksTest >> testDouble [
 
 	| received |
@@ -71,12 +85,6 @@ TFBasicTypeMarshallingInCallbacksTest >> testPointer [
 	received := self call: 'pointer' type: TFBasicType pointer value: bytes.
 	self assert: received getHandle equals: bytes getHandle
 	] ensure: [ bytes free ]
-]
-
-{ #category : #tests }
-TFBasicTypeMarshallingInCallbacksTest >> testSignedChar [
-
-	self assertSignedIntType: TFBasicType schar named: 'char'
 ]
 
 { #category : #tests }
@@ -119,12 +127,6 @@ TFBasicTypeMarshallingInCallbacksTest >> testSignedLong [
 TFBasicTypeMarshallingInCallbacksTest >> testSignedShort [
 
 	self assertSignedIntType: TFBasicType sshort named: 'short'
-]
-
-{ #category : #tests }
-TFBasicTypeMarshallingInCallbacksTest >> testUnsignedChar [
-
-	self assertUnsignedIntType: TFBasicType uchar named: 'uchar'
 ]
 
 { #category : #tests }

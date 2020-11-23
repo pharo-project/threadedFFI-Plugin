@@ -15,3 +15,9 @@ TFUFFIFailingCallbackWithDefault >> returnOnError [
 
 	^ -1
 ]
+
+{ #category : #initialization }
+TFUFFIFailingCallbackWithDefault >> shouldDebugExceptions [
+
+	^ false
+]

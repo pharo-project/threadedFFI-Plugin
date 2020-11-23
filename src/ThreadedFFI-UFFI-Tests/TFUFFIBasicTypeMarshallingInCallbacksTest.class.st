@@ -5,6 +5,12 @@ Class {
 }
 
 { #category : #tests }
+TFUFFIBasicTypeMarshallingInCallbacksTest >> testChar [
+
+	self assertCharType: 'char'
+]
+
+{ #category : #tests }
 TFUFFIBasicTypeMarshallingInCallbacksTest >> testDouble [
 
 	| received |
@@ -29,12 +35,6 @@ TFUFFIBasicTypeMarshallingInCallbacksTest >> testPointer [
 	received := self call: 'pointer' type: #(void* name) value: bytes.
 	self assert: received getHandle equals: bytes getHandle
 	] ensure: [ bytes free ]
-]
-
-{ #category : #tests }
-TFUFFIBasicTypeMarshallingInCallbacksTest >> testSignedChar [
-
-	self assertSignedIntType: 'char'
 ]
 
 { #category : #tests }
@@ -77,12 +77,6 @@ TFUFFIBasicTypeMarshallingInCallbacksTest >> testSignedLong [
 TFUFFIBasicTypeMarshallingInCallbacksTest >> testSignedShort [
 
 	self assertSignedIntType: 'short'
-]
-
-{ #category : #tests }
-TFUFFIBasicTypeMarshallingInCallbacksTest >> testUnsignedChar [
-
-	self assertUnsignedIntType: 'uchar'
 ]
 
 { #category : #tests }

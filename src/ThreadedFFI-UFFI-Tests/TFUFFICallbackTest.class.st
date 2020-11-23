@@ -1,6 +1,9 @@
 Class {
 	#name : #TFUFFICallbackTest,
 	#superclass : #TFUFFITestCase,
+	#instVars : [
+		'oldExceptionHandler'
+	],
 	#category : #'ThreadedFFI-UFFI-Tests'
 }
 
@@ -32,7 +35,8 @@ TFUFFICallbackTest >> returnAnswer [
 TFUFFICallbackTest >> setUp [ 
 	
 	super setUp.
-
+	oldExceptionHandler := self ffiLibrary uniqueInstance runner exceptionHandler.
+	self ffiLibrary uniqueInstance runner exceptionHandler: TFTestCallbackExceptionHandler new.
 ]
 
 { #category : #tests }
@@ -57,6 +61,14 @@ TFUFFICallbackTest >> sumFloat: a andDouble: b [
 TFUFFICallbackTest >> sumInt:a andInt: b [
 
 	^ self ffiCall: #(int sumTwoNumbers(int a, int b))
+]
+
+{ #category : #running }
+TFUFFICallbackTest >> tearDown [
+
+	super tearDown.
+	
+	self ffiLibrary uniqueInstance runner exceptionHandler: oldExceptionHandler.
 ]
 
 { #category : #tests }
@@ -148,7 +160,8 @@ TFUFFICallbackTest >> testCallbackWithErrorHanlded [
 		fromAddress: callback getHandle 
 		definition: definition.
 
-	UIManager nonInteractiveDuring: [self assert: (runner invokeFunction: fun withArguments: {1}) equals: -1]
+	UIManager nonInteractiveDuring: [
+		self assert: (runner invokeFunction: fun withArguments: {1}) equals: -1]
 
 ]
 

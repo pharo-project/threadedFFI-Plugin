@@ -1,10 +1,13 @@
 Class {
 	#name : #TFCallbacksTest,
 	#superclass : #TFTestCase,
+	#instVars : [
+		'oldExceptionHandler'
+	],
 	#category : #'ThreadedFFI-Tests'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #utils }
 TFCallbacksTest >> callCallback: aCallback [
 	
 	| functionDefinition function |
@@ -31,7 +34,16 @@ TFCallbacksTest >> newTestCallbackDoing: aBlock [
 TFCallbacksTest >> setUp [
 
 	super setUp.
+	
+	oldExceptionHandler := runner exceptionHandler.
 	runner exceptionHandler: TFTestCallbackExceptionHandler new
+]
+
+{ #category : #tests }
+TFCallbacksTest >> tearDown [ 
+
+	runner exceptionHandler: oldExceptionHandler.
+	super tearDown
 ]
 
 { #category : #tests }
