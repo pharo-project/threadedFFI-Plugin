@@ -31,6 +31,12 @@ TFPointerToStructType >> emitMarshallToPrimitive: anIRBuilder [
 	self basicType emitMarshallToPrimitive: anIRBuilder.
 ]
 
+{ #category : #'reading-writing' }
+TFPointerToStructType >> readValue: anExternalAddress [
+	
+	^ self basicType readValue: anExternalAddress
+]
+
 { #category : #accessing }
 TFPointerToStructType >> targetClass [
 	^ targetClass
