@@ -19,18 +19,6 @@ TFCalloutMethodBuilder >> createFFICalloutLiteralFromSpec: functionSpec [
 
 { #category : #private }
 TFCalloutMethodBuilder >> generateFFICallout: builder spec: functionSpec ffiLibrary: ffiLibrary [
-	| properties |
-
-	"Copy the properties of the old method"
-
-	sender methodProperties ifNotNil: [ 
-		properties := sender methodProperties copy.
-		properties method: nil.
-		builder properties: properties ].
-	
-	builder
-		numArgs: self method argumentNames size;
-		addTemps: (self method argumentNames copyWith: #result).
 
 	TFCalloutAPI isTracing ifTrue: [ 
 		TFCalloutAPI trace: sender. 
