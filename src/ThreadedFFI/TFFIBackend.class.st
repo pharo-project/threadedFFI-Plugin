@@ -5,6 +5,18 @@ Class {
 	#category : #'ThreadedFFI-Base'
 }
 
+{ #category : #detecting }
+TFFIBackend class >> isAvailable [
+	
+	^ self new isAvailable 
+]
+
+{ #category : #accessing }
+TFFIBackend class >> priority [
+
+	^ 10
+]
+
 { #category : #'instance creation' }
 TFFIBackend >> allocate: byteSize [
 
@@ -12,6 +24,12 @@ TFFIBackend >> allocate: byteSize [
 
 	<primitive: 'primitiveFFIAllocate'>
 	^ self primitiveFailed
+]
+
+{ #category : #'instance creation' }
+TFFIBackend >> calloutAPIClass [
+	
+	^ TFCalloutAPI 
 ]
 
 { #category : #'instance creation' }
@@ -38,6 +56,12 @@ TFFIBackend >> integerOfObject: anObject at: byteOffset size: nBytes signed: aBo
 	invoked from ExternalAddress."
 	<primitive: 'primitiveFFIIntegerAt'>
 	^self primitiveFailed
+]
+
+{ #category : #testing }
+TFFIBackend >> isAvailable [
+
+	^ [ self loadSymbol: #primitiveLoadSymbolFromModule module: nil. true ] onErrorDo: [ false ]
 ]
 
 { #category : #'instance creation' }
