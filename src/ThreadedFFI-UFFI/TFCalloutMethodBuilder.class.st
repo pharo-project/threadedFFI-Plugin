@@ -18,8 +18,8 @@ TFCalloutMethodBuilder >> createFFICalloutLiteralFromSpec: functionSpec [
 ]
 
 { #category : #private }
-TFCalloutMethodBuilder >> generateFFICallout: builder spec: functionSpec [
-	| properties ffiLibrary |
+TFCalloutMethodBuilder >> generateFFICallout: builder spec: functionSpec ffiLibrary: ffiLibrary [
+	| properties |
 
 	"Copy the properties of the old method"
 
@@ -38,12 +38,6 @@ TFCalloutMethodBuilder >> generateFFICallout: builder spec: functionSpec [
 			pushLiteral: TFCalloutAPI;
 			pushLiteral: sender;
 			send: #trace: ].
-
-	"Obtain the library to use"
-	ffiLibrary := library ifNil: [sender receiver ffiLibrary].	
-	ffiLibrary := ffiLibrary isClass 
-		ifFalse: [ ffiLibrary asFFILibrary ]
-		ifTrue: [ ffiLibrary uniqueInstance ].
 	
 	builder 
 		pushLiteral: (ffiLibrary uniqueInstance runner).
