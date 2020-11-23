@@ -18,7 +18,7 @@ FFIExternalStructureType >> tfExternalTypeWithArity [
 				  targetClass: objectClass;
 				  yourself ].
 			
-	self pointerArity > 1
+	^ self pointerArity > 1
 		  ifTrue: [ TFBasicType pointer ]
 		  ifFalse: [ self tfExternalType ]
 ]
