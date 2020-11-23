@@ -37,7 +37,7 @@ TFDerivedType class >> string [
 { #category : #accessing }
 TFDerivedType >> basicType [
 	
-	^ self subclassResponsibility
+	^ TFBasicType pointer
 ]
 
 { #category : #accessing }
