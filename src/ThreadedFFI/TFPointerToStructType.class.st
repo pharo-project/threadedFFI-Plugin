@@ -10,7 +10,7 @@ Class {
 { #category : #'reading-writing' }
 TFPointerToStructType >> callbackReadValue: anExternalAddress [
 
-	^ targetClass fromHandle: anExternalAddress.
+	^ self basicType callbackReadValue: anExternalAddress
 ]
 
 { #category : #marshalling }
