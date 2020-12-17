@@ -25,9 +25,12 @@ TFTestCase >> libraryPath [
 ]
 
 { #category : #running }
-TFTestCase >> runCaseManaged [
-
-	super runCase
+TFTestCase >> runCaseManaged [ 
+	
+	"Skipping in running on an old VM"
+	TFFIBackend isAvailable ifFalse: [ ^ self skip ].
+	
+	super runCaseManaged.
 ]
 
 { #category : #accessing }

@@ -1,3 +1,6 @@
+"
+I am the Backend implementation of callbacks for UFFI. I use TFFI as a backend
+"
 Class {
 	#name : #TFCallback,
 	#superclass : #FFIExternalReference,
@@ -17,6 +20,8 @@ Class {
 { #category : #finalization }
 TFCallback class >> finalizeResourceData: aCallbackDataHandler [
 
+	aCallbackDataHandler isNull ifTrue: [ ^ self ].
+	
 	self primUnregister: aCallbackDataHandler.
 	aCallbackDataHandler beNull
 ]

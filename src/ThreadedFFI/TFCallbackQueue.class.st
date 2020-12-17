@@ -49,6 +49,11 @@ TFCallbackQueue class >> uniqueInstance [
 	^ UniqueInstance ifNil: [ UniqueInstance := self new ]
 ]
 
+{ #category : #accessing }
+TFCallbackQueue >> callbackProcess [
+	^ callbackProcess
+]
+
 { #category : #operations }
 TFCallbackQueue >> executeCallback: aCallbackInvocation [
 	
@@ -93,8 +98,11 @@ TFCallbackQueue >> initializeQueue [
 	
 	| semaphoreIndex |
 	
-	semaphoreIndex := Smalltalk registerExternalObject: semaphore.
-	self primitiveInitializeQueueWith: semaphoreIndex
+	[	semaphoreIndex := Smalltalk registerExternalObject: semaphore.
+		self primitiveInitializeQueueWith: semaphoreIndex ] 
+			onErrorDo: [ :e |
+				semaphoreIndex ifNotNil: [ Smalltalk unregisterExternalObject: semaphoreIndex ].
+				e pass]
 ]
 
 { #category : #private }
@@ -162,8 +170,9 @@ TFCallbackQueue >> shutDown [
 { #category : #'system startup' }
 TFCallbackQueue >> startUp [
 
-	self initializeQueue.
-	self forkCallbackProcess
+	[self initializeQueue.
+	self forkCallbackProcess] 
+		onErrorDo: [ self inform: 'The current VM does not support TFFI Callbacks. It will use the old implementation' ]
 ]
 
 { #category : #initialization }
