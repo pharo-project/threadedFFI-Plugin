@@ -9,7 +9,7 @@ Class {
 
 { #category : #executing }
 TFCallbackForkRunStrategy >> executeCallback: aCallbackInvocation on: aTFRunner [
-'OK' printToStdout.
+
 	[ aTFRunner handleExceptionDuring: [ aCallbackInvocation execute ] ]
 		forkAt: Processor highIOPriority - 1
 ]
