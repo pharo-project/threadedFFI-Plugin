@@ -62,7 +62,12 @@ TFCallbackQueue >> executeCallback: aCallbackInvocation [
 	
 	aCallbackInvocation callback: ((self lookupCallback: aCallbackInvocation callbackData) 
 		ifNil: [
-			Stdio stdout << 'INV: ' << aCallbackInvocation getHandle printString; lf.
+			Stdio stdout 
+				<< 'INV: ' 
+				<< aCallbackInvocation getHandle printString;
+				<< ' THUNK: '; 
+				<< aCallbackInvocation callbackData printString; 
+				lf.
 			self error: 'Callback not found.' ]).
 	aCallbackInvocation runner executeCallback: aCallbackInvocation
 ]

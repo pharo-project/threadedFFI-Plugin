@@ -6,7 +6,8 @@ Class {
 	#name : #TFCallbackInvocation,
 	#superclass : #FFIExternalObject,
 	#instVars : [
-		'callback'
+		'callback',
+		'readyToReturn'
 	],
 	#category : #'ThreadedFFI-Callbacks'
 }
@@ -49,6 +50,14 @@ TFCallbackInvocation >> callbackData [
 
 { #category : #operations }
 TFCallbackInvocation >> execute [ 
+
+	self executeThen: [ 
+		self runner returnCallback: self ]
+]
+
+{ #category : #operations }
+TFCallbackInvocation >> executeThen: aBlock [
+	"Do not make the return here, instead, execute a block that can handle the callback queue to return  	in the right moment"
 	| returnValue transformedArguments |
 
 	transformedArguments := [ self arguments 
@@ -59,7 +68,9 @@ TFCallbackInvocation >> execute [
 	return: [ self arguments ].
 
 	[ returnValue := callback frontendCallback valueWithArguments: transformedArguments ] 
-	ensure: [ 
+	ensure: [
+		readyToReturn := true.
+
 		returnValue := callback returnType marshallToPrimitive: (callback isSuccess 
 			ifTrue: [ returnValue ]
 			ifFalse: [ callback frontendCallback returnOnError ]).
@@ -67,7 +78,21 @@ TFCallbackInvocation >> execute [
 		self isNull ifFalse: [ 
 			callback returnType isVoid 
 				ifFalse: [ self writeReturnValue: returnValue ].
-			self runner returnCallback: self ] ]
+
+		aBlock value ] ]
+]
+
+{ #category : #initialization }
+TFCallbackInvocation >> initialize [
+
+	super initialize.
+	readyToReturn := false
+]
+
+{ #category : #testing }
+TFCallbackInvocation >> isReadyToReturn [
+
+	^ readyToReturn
 ]
 
 { #category : #private }
@@ -94,7 +119,9 @@ TFCallbackInvocation >> returnExecution [
 { #category : #accessing }
 TFCallbackInvocation >> returnHolder [
 
-	^ TFBasicType pointer readValue: handle offset: 1 + TFBasicType pointer byteSize
+	^ TFBasicType pointer 
+		readValue: handle 
+		offset: 1 + TFBasicType pointer byteSize
 ]
 
 { #category : #accessing }

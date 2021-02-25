@@ -72,8 +72,9 @@ TFRunner >> executeCallback: aCallbackInvocation [
 	  => no callbacks should finish while this method runs."
 
 	stackProtect critical: [ callbackInvocationStack push: aCallbackInvocation ].
-	aCallbackInvocation callback runStrategy executeCallback: aCallbackInvocation on: self.
-
+	aCallbackInvocation callback runStrategy 
+		executeCallback: aCallbackInvocation 
+		on: self
 ]
 
 { #category : #errors }
