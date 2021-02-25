@@ -78,15 +78,18 @@ TFCallbackQueuedReturnRunStrategy >> push: aCallbackInvocation [
 
 { #category : #executing }
 TFCallbackQueuedReturnRunStrategy >> return: aCallbackInvocation [
-	| next |
+	| next returned |
 	
 	self peek == aCallbackInvocation ifFalse: [ ^ self ].
 	self pop.
+	returned := aCallbackInvocation returnExecution.
+
 	"Stdio stdout 
 		<< 'RETURN ' 
 		<< aCallbackInvocation callback getHandle printString << ' '
 		<< aCallbackInvocation callback frontendCallback tfPrintString << ' '
-		<< aCallbackInvocation returnExecution printString; lf; flush."
+		<< returned printString; lf; flush."
+	
 	self isEmpty ifTrue: [ ^ self ].
 	((next := self peek) isReadyToReturn) 
 		ifTrue: [ 
